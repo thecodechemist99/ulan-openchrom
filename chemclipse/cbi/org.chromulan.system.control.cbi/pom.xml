@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <!--
+	PARENT
+  -->
+  <parent>
+    <groupId>net.chemclipse</groupId>
+    <artifactId>master</artifactId>
+    <version>BUILD-VERSION</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <!--
+	ARTIFACT
+  -->
+  <groupId>net.chemclipse</groupId>
+  <artifactId>parent</artifactId>
+  <packaging>pom</packaging>
+  <!--
+	DESCRIPTION
+  --> 
+  <name>OpenChrom CHROMuLAN Plug-in</name>
+  <description>
+	The OpenChrom CHROMuLAN plug-in offers a solution to connect uLAN devices. It extends the functionality of the OpenChrom Rich Client Platform (RCP).
+  </description>
+  <url>https://github.com/holyjan3/ulan-openchrom</url>
+  <!--
+	LICENSES
+  -->
+  <licenses>
+    <license>
+      <name>EPL v1.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+    </license> 
+  </licenses>
+  <!--
+	DEVELOPERS
+  -->
+  <developers>
+    <developer>
+      <id>holyjan3</id>
+      <name>Jan Holy</name>
+      <email>holyjan3 [at] fel.cvut.cz</email>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>eselmeister</id>
+      <name>Philip Wenig</name>
+      <email>philip.wenig [at] openchrom.net</email>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <!--
+	MODULES
+  -->
+  <modules>
+    <module>../../plugins/org.chromulan.system.control</module>
+    <module>../../plugins/org.chromulan.system.control.ui</module>
+    <module>../../features/org.chromulan.system.control.feature</module>
+    <!--<module>../../plugins/org.chromulan.system.control.fragment.test</module>-->
+    <module>../../sites/org.chromulan.system.control.updateSite</module>
+  </modules>
+</project>

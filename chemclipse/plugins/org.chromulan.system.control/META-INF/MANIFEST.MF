@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Control
+Bundle-SymbolicName: org.chromulan.system.control;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.chromulan.system.control.Activator
+Bundle-Vendor: CHROMuLAN
+Require-Bundle: org.eclipse.core.runtime,
+ net.chemclipse.support;bundle-version="0.7.0",
+ net.chemclipse.logging;bundle-version="0.7.0",
+ net.chemclipse.processing;bundle-version="0.7.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.chromulan.system.control.preferences

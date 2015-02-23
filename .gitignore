@@ -1,0 +1,14 @@
+chemclipse/plugins/org.chromulan.system.control.fragment.test/bin/
+chemclipse/plugins/org.chromulan.system.control.ui.fragment.test/bin/
+chemclipse/plugins/org.chromulan.system.control.ui/bin/
+chemclipse/plugins/org.chromulan.system.control/bin/
+chemclipse/plugins/org.chromulan.system.control.fragment.test/Openchrom.log
+chemclipse/plugins/org.chromulan.system.control.fragment.test/Openchrom.log*
+chemclipse/sites/org.chromulan.system.control.updateSite/artifacts.jar
+chemclipse/sites/org.chromulan.system.control.updateSite/content.jar
+chemclipse/sites/org.chromulan.system.control.updateSite/features/
+chemclipse/sites/org.chromulan.system.control.updateSite/plugins/
+chemclipse/features/org.chromulan.system.control.feature/target/
+chemclipse/plugins/org.chromulan.system.control.ui/target/
+chemclipse/plugins/org.chromulan.system.control/target/
+chemclipse/sites/org.chromulan.system.control.updateSite/target/
