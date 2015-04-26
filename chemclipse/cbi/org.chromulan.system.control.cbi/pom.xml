@@ -5,7 +5,7 @@
 	PARENT
   -->
   <parent>
-    <groupId>net.chemclipse</groupId>
+    <groupId>org.eclipse.chemclipse</groupId>
     <artifactId>master</artifactId>
     <version>BUILD-VERSION</version>
     <relativePath>../../pom.xml</relativePath>
@@ -13,7 +13,7 @@
   <!--
 	ARTIFACT
   -->
-  <groupId>net.chemclipse</groupId>
+  <groupId>org.eclipse.chemclipse</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
   <!--

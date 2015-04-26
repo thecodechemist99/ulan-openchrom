@@ -15,7 +15,7 @@ package org.chromulan.system.control.ui;
 import org.chromulan.system.control.preferences.PreferenceSupplier;
 import org.osgi.framework.BundleContext;
 
-import net.chemclipse.support.ui.activator.AbstractActivatorUI;
+import org.eclipse.chemclipse.support.ui.activator.AbstractActivatorUI;
 
 /**
  * The activator class controls the plug-in life cycle
