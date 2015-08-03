@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>net.chemclipse</groupId>
-    <artifactId>net.chemclipse.sites.parent</artifactId>
+    <groupId>org.eclipse.chemclipse</groupId>
+    <artifactId>org.eclipse.chemclipse.sites.parent</artifactId>
     <version>BUILD-VERSION</version>
   </parent>
   <artifactId>org.chromulan.system.control.updateSite</artifactId>
