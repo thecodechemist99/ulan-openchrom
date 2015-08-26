@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_JbVnIJmgEeSpTYJdjhxkxw">
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_JbVnIJmgEeSpTYJdjhxkxw">
   <imports xsi:type="basic:Part" xmi:id="_s74ScLtVEeSOd4rPaPqFeA" elementId="org.eclipse.ui.console.ConsoleView"/>
   <imports xsi:type="advanced:Area" xmi:id="_uF4ncLtVEeSOd4rPaPqFeA" elementId="org.eclipse.chemclipse.rcp.app.ui.editor"/>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_cs0e4JmgEeSpTYJdjhxkxw" featurename="sharedElements" parentElementId="org.eclipse.chemclipse.rcp.app.ui.trimmedwindow.main">
@@ -10,13 +10,11 @@
     <elements xsi:type="advanced:Perspective" xmi:id="_5ACA0LtVEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.perspective.chromulan" label="CHROMuLAN" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/perspective.gif">
       <children xsi:type="basic:PartSashContainer" xmi:id="_UkfbYLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partsashcontainer.0">
         <children xsi:type="basic:PartSashContainer" xmi:id="_WwDUALtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partsashcontainer.1" containerData="7000" horizontal="true">
-          <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.0" containerData="2500">
-            <children xsi:type="advanced:Placeholder" xmi:id="_gEMY4LtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.placeholder.1" ref="_6LMBYJmgEeSpTYJdjhxkxw"/>
-          </children>
+          <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.0" containerData="2500"/>
           <children xsi:type="advanced:Placeholder" xmi:id="_fcNy4LtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.placeholder.0" ref="_uF4ncLtVEeSOd4rPaPqFeA"/>
         </children>
         <children xsi:type="basic:PartSashContainer" xmi:id="_ofqJULtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partsashcontainer.2" containerData="3000" horizontal="true">
-          <children xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.1">
+          <children xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.devicesSetting">
             <children xsi:type="advanced:Placeholder" xmi:id="_pjou0LtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.placeholder.2" ref="_IMezULtKEeSOd4rPaPqFeA"/>
           </children>
           <children xsi:type="basic:PartStack" xmi:id="_GycyYLtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.2">
@@ -25,5 +23,19 @@
         </children>
       </children>
     </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_GtTWAEtJEeWFBNjUJiIrKw" featurename="children" parentElementId="org.eclipse.chemclipse.rcp.app.ui.menu.main">
+    <elements xsi:type="menu:Menu" xmi:id="_JPdwwEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.menu.recordAnalysis" label="Record Analysis">
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_RRXxsEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.handledmenuitem.newanalysis" label="New Analysis" command="_ZOfZQEtJEeWFBNjUJiIrKw"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Wr8kAEtJEeWFBNjUJiIrKw" featurename="commands" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="_ZOfZQEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.command.newanalysis" commandName="New Analysis"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_bq38IEtJEeWFBNjUJiIrKw" featurename="handlers" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_d2ISwEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.handler.newanalysis" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.commands.NewAnalysis" command="_ZOfZQEtJEeWFBNjUJiIrKw"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ioKeYEtJEeWFBNjUJiIrKw" featurename="addons" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="application:Addon" xmi:id="_nP10IEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.addon.0" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.CreateChromatogram"/>
   </fragments>
 </fragment:ModelFragments>

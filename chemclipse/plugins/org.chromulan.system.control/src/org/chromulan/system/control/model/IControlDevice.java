@@ -11,9 +11,27 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
-public interface IControlDevice {
+import org.eclipse.chemclipse.model.core.IChromatogram;
+
+public interface IControlDevice
+{
 
 	String getName();
 
 	void setName(String name);
+	
+	boolean hasChromatogram();
+	
+	void setChromatogram(IChromatogram chromatogram) throws UnsupportedOperationException;
+	
+	IChromatogram getChromatogram() throws UnsupportedOperationException;
+	
+	void setAnalysis(IAnalysis analysis);
+	
+	IAnalysis getAnalysis();
+	
+	boolean isPrepare();
+	
+	String getContributionURI();
+	
 }

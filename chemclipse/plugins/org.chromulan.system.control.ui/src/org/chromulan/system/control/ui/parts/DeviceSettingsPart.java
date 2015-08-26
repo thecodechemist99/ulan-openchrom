@@ -12,9 +12,16 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.parts;
 
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.chromulan.system.control.model.IAnalysis;
+import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.chromulan.system.control.model.IControlDevice;
+import org.chromulan.system.control.ui.events.IAnalysisUIEvents;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,20 +33,81 @@ public class DeviceSettingsPart {
 
 	@Inject
 	private Composite parent;
+	
+	@Inject 
+	MPart part;
+	
+	@Inject
+	private IEventBroker eventBroker;
 
 	@PostConstruct
 	public void createPartControl() {
 
+		part.setLabel("Hokus Pokus");
 		parent.setLayout(new FillLayout());
 		Button button = new Button(parent, SWT.PUSH);
-		button.setText("Show Device Settings");
+		button.setText("Add Chromatogtam");
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				eventBroker.post(IAnalysisUIEvents.TOPIC_ANALYSIS_CHROMULAN_UI_CHROMATOGRAM_DISPLAY, new IControlDevice() {
 
-				System.out.println("Demo");
-			}
+					@Override
+					public String getName() {
+
+						return null;
+					}
+
+					@Override
+					public void setName(String name) {
+
+					}
+
+					@Override
+					public boolean hasChromatogram() {
+
+						return true;
+					}
+
+					@Override
+					public void setChromatogram(IChromatogram chromatogram) throws UnsupportedOperationException {
+
+					}
+
+					@Override
+					public IChromatogram getChromatogram() throws UnsupportedOperationException {
+
+						return null;
+					}
+
+					@Override
+					public void setAnalysis(IAnalysis analysis) {
+
+					}
+
+					@Override
+					public IAnalysis getAnalysis() {
+
+						return null;
+					}
+
+					@Override
+					public boolean isPrepare() {
+
+						return false;
+					}
+
+					@Override
+					public String getContributionURI() {
+
+						return null;
+					}
+
+					
+				
+				});				
+			}	
 		});
 	}
 }
