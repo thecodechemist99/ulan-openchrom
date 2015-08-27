@@ -3,14 +3,19 @@
   <imports xsi:type="basic:Part" xmi:id="_s74ScLtVEeSOd4rPaPqFeA" elementId="org.eclipse.ui.console.ConsoleView"/>
   <imports xsi:type="advanced:Area" xmi:id="_uF4ncLtVEeSOd4rPaPqFeA" elementId="org.eclipse.chemclipse.rcp.app.ui.editor"/>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_cs0e4JmgEeSpTYJdjhxkxw" featurename="sharedElements" parentElementId="org.eclipse.chemclipse.rcp.app.ui.trimmedwindow.main">
-    <elements xsi:type="basic:Part" xmi:id="_6LMBYJmgEeSpTYJdjhxkxw" elementId="org.chromulan.system.control.ui.parts.availableDevices" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AvailableDevicesPart" label="Available Devices" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/devices.gif"/>
     <elements xsi:type="basic:Part" xmi:id="_IMezULtKEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.parts.deviceSettings" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.DeviceSettingsPart" label="Device Settings" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/settings.gif"/>
+    <elements xsi:type="basic:Part" xmi:id="_6EKToEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.part.availableDevices" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AvailableDevicesPart" label="Available Devices"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_0J-34LtVEeSOd4rPaPqFeA" featurename="children" parentElementId="org.eclipse.chemclipse.rcp.app.ui.perspectivestack.main">
     <elements xsi:type="advanced:Perspective" xmi:id="_5ACA0LtVEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.perspective.chromulan" label="CHROMuLAN" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/perspective.gif">
       <children xsi:type="basic:PartSashContainer" xmi:id="_UkfbYLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partsashcontainer.0">
         <children xsi:type="basic:PartSashContainer" xmi:id="_WwDUALtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partsashcontainer.1" containerData="7000" horizontal="true">
-          <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.0" containerData="2500"/>
+          <children xsi:type="basic:PartSashContainer" xmi:id="_1lizQEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.partsashcontainer.3">
+            <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.0" containerData="2500"/>
+            <children xsi:type="basic:PartStack" xmi:id="_5KlnUEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.partstack.1">
+              <children xsi:type="advanced:Placeholder" xmi:id="_S78TQEygEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.placeholder.1" ref="_6EKToEyaEeWRzKmWon3PLg"/>
+            </children>
+          </children>
           <children xsi:type="advanced:Placeholder" xmi:id="_fcNy4LtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.placeholder.0" ref="_uF4ncLtVEeSOd4rPaPqFeA"/>
         </children>
         <children xsi:type="basic:PartSashContainer" xmi:id="_ofqJULtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partsashcontainer.2" containerData="3000" horizontal="true">

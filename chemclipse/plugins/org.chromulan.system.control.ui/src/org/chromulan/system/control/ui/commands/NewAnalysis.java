@@ -66,7 +66,7 @@ public class NewAnalysis {
 				part.setLabel(analysis.getName());
 				part.setCloseable(true);
 				part.setElementId("AvailableDevicesPart");
-				part.setContributionURI("bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AvailableDevicesPart");
+				part.setContributionURI("bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AnalysisPart");
 				part.setObject(analysis);
 				MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.0", application);
 				stack.getChildren().add(part);

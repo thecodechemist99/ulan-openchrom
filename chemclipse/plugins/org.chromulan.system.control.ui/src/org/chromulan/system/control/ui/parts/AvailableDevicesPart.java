@@ -28,8 +28,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -65,7 +68,7 @@ public class AvailableDevicesPart {
 	protected EPartService partService;
 	
 	@Inject
-	protected MApplication aplication;
+	protected MApplication application;
 	
 	
 	@Inject
@@ -73,20 +76,13 @@ public class AvailableDevicesPart {
 	
 	@Inject 
 	protected MPart part;
-	
-	protected IAnalysis analysis;
-	
-	private Label lableNameAnalysis;
+
+
 	private Table table;
-	private boolean isCloseAnalysis;
 	
 	
 	
 	private Button buttonRefreshDevices;
-	private Button buttonStart;
-	private Button buttonStop;
-	private Button buttonEnd;
-	private Button buttonSave;
 	private Button buttonAddDevice;
 	
 	protected List<IControlDevice> deviceList; 
@@ -99,28 +95,20 @@ public class AvailableDevicesPart {
 	
 	@PostConstruct
 	public void createPartControl() {
-		analysis = (IAnalysis)part.getObject();
 		
 		
 		loadExtension();
 		//refreshDevice();
-		isCloseAnalysis = false;
 
 		
 		GridLayout gridLayout = new GridLayout(2,false);
 		
 		parent.setLayout(gridLayout);
 		
-		lableNameAnalysis = new Label(parent, SWT.LEFT);
-		
-		if(analysis != null)
-		{
-			lableNameAnalysis.setText(analysis.getName());
-		}
+
 		
 		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, false); 
 		gridData.horizontalSpan = 2;
-		lableNameAnalysis.setLayoutData(gridData);
 		
 		
 		
@@ -165,89 +153,35 @@ public class AvailableDevicesPart {
 		buttonAddDevice.setLayoutData(gridData);
 		
 		
-		buttonStart = new Button(parent, SWT.PUSH);
-		buttonStart.setText("Start Analysis");
-		buttonStart.setEnabled(true);
-		buttonStart.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				  startAnalysis(true);
-			  }
-		}); 
-		gridData = new GridData(GridData.FILL, GridData.FILL, true, false); 
-		buttonStart.setLayoutData(gridData);
+		MPerspective perspectiveChromulan = (MPerspective)modelService.find("org.chromulan.system.control.ui.perspective.chromulan", application);
 		
-		
-		
-		
-		buttonStop = new Button(parent, SWT.PUSH);
-		buttonStop.setText("Stop Analysis");
-		buttonStop.setEnabled(false);
-		buttonStop.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				  stopAnalysis(true);
-			  }
-		});
-		gridData = new GridData(GridData.FILL, GridData.FILL, true, false); 
-		buttonStop.setLayoutData(gridData);
-		
-	
-		
-		buttonEnd = new Button(parent, SWT.PUSH);
-		buttonEnd.setText("End Analysis");
-		buttonEnd.setEnabled(true);
-		buttonEnd.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				  endAnalysis(true);
-			  }
-		});
-		gridData = new GridData(GridData.FILL, GridData.FILL, true, false); 
-		buttonEnd.setLayoutData(gridData);
-		
-		
-		
-		buttonSave = new Button(parent, SWT.PUSH);
-		buttonSave.setText("Save");
-		buttonSave.setEnabled(false);
-		buttonSave.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				exportChromatogram();
-			  }
-		});
-		gridData = new GridData(GridData.FILL, GridData.FILL, true, false); 
-		buttonSave.setLayoutData(gridData);
-		
-		
+		if(perspectiveChromulan.getContext().containsKey(IAnalysis.class))
+		{
+			buttonAddDevice.setEnabled(false);
+		}
+			else
+		{
+			buttonAddDevice.setEnabled(true);
+		}
 		
 
 	}
 	
-	@PreDestroy
-	public void preDestroy()
+
+	
+	@Inject
+	@Optional
+	public void disableButtons(@UIEventTopic(value=IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START) IAnalysis analysis)
 	{
-		if(analysis != null)
-		{
-		if(analysis.isRecerding())
-		{
-			stopAnalysis(false);
-			endAnalysis(false); 
-		}
-		else
-		{
-			if(!isCloseAnalysis)
-			{
-				endAnalysis(false);
-			}
-			
-		}
-		}
+		buttonAddDevice.setEnabled(false);
 	}
 	
+	@Inject
+	@Optional
+	public void enableButtons(@UIEventTopic(value=IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END) IAnalysis analysis)
+	{
+		buttonAddDevice.setEnabled(true);
+	}
 	
 	
 	
@@ -286,12 +220,11 @@ public class AvailableDevicesPart {
 		
 		IControlDevice device = deviceList.get(numberDevice);
 		
-		if((analysis != null) && (device.isPrepare() && !analysis.isRecerding()))
+		if(device.isPrepare())
 		{
 			
 			
 			
-			device.setAnalysis(analysis);
 			MPart part = MBasicFactory.INSTANCE.createPart();
 			part.setLabel(device.getName());
 			part.setElementId("Devices Setting");
@@ -302,7 +235,7 @@ public class AvailableDevicesPart {
 			String contributionURI = device.getContributionURI();
 			part.setContributionURI(contributionURI);
 			
-			MPartStack stack = (MPartStack) modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", aplication);
+			MPartStack stack = (MPartStack) modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
 			stack.getChildren().add(part);
 			partService.activate(part);
 			
@@ -315,118 +248,6 @@ public class AvailableDevicesPart {
 		}
 				
 	}
-	
-
-	
-	protected boolean startAnalysis(boolean setControl)
-	{
-		if((analysis != null)&&(!analysis.isRecerding())&& !isCloseAnalysis)
-		{
-			if(setControl)
-			{
-				buttonStart.setEnabled(false);
-				buttonStop.setEnabled(true);
-				buttonEnd.setEnabled(false);
-				buttonAddDevice.setEnabled(false);
-				buttonSave.setEnabled(false);
-			}
-			
-			
-			
-			
-			analysis.setRecording(true);
-			
-			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START, analysis);
-			
-			
-			
-			
-			return true;
-		} else
-		{
-			return false;
-		}
-	}
-	
-	protected boolean stopAnalysis(boolean setControl)
-	{
-		if((analysis != null)&&(analysis.isRecerding())&& !isCloseAnalysis){
-			
-			if(setControl)
-			{
-				buttonStart.setEnabled(false);
-				buttonStop.setEnabled(false);
-				buttonEnd.setEnabled(true);
-				buttonAddDevice.setEnabled(false);
-				buttonSave.setEnabled(true);
-			}
-			
-			
-			
-			analysis.setRecording(false);
-			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP, analysis);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	protected boolean exportChromatogram()
-	{
-		if((analysis != null) && (!analysis.isRecerding()) && !isCloseAnalysis)
-		{	
-			IChromatogram chromatogram = null;
-			for(IControlDevice iControlDevice : deviceList) {
-				if((iControlDevice.getAnalysis() == analysis) && (iControlDevice.hasChromatogram()))
-				{
-					if(chromatogram == null)
-					{
-						chromatogram = iControlDevice.getChromatogram();
-					} 
-					else
-					{
-						chromatogram.addReferencedChromatogram(chromatogram);
-					}
-					
-				}
-			}
-			
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	protected boolean endAnalysis(boolean setControl)
-	{
-		
-		if((analysis != null) &&(!analysis.isRecerding())&& !isCloseAnalysis)
-		{
-			
-			if(setControl) 
-			{
-				buttonStart.setEnabled(false);
-				buttonStop.setEnabled(false);
-				buttonEnd.setEnabled(false);
-				buttonAddDevice.setEnabled(false);
-				buttonSave.setEnabled(false);
-			}
-	
-			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END, analysis);
-			isCloseAnalysis = true;
-			
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
 	
 
 	
