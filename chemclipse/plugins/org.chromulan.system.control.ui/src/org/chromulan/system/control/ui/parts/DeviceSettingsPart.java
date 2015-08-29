@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.chromulan.system.control.model.IAnalysis;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.chromulan.system.control.model.IControlDevice;
+import org.chromulan.system.control.model.chromatogram.ChromatogramRecording;
 import org.chromulan.system.control.ui.events.IAnalysisUIEvents;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -71,14 +72,14 @@ public class DeviceSettingsPart {
 					}
 
 					@Override
-					public void setChromatogram(IChromatogram chromatogram) throws UnsupportedOperationException {
-
-					}
-
-					@Override
-					public IChromatogram getChromatogram() throws UnsupportedOperationException {
-
+					public ChromatogramRecording getChromatogram() throws UnsupportedOperationException {
+					
 						return null;
+					}
+					
+					@Override
+					public void setChromatogram(ChromatogramRecording chromatogram) throws UnsupportedOperationException {
+					
 					}
 
 					@Override

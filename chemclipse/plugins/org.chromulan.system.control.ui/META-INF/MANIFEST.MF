@@ -15,7 +15,16 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.equinox.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.chemclipse.model.core,
+Import-Package: org.eclipse.chemclipse.csd.swt.ui.components.chromatogram,
+ org.eclipse.chemclipse.model.core,
+ org.eclipse.chemclipse.model.selection,
+ org.eclipse.chemclipse.msd.swt.ui.components.chromatogram,
+ org.eclipse.chemclipse.swt.ui.components,
+ org.eclipse.chemclipse.swt.ui.converter,
+ org.eclipse.chemclipse.swt.ui.series,
+ org.eclipse.chemclipse.swt.ui.support,
+ org.eclipse.chemclipse.thirdpartylibraries.swtchart.ext,
+ org.eclipse.chemclipse.wsd.model.core.selection,
  org.eclipse.chemclipse.wsd.swt.ui.components.chromatogram,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.di.annotations,
@@ -25,4 +34,5 @@ Import-Package: org.eclipse.chemclipse.model.core,
  org.eclipse.e4.ui.model.application.ui,
  org.eclipse.e4.ui.model.application.ui.advanced,
  org.eclipse.e4.ui.model.application.ui.basic,
- org.eclipse.e4.ui.workbench.modeling
+ org.eclipse.e4.ui.workbench.modeling,
+ org.swtchart

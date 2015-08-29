@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
+import org.chromulan.system.control.model.chromatogram.ChromatogramRecording;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public interface IControlDevice
@@ -22,9 +23,9 @@ public interface IControlDevice
 	
 	boolean hasChromatogram();
 	
-	void setChromatogram(IChromatogram chromatogram) throws UnsupportedOperationException;
+	void setChromatogram(ChromatogramRecording chromatogram) throws UnsupportedOperationException;
 	
-	IChromatogram getChromatogram() throws UnsupportedOperationException;
+	ChromatogramRecording getChromatogram() throws UnsupportedOperationException;
 	
 	void setAnalysis(IAnalysis analysis);
 	
