@@ -4,7 +4,7 @@
   <imports xsi:type="advanced:Area" xmi:id="_uF4ncLtVEeSOd4rPaPqFeA" elementId="org.eclipse.chemclipse.rcp.app.ui.editor"/>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_cs0e4JmgEeSpTYJdjhxkxw" featurename="sharedElements" parentElementId="org.eclipse.chemclipse.rcp.app.ui.trimmedwindow.main">
     <elements xsi:type="basic:Part" xmi:id="_IMezULtKEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.parts.deviceSettings" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.DeviceSettingsPart" label="Device Settings" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/settings.gif"/>
-    <elements xsi:type="basic:Part" xmi:id="_6EKToEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.part.availableDevices" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AvailableDevicesPart" label="Available Devices"/>
+    <elements xsi:type="basic:Part" xmi:id="_6EKToEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.part.availableDevices" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AvailableDevicesPart" label="Available Devices" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/devices.gif"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_0J-34LtVEeSOd4rPaPqFeA" featurename="children" parentElementId="org.eclipse.chemclipse.rcp.app.ui.perspectivestack.main">
     <elements xsi:type="advanced:Perspective" xmi:id="_5ACA0LtVEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.perspective.chromulan" label="CHROMuLAN" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/perspective.gif">
@@ -29,7 +29,7 @@
       </children>
     </elements>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_GtTWAEtJEeWFBNjUJiIrKw" featurename="children" parentElementId="org.eclipse.chemclipse.rcp.app.ui.menu.main">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_GtTWAEtJEeWFBNjUJiIrKw" featurename="children" parentElementId="org.eclipse.chemclipse.ux.extension.ui.controls.menu">
     <elements xsi:type="menu:Menu" xmi:id="_JPdwwEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.menu.recordAnalysis" label="Record Analysis">
       <children xsi:type="menu:HandledMenuItem" xmi:id="_RRXxsEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.handledmenuitem.newanalysis" label="New Analysis" command="_ZOfZQEtJEeWFBNjUJiIrKw"/>
     </elements>

@@ -8,7 +8,7 @@
  * 
  * Contributors:
  * Majitel - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.ui.chromatogram;
 
 import javax.inject.Inject;
@@ -24,38 +24,30 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
-
 public class CreateChromatogram {
+
 	@Inject
-	EModelService modelService;
-	
+	private EModelService modelService;
 	@Inject
-	MApplication aplication;
-	
+	private MApplication aplication;
 	@Inject
-	EPartService partService;
-	
+	private EPartService partService;
+
 	@Inject
 	@Optional
-	public void displayChromatogam(@UIEventTopic(value= IAnalysisUIEvents.TOPIC_ANALYSIS_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IControlDevice device)
-	{
-		
+	public void displayChromatogam(@UIEventTopic(value = IAnalysisUIEvents.TOPIC_ANALYSIS_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IControlDevice device) {
+
 		System.out.println("create chromatogram");
-		if(device.hasChromatogram())
-		{
+		if(device.hasChromatogram()) {
 			MPart part = MBasicFactory.INSTANCE.createPart();
-			
 			part.setLabel("Chromatogram");
 			part.setElementId("Chromatogram");
 			part.setCloseable(true);
-			part.setObject(device);	
+			part.setObject(device);
 			part.setContributionURI("bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramViewer");
-			
-			MPartStack stack = (MPartStack) modelService.find("org.chromulan.system.control.ui.partstack.2", aplication);
+			MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.2", aplication);
 			stack.getChildren().add(part);
 			partService.activate(part);
-			
 		}
 	}
-
 }

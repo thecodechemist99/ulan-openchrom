@@ -8,12 +8,12 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.model;
 
 import java.util.List;
 
-
 public interface IControlDevices {
+
 	List<IControlDevice> getControlDevices();
 }

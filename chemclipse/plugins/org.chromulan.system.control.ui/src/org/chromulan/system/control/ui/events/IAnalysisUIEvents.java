@@ -8,10 +8,10 @@
  * 
  * Contributors:
  * Majitel - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.ui.events;
 
-
 public interface IAnalysisUIEvents {
-	final String TOPIC_ANALYSIS_CHROMULAN_UI_CHROMATOGRAM_DISPLAY = "analysis/chromulan/ui/chromatogram/display";
+
+	String TOPIC_ANALYSIS_CHROMULAN_UI_CHROMATOGRAM_DISPLAY = "analysis/chromulan/ui/chromatogram/display";
 }

@@ -12,12 +12,10 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.parts;
 
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.model.IAnalysis;
-import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.chromatogram.ChromatogramRecording;
 import org.chromulan.system.control.ui.events.IAnalysisUIEvents;
@@ -34,10 +32,8 @@ public class DeviceSettingsPart {
 
 	@Inject
 	private Composite parent;
-	
-	@Inject 
+	@Inject
 	MPart part;
-	
 	@Inject
 	private IEventBroker eventBroker;
 
@@ -52,6 +48,7 @@ public class DeviceSettingsPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+
 				eventBroker.post(IAnalysisUIEvents.TOPIC_ANALYSIS_CHROMULAN_UI_CHROMATOGRAM_DISPLAY, new IControlDevice() {
 
 					@Override
@@ -73,13 +70,13 @@ public class DeviceSettingsPart {
 
 					@Override
 					public ChromatogramRecording getChromatogram() throws UnsupportedOperationException {
-					
+
 						return null;
 					}
-					
+
 					@Override
 					public void setChromatogram(ChromatogramRecording chromatogram) throws UnsupportedOperationException {
-					
+
 					}
 
 					@Override
@@ -104,11 +101,8 @@ public class DeviceSettingsPart {
 
 						return null;
 					}
-
-					
-				
-				});				
-			}	
+				});
+			}
 		});
 	}
 }

@@ -8,7 +8,7 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.ui.commands;
 
 import javax.inject.Inject;
@@ -29,21 +29,18 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
 
 public class NewAnalysis {
-	
-	
 
 	@Inject
-	protected  EModelService modelService;
+	private EModelService modelService;
 	@Inject
-	protected  EPartService partService;
+	private EPartService partService;
 	@Inject
-	protected  MApplication application;
+	private MApplication application;
+
 	/*
 	 * @Inject
 	 * protected static IEclipseContext context;
 	 */
-	
-
 	@Execute
 	public void execute(Composite parent) {
 
@@ -54,14 +51,9 @@ public class NewAnalysis {
 			IAnalysis analysis = new AbstractAnalysis() {
 			};
 			analysis.setName(analysisName);
-	
-			
 			MPerspective perspectiveChromulan = (MPerspective)modelService.find("org.chromulan.system.control.ui.perspective.chromulan", application);
 			if(perspectiveChromulan != null) {
-				
 				partService.switchPerspective(perspectiveChromulan);
-				
-				
 				MPart part = MBasicFactory.INSTANCE.createPart();
 				part.setLabel(analysis.getName());
 				part.setCloseable(true);
@@ -71,11 +63,7 @@ public class NewAnalysis {
 				MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.0", application);
 				stack.getChildren().add(part);
 				partService.activate(part);
-	
 			}
 		}
-		
 	}
-	
 }
-

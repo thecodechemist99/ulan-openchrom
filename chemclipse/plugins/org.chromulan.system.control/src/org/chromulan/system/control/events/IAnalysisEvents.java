@@ -8,14 +8,12 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.events;
 
-
 public interface IAnalysisEvents {
-	
 
-	final String TOPIC_ANALYSIS_CHROMULAN_START = "analysis/chromulan/start";
-	final String TOPIC_ANALYSIS_CHROMULAN_STOP 	= "analysis/chromulan/stop";
-	final String TOPIC_ANALYSIS_CHROMULAN_END 	= "analysis/chromulan/end";
+	String TOPIC_ANALYSIS_CHROMULAN_START = "analysis/chromulan/start";
+	String TOPIC_ANALYSIS_CHROMULAN_STOP = "analysis/chromulan/stop";
+	String TOPIC_ANALYSIS_CHROMULAN_END = "analysis/chromulan/end";
 }

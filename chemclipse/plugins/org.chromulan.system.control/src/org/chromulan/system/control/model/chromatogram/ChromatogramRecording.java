@@ -8,7 +8,7 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.model.chromatogram;
 
 import java.util.List;
@@ -16,81 +16,69 @@ import java.util.List;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 
-
 public class ChromatogramRecording {
-	
-	IChromatogram chromatogram;
-	
-	
-	public ChromatogramRecording(int scanInterval,int scanDelay)
-	{
+
+	private IChromatogram chromatogram;
+
+	public ChromatogramRecording(int scanInterval, int scanDelay) {
+
 		chromatogram.setScanInterval(scanInterval);
 		chromatogram.setScanDelay(scanDelay);
 	}
-	
-	
-	public void addScan(IScan scan)
-	{
+
+	public void addScan(IScan scan) {
+
 		synchronized(chromatogram) {
 			chromatogram.addScan(scan);
-			
 		}
 	}
-	
-	
-	public void addScans(List<IScan> scans)
-	{
+
+	public void addScans(List<IScan> scans) {
+
 		synchronized(chromatogram) {
 			chromatogram.getScans().addAll(scans);
 		}
 	}
-	
-	public void setScanInterval(int milliseconds)
-	{
+
+	public void setScanInterval(int milliseconds) {
+
 		synchronized(chromatogram) {
-			if(milliseconds != chromatogram.getScanInterval())
-			{
+			if(milliseconds != chromatogram.getScanInterval()) {
 				reset();
 				chromatogram.setScanInterval(milliseconds);
 			}
 		}
-		
 	}
-	
-	
-	
-	public int getScanInterval()
-	{
+
+	public int getScanInterval() {
+
 		return chromatogram.getScanInterval();
 	}
-	
-	public void setScanDelay(int milliseconds)
-	{
+
+	public void setScanDelay(int milliseconds) {
+
 		synchronized(chromatogram) {
-			if(chromatogram.getScanDelay()!= milliseconds)
-			{
+			if(chromatogram.getScanDelay() != milliseconds) {
 				chromatogram.setScanDelay(milliseconds);
 				chromatogram.recalculateRetentionTimes();
 			}
 		}
 	}
-	
-	
-	public void resetRecording()
-	{
+
+	public void resetRecording() {
+
 		synchronized(chromatogram) {
 			reset();
 		}
 	}
-	
-	protected void reset()
-	{
+
+	protected void reset() {
+
 		chromatogram.removeScans(1, chromatogram.getNumberOfScans());
 	}
-	
-	public IChromatogram getChromatogram()
-	{
+
+	public IChromatogram getChromatogram() {
+
 		return chromatogram;
 	}
-
 }

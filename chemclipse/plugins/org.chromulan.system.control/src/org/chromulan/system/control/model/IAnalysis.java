@@ -8,24 +8,22 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.model;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
-
 public interface IAnalysis {
-	
-	
-	public void setChromatogram(IChromatogram chromatogram);
 
-	public IChromatogram getChromatogram();
-	
-	public void setName(String name);
-	
-	public String getName();
-	
-	public boolean isRecerding();
+	void setChromatogram(IChromatogram chromatogram);
+
+	IChromatogram getChromatogram();
+
+	void setName(String name);
+
+	String getName();
+
+	boolean isRecerding();
 
 	void setRecording(boolean b);
 }

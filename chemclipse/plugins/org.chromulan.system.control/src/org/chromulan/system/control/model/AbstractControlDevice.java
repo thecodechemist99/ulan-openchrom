@@ -11,19 +11,18 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
-import org.eclipse.chemclipse.model.core.IChromatogram;
-
 public abstract class AbstractControlDevice implements IControlDevice {
 
-	protected String name;
-	protected IAnalysis analysis;
-	protected String contributionURI;
-	
+	private String name;
+	private IAnalysis analysis;
+	private String contributionURI;
+
 	public AbstractControlDevice() {
+
 		name = "";
-		
-	}	
-	
+		contributionURI = "";
+	}
+
 	@Override
 	public String getName() {
 
@@ -35,17 +34,22 @@ public abstract class AbstractControlDevice implements IControlDevice {
 
 		this.name = name;
 	}
-	
+
 	@Override
 	public IAnalysis getAnalysis() {
-	
+
 		return analysis;
 	}
-	
+
 	@Override
 	public void setAnalysis(IAnalysis analysis) {
+
 		this.analysis = analysis;
 	}
 
+	@Override
+	public String getContributionURI() {
 
+		return contributionURI;
+	}
 }

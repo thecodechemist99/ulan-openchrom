@@ -8,37 +8,39 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.model;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
-
 public abstract class AbstractAnalysis implements IAnalysis {
 
-	protected IChromatogram chromatogram;
-	protected String name;
-	protected boolean isRecording;
-	
-	
+	private IChromatogram chromatogram;
+	private String name;
+	private boolean isRecording;
+
 	public AbstractAnalysis() {
+
 		name = "";
 		chromatogram = null;
 		isRecording = false;
 	}
-	
+
 	@Override
 	public void setChromatogram(IChromatogram chromatogram) {
+
 		this.chromatogram = chromatogram;
 	}
-	
+
 	@Override
 	public IChromatogram getChromatogram() {
+
 		return chromatogram;
 	}
 
 	@Override
 	public void setName(String name) {
+
 		this.name = name;
 	}
 
@@ -47,20 +49,16 @@ public abstract class AbstractAnalysis implements IAnalysis {
 
 		return name;
 	}
-	
+
 	@Override
 	public boolean isRecerding() {
-	
+
 		return isRecording;
 	}
-	
+
 	@Override
 	public void setRecording(boolean b) {
+
 		isRecording = b;
 	}
-	
-
-
-	
 }
-
