@@ -14,7 +14,6 @@ package org.chromulan.system.control.ui;
 
 import org.chromulan.system.control.preferences.PreferenceSupplier;
 import org.osgi.framework.BundleContext;
-
 import org.eclipse.chemclipse.support.ui.activator.AbstractActivatorUI;
 
 /**
