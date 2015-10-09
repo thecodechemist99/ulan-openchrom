@@ -16,14 +16,11 @@ import java.util.List;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 
-public class ChromatogramRecording {
+public class ChromatogramRecording implements IChromatogramRecording {
 
 	private IChromatogram chromatogram;
 
-	public ChromatogramRecording(int scanInterval, int scanDelay) {
-
-		chromatogram.setScanInterval(scanInterval);
-		chromatogram.setScanDelay(scanDelay);
+	public ChromatogramRecording() {
 	}
 
 	public void addScan(IScan scan) {
@@ -52,7 +49,10 @@ public class ChromatogramRecording {
 
 	public int getScanInterval() {
 
-		return chromatogram.getScanInterval();
+		synchronized(chromatogram) {
+			return chromatogram.getScanInterval();
+		}
+		
 	}
 
 	public void setScanDelay(int milliseconds) {
@@ -72,13 +72,24 @@ public class ChromatogramRecording {
 		}
 	}
 
-	protected void reset() {
+	private void reset() {
 
 		chromatogram.removeScans(1, chromatogram.getNumberOfScans());
 	}
 
 	public IChromatogram getChromatogram() {
 
-		return chromatogram;
+		synchronized(chromatogram) {
+			return chromatogram;
+		}
+		
+	}
+	
+	public void setChromatogram(IChromatogram chromatogram)
+	{
+		synchronized(chromatogram) {
+			this.chromatogram = chromatogram;
+		}
+		
 	}
 }

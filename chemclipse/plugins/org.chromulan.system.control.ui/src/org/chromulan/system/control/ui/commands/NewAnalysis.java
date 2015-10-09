@@ -13,7 +13,7 @@ package org.chromulan.system.control.ui.commands;
 
 import javax.inject.Inject;
 
-import org.chromulan.system.control.model.AbstractAnalysis;
+import org.chromulan.system.control.model.Analysis;
 import org.chromulan.system.control.model.IAnalysis;
 import org.chromulan.system.control.ui.wizard.WizardNewAnalysis;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -47,10 +47,10 @@ public class NewAnalysis {
 		WizardNewAnalysis newAnalysisWizard = new WizardNewAnalysis();
 		WizardDialog wizardDialog = new WizardDialog(parent.getShell(), newAnalysisWizard);
 		if(wizardDialog.open() == Window.OK) {
-			String analysisName = newAnalysisWizard.getAnalysisName();
-			IAnalysis analysis = new AbstractAnalysis() {
+			//String analysisName = newAnalysisWizard.getAnalysisName();
+			IAnalysis analysis = new Analysis() {
 			};
-			analysis.setName(analysisName);
+			analysis.setName("");
 			MPerspective perspectiveChromulan = (MPerspective)modelService.find("org.chromulan.system.control.ui.perspective.chromulan", application);
 			if(perspectiveChromulan != null) {
 				partService.switchPerspective(perspectiveChromulan);

@@ -16,12 +16,14 @@ import org.eclipse.jface.wizard.Wizard;
 public class WizardNewAnalysis extends Wizard {
 
 	private WizardPageOne page1;
+	private WizardModelAnalysis modelAnalysis;
 
 	public WizardNewAnalysis() {
 
 		super();
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Analysis wizard");
+		modelAnalysis = new WizardModelAnalysis();
 	}
 
 	@Override
@@ -37,8 +39,8 @@ public class WizardNewAnalysis extends Wizard {
 		return page1.isPageComplete();
 	}
 
-	public String getAnalysisName() {
+	public WizardModelAnalysis getModel() {
 
-		return page1.getAnalysisName();
+		return modelAnalysis;
 	}
 }

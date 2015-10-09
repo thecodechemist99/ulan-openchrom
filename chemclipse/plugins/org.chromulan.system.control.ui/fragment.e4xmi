@@ -11,7 +11,12 @@
       <children xsi:type="basic:PartSashContainer" xmi:id="_UkfbYLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partsashcontainer.0">
         <children xsi:type="basic:PartSashContainer" xmi:id="_WwDUALtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partsashcontainer.1" containerData="7000" horizontal="true">
           <children xsi:type="basic:PartSashContainer" xmi:id="_1lizQEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.partsashcontainer.3">
-            <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.0" containerData="2500"/>
+            <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.0" containerData="2500">
+              <children xsi:type="basic:Part" xmi:id="_JUqo0GzSEeWhB_dhmOjHpg" elementId="org.chromulan.system.control.ui.part.0" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AnalysesPart"/>
+            </children>
+            <children xsi:type="basic:PartStack" xmi:id="_IZTz0GzSEeWhB_dhmOjHpg" elementId="org.chromulan.system.control.ui.partstack.3">
+              <children xsi:type="basic:Part" xmi:id="_fCLloG24EeWhB_dhmOjHpg" elementId="org.chromulan.system.control.ui.part.1" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AnalysisPart"/>
+            </children>
             <children xsi:type="basic:PartStack" xmi:id="_5KlnUEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.partstack.1">
               <children xsi:type="advanced:Placeholder" xmi:id="_S78TQEygEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.placeholder.1" ref="_6EKToEyaEeWRzKmWon3PLg"/>
             </children>

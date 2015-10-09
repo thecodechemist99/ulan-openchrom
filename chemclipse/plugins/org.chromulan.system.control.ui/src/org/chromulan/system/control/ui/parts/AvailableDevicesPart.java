@@ -12,16 +12,21 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.parts;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.swing.ProgressMonitor;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.chromulan.system.control.events.IAnalysisEvents;
 import org.chromulan.system.control.model.IAnalysis;
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.IControlDevices;
+import org.chromulan.system.control.ui.analysis.support.UlanScanNetRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -34,6 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,11 +47,30 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import net.sourceforge.ulan.base.CompletionHandler;
+import net.sourceforge.ulan.base.DeviceDescription;
+import net.sourceforge.ulan.base.ICompatibleDevices;
+import net.sourceforge.ulan.base.ULanCommunicationInterface;
+import net.sourceforge.ulan.base.ULanDrv;
+import net.sourceforge.ulan.base.ULanMsg;
+
+
 public class AvailableDevicesPart {
+	
+	
+	static
+	{
+		if(ULanDrv.isLibraryLoaded())
+		{
+			ULanCommunicationInterface.setHandle(new ULanDrv());
+		}
+		
+	}
 
 	@Inject
 	private Composite parent;
@@ -56,39 +81,55 @@ public class AvailableDevicesPart {
 	@Inject
 	private MApplication application;
 	@Inject
-	private IExtensionRegistry registry;
+	private Display display;
+	
+	
+	
+	
 	private Table table;
 	private Button buttonRefreshDevices;
 	private Button buttonAddDevice;
-	private List<IControlDevice> deviceList;
-	private List<IControlDevices> devicePlugins;
+	
+	private List<DeviceDescription> devices;
 
+	
+	
 	@PostConstruct
 	public void createPartControl() {
 
-		loadExtension();
-		// refreshDevice();
+		
+
 		GridLayout gridLayout = new GridLayout(2, false);
 		parent.setLayout(gridLayout);
-		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
+		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gridData.horizontalSpan = 2;
 		table = new Table(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
-		gridData.horizontalSpan = 2;
 		table.setLayoutData(gridData);
-		TableColumn tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText("Name of devices");
-		tableColumn.setWidth(150);
 		table.setHeaderVisible(true);
-		refreshDevice();
+		
+		TableColumn columnName = new TableColumn(table, SWT.NULL);
+		columnName.setText("Name of devices");
+		columnName.setWidth(150);
+		
+		TableColumn columnDescription = new TableColumn(table, SWT.None);
+		columnDescription.setText("Description");
+		columnDescription.setWidth(400);
+		
 		buttonRefreshDevices = new Button(parent, SWT.PUSH);
 		buttonRefreshDevices.setText("Refresh Devices");
 		buttonRefreshDevices.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
-				refreshDevice();
+				display.asyncExec(new Runnable() {
+					
+					@Override
+					public void run() {
+						openConection();
+						loadDevice();
+					}
+				});
+				
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
@@ -112,72 +153,99 @@ public class AvailableDevicesPart {
 			buttonAddDevice.setEnabled(true);
 		}
 	}
+	
+	private void openConection()
+	{
+		
+		if(ULanDrv.isLibraryLoaded())
+		{
+			ULanCommunicationInterface communication = new ULanCommunicationInterface();
+			try {
+				ULanCommunicationInterface.open();
+				communication.addFilt(0, null, new CompletionHandler<ULanMsg, Void>() {
+
+					@Override
+					public void completed(ULanMsg arg0, Void arg1) {
+						
+					}
+
+					@Override
+					public void failed(Exception arg0, Void arg1) {
+						
+					}
+
+				}).activateFilt();
+				
+			} catch(IOException e) {
+				
+			}
+		}
+		
+		
+	}
+	
+	
+	private void closeConnection()
+	{
+		if(ULanDrv.isLibraryLoaded())
+		{
+			try {
+				ULanCommunicationInterface.close();
+			} catch(IOException e) {
+				//logger.warn(e);
+			}
+		}
+	}
+	
+	private void loadDevice()
+	{
+		if(ULanCommunicationInterface.isOpen())
+		{
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(display.getActiveShell());
+			UlanScanNetRunnable runnable = new UlanScanNetRunnable();			
+			try {
+				dialog.run(false, false, runnable);
+			} catch(InvocationTargetException | InterruptedException e) {
+				//TODO: exception logger.warn(e);
+			}
+			this.devices = runnable.getDevices();
+			rewriteTable();
+		}
+		
+	}
+
+	private void rewriteTable() {
+		table.removeAll();
+		
+		for(DeviceDescription deviceDescription : devices) {
+			TableItem item = new TableItem(table, SWT.None);
+			item.setText(0, deviceDescription.getModulType());
+			item.setText(1, deviceDescription.getDescription());
+		}
+	}
 
 	@Inject
 	@Optional
-	public void disableButtons(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START) IAnalysis analysis) {
+	public void disableButtons(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START_RECORDING) IAnalysis analysis) {
 
 		buttonAddDevice.setEnabled(false);
 	}
 
 	@Inject
 	@Optional
-	public void enableButtons(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END) IAnalysis analysis) {
+	public void enableButtons(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP_RECORDING) IAnalysis analysis) {
 
 		buttonAddDevice.setEnabled(true);
 	}
 
-	protected void refreshDevice() {
 
-		deviceList = new LinkedList<IControlDevice>();
-		for(IControlDevices elem : devicePlugins) {
-			deviceList.addAll(elem.getControlDevices());
+	private void openNewDeviceSettingsPart(int numberDevice) {		
+		if(ULanCommunicationInterface.isOpen() && this.devices != null && numberDevice < this.devices.size())
+		{
+			DeviceDescription device = this.devices.get(numberDevice);
+			String modulType = device.getModulType();
 		}
-		table.removeAll();
-		// Display display = new Display();
-		for(int i = 0; i < deviceList.size(); i++) {
-			TableItem item = new TableItem(table, SWT.NULL);
-			IControlDevice device = deviceList.get(i);
-			if(device.isPrepare()) {
-				item.setText(i, device.getName());
-				// item.setBackground(i, display.getSystemColor(SWT.COLOR_WHITE));
-			} else {
-				item.setText(i, device.getName());
-				// item.setBackground(i, display.getSystemColor(SWT.COLOR_GRAY));
-			}
-		}
+	
 	}
 
-	protected boolean openNewDeviceSettingsPart(int numberDevice) {
-
-		IControlDevice device = deviceList.get(numberDevice);
-		if(device.isPrepare()) {
-			MPart part = MBasicFactory.INSTANCE.createPart();
-			part.setLabel(device.getName());
-			part.setElementId("Devices Setting");
-			part.setCloseable(true);
-			part.setObject(device);
-			String contributionURI = device.getContributionURI();
-			part.setContributionURI(contributionURI);
-			MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
-			stack.getChildren().add(part);
-			partService.activate(part);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	protected void loadExtension() {
-
-		devicePlugins = new LinkedList<IControlDevices>();
-		IConfigurationElement[] config = registry.getConfigurationElementsFor("org.chromulan.system.control.ui");
-		for(IConfigurationElement elem : config) {
-			try {
-				IControlDevices controlDevices = (IControlDevices)elem.createExecutableExtension("Control device");
-				devicePlugins.add(controlDevices);
-			} catch(CoreException e) {
-			}
-		}
-	}
 }

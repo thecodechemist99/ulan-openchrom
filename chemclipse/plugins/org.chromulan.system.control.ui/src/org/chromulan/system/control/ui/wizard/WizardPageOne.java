@@ -11,69 +11,76 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.wizard;
 
+import org.chromulan.system.control.ui.analysis.support.MillisecondsToMinutes;
+import org.chromulan.system.control.ui.analysis.support.MinutesToMilliseconds;
+import org.chromulan.system.control.ui.analysis.support.ValidatorInterval;
+import org.chromulan.system.control.ui.analysis.support.ValidatorName;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.wizard.WizardPageSupport;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class WizardPageOne extends WizardPage {
 
-	private Composite container;
-	private Text name;
-	private String nameS;
+
+
 
 	public WizardPageOne() {
 
 		super("New Anlysis");
 		setTitle("New Anlysis");
-		setPageComplete(false);
+
 	}
 
 	@Override
 	public void createControl(Composite parent) {
-
-		container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL, GridData.FILL, true, false);
-		Label label = new Label(container, SWT.LEFT);
-		label.setText("Set name of analysis: ");
-		label.setLayoutData(gd);
-		name = new Text(container, SWT.BORDER | SWT.SINGLE);
-		name.setText("");
-		name.setLayoutData(gd);
-		name.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-
-				setPageComplete(isPageComplete());
-				nameS = name.getText();
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-
-			}
-		});
-		gd = new GridData(GridData.FILL, GridData.FILL, true, false);
-		name.setLayoutData(gd);
-		setControl(container);
+		DataBindingContext dbc = new DataBindingContext();
+		WizardPageSupport.create(this, dbc);
+		Composite composite = new Composite(parent, SWT.NONE);
+		Label label = new Label(composite, SWT.None);
+		label.setText("Name of analysis");
+		
+		final Text textName = new Text(composite, SWT.BORDER);
+		
+		WizardModelAnalysis model = ((WizardNewAnalysis) getWizard()).getModel();
+		
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textName), model.name,new UpdateValueStrategy().setAfterConvertValidator(new ValidatorName()),null);
+		
+		label = new Label(composite, SWT.None);
+		label.setText("Auto Continue");
+		
+		final Button buttonAutoContinue = new Button(composite, SWT.CHECK);
+		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoContinue), model.autoContinue);
+		
+		label = new Label(composite, SWT.None);
+		label.setText("Auto Stop");
+		final Button buttonAutoStop = new Button(composite, SWT.CHECK);
+		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoStop), model.autoStop);
+		
+		label = new Label(composite,SWT.None);
+		label.setText("Interval");
+		final Text textInterval = new Text(composite, SWT.BORDER);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textInterval), model.interval,new UpdateValueStrategy().setAfterConvertValidator(new ValidatorInterval()).setConverter(new MinutesToMilliseconds()),
+				new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
+		
+		
+		
+		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(
+				composite);
+		setControl(composite);
 	}
 
-	public String getAnalysisName() {
 
-		return nameS;
-	}
 
-	@Override
-	public boolean isPageComplete() {
-
-		return !name.getText().isEmpty();
-	}
 }
