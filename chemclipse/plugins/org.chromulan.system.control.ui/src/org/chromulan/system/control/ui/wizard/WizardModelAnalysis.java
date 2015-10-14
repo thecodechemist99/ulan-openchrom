@@ -8,7 +8,7 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.ui.wizard;
 
 import java.io.File;
@@ -16,12 +16,11 @@ import java.io.File;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 
-
 public class WizardModelAnalysis {
-	public IObservableValue name = new WritableValue("",String.class);
+
+	public IObservableValue name = new WritableValue("", String.class);
 	public IObservableValue interval = new WritableValue(600000L, Long.class);
 	public IObservableValue autoContinue = new WritableValue(false, Boolean.class);
 	public IObservableValue autoStop = new WritableValue(false, Boolean.class);
 	public IObservableValue folder = new WritableValue(null, File.class);
-	
 }

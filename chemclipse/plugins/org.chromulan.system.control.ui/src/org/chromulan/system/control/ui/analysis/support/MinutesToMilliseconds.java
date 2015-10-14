@@ -8,35 +8,30 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.ui.analysis.support;
 
 import org.eclipse.core.databinding.conversion.Converter;
 
-public class MinutesToMilliseconds extends  Converter {
-	
+public class MinutesToMilliseconds extends Converter {
+
 	public MinutesToMilliseconds() {
+
 		super(String.class, Long.class);
 	}
 
 	@Override
 	public Object convert(Object fromObject) {
-		if(fromObject instanceof String) 
-		{
+
+		if(fromObject instanceof String) {
 			String variable = (String)fromObject;
 			try {
-				return Long.parseLong(variable)*1000*60;
+				return Long.parseLong(variable) * 1000 * 60;
 			} catch(NumberFormatException e) {
 				return null;
 			}
-			
-		}
-		else
-		{
+		} else {
 			return null;
 		}
-		
 	}
-	
-	
 }

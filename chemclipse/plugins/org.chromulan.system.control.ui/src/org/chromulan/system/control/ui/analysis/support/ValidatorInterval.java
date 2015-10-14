@@ -8,32 +8,26 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.ui.analysis.support;
 
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 
-
-public class ValidatorInterval implements IValidator{
+public class ValidatorInterval implements IValidator {
 
 	@Override
 	public IStatus validate(Object value) {
-		
-		if(value != null)
-		{
+
+		if(value != null) {
 			long i = (Long)value;
-			if(i>=1)
+			if(i >= 1)
 				return ValidationStatus.OK_STATUS;
 			else
 				return ValidationStatus.error("INTERVAL: value have to be larger then zero");
-		} else 
-		{
-				return ValidationStatus.error("INTERVAL: is not number");
+		} else {
+			return ValidationStatus.error("INTERVAL: is not number");
 		}
-		
-					
-		
 	}
 }

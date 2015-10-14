@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Majitel.
+ * Copyright (c) 2015 Jan Holy.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,13 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * Majitel - initial API and implementation
+ * Jan Holy - initial API and implementation
  *******************************************************************************/
 package org.chromulan.system.control.ui.chromatogram;
 
 import javax.inject.Inject;
 
 import org.chromulan.system.control.model.IControlDevice;
+import org.chromulan.system.control.model.chromatogram.IChromatogramRecording;
+import org.chromulan.system.control.model.chromatogram.IChromatogramRecordingWSD;
 import org.chromulan.system.control.ui.events.IAnalysisUIEvents;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -35,19 +37,16 @@ public class CreateChromatogram {
 
 	@Inject
 	@Optional
-	public void displayChromatogam(@UIEventTopic(value = IAnalysisUIEvents.TOPIC_ANALYSIS_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IControlDevice device) {
+	public void displayChromatogam(@UIEventTopic(value = IAnalysisUIEvents.TOPIC_ANALYSIS_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IChromatogramRecording chromatogram) {
 
-		System.out.println("create chromatogram");
-		if(device.hasChromatogram()) {
-			MPart part = MBasicFactory.INSTANCE.createPart();
-			part.setLabel("Chromatogram");
-			part.setElementId("Chromatogram");
-			part.setCloseable(true);
-			part.setObject(device);
-			part.setContributionURI("bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramViewer");
-			MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.2", aplication);
-			stack.getChildren().add(part);
-			partService.activate(part);
-		}
+		MPart part = MBasicFactory.INSTANCE.createPart();
+		part.setLabel(chromatogram.getName());
+		part.setElementId("ChromatogramRecording");
+		part.setCloseable(true);
+		part.setObject(chromatogram);
+		part.setContributionURI("bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramViewer");
+		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.2", aplication);
+		stack.getChildren().add(part);
+		partService.activate(part);
 	}
 }

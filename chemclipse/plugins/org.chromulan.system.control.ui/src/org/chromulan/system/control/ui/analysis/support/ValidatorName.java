@@ -8,65 +8,46 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.ui.analysis.support;
 
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 
-
-public class ValidatorName implements IValidator{
+public class ValidatorName implements IValidator {
 
 	@Override
 	public IStatus validate(Object value) {
-		
-		if(value == null)
-		{
+
+		if(value == null) {
 			return ValidationStatus.error("NAME: name is empty");
 		}
-		if(value instanceof String)
-		{
-			
+		if(value instanceof String) {
 			String ss = (String)value;
-			if(ss.isEmpty())
-			{
+			if(ss.isEmpty()) {
 				return ValidationStatus.error("NAME: name is empty");
-			}else if (ss.contains("<"))
-			{
+			} else if(ss.contains("<")) {
 				return ValidationStatus.error("NAME: name contains unsupported character <");
-			}else if (ss.contains(">"))
-			{
+			} else if(ss.contains(">")) {
 				return ValidationStatus.error("NAME: name contains unsupported character >");
-			}else if (ss.contains(":"))
-			{
+			} else if(ss.contains(":")) {
 				return ValidationStatus.error("NAME: name contains unsupported character :");
-			}else if (ss.contains("/"))
-			{
+			} else if(ss.contains("/")) {
 				return ValidationStatus.error("NAME: name contains unsupported character /");
-			}else if (ss.contains("\\"))
-			{
+			} else if(ss.contains("\\")) {
 				return ValidationStatus.error("NAME: name contains unsupported character \\");
-			}else if (ss.contains("|"))
-			{
+			} else if(ss.contains("|")) {
 				return ValidationStatus.error("NAME: name contains unsupported character |");
-			}else if (ss.contains("?"))
-			{
+			} else if(ss.contains("?")) {
 				return ValidationStatus.error("NAME: name contains unsupported character ?");
-			}else if (ss.contains("*"))
-			{
+			} else if(ss.contains("*")) {
 				return ValidationStatus.error("NAME: name contains unsupported character *");
-			}else
-			{
+			} else {
 				return ValidationStatus.OK_STATUS;
 			}
-			
-		}else
-		{
+		} else {
 			return ValidationStatus.error("NAME: invalid name");
 		}
-		
-		
-		
 	}
 }

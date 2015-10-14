@@ -11,87 +11,86 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.chromatogram;
 
+import org.chromulan.system.control.model.chromatogram.IChromatogramRecording;
+import org.chromulan.system.control.model.chromatogram.IChromatogramRecordingWSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.swt.ui.components.AbstractLineSeriesUI;
+import org.eclipse.chemclipse.swt.ui.converter.SeriesConverter;
+import org.eclipse.chemclipse.swt.ui.series.ISeries;
 import org.eclipse.chemclipse.swt.ui.support.AxisTitlesIntensityScale;
+import org.eclipse.chemclipse.swt.ui.support.Colors;
+import org.eclipse.chemclipse.swt.ui.support.Sign;
 import org.eclipse.swt.widgets.Composite;
+import org.swtchart.IAxis;
+import org.swtchart.ILineSeries;
+import org.swtchart.ILineSeries.PlotSymbolType;
+import org.swtchart.ISeries.SeriesType;
+import org.swtchart.Range;
 
 public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
-	private IChromatogram chromatogram;
-	private Thread autoOverwrite;
-	private int overWritePeriod;
+	private IChromatogramRecording chromatogramRecording;
 
 	public ChromatogramOverviewUI(Composite parent, int style) {
 
 		super(parent, style, new AxisTitlesIntensityScale());
-		overWritePeriod = 1000;
 	}
 
-	public void setChromatogram(IChromatogram chromatogram) {
+	public void setChromatogram(IChromatogramRecording chromatogramRecording) {
 
-		this.chromatogram = chromatogram;
+		this.chromatogramRecording = chromatogramRecording;
 	}
 
-	public IChromatogram getChromatogram() {
+	public IChromatogramRecording getChromatogram() {
 
-		return chromatogram;
+		return chromatogramRecording;
 	}
 
 	@Override
 	public void setViewSeries() {
 
-		/*
-		 * Get the series here.
-		 */
-		// ISeries series = null;
-		// ILineSeries lineSeries = (ILineSeries)getSeriesSet().createSeries(SeriesType.LINE, series.getId());
-		// lineSeries.setXSeries(series.getXSeries());
-		// lineSeries.setYSeries(series.getYSeries());
-		// lineSeries.enableArea(true);
-		// lineSeries.setSymbolType(PlotSymbolType.NONE);
-	}
-
-	public void setAutoOverwrite(boolean autoOverwrite) {
-
-		if(this.autoOverwrite != null) {
-			if(autoOverwrite) {
-				if(!this.autoOverwrite.isAlive()) {
-					this.autoOverwrite.start();
-				}
-			} else {
-				if(this.autoOverwrite.isAlive()) {
-					this.autoOverwrite.interrupt();
-				}
+		if(this.chromatogramRecording != null && this.chromatogramRecording.getNumberOfScans() != 0) {
+			ISeries series;
+			ILineSeries lineSeries;
+			deleteAllCurrentSeries();
+			synchronized(chromatogramRecording.getChromatogram()) {
+				series = SeriesConverter.convertChromatogram(chromatogramRecording.getChromatogram(), Sign.POSITIVE, false);
 			}
+			// addSeries(series);
+			lineSeries = (ILineSeries)getSeriesSet().createSeries(SeriesType.LINE, series.getId());
+			lineSeries.setXSeries(series.getXSeries());
+			lineSeries.setYSeries(series.getYSeries());
+			lineSeries.enableArea(true);
+			lineSeries.setSymbolType(PlotSymbolType.NONE);
+			lineSeries.setLineColor(Colors.RED);
 		}
 	}
 
-	public void setOverwritePeriod(int milliseconds) {
+	public void displayInteval(double interval) {
 
-		overWritePeriod = milliseconds;
-	}
-
-	public int getOverWritePeriod() {
-
-		return overWritePeriod;
-	}
-
-	public void setVisitableInterval(int seconds, boolean autoOverwrite) {
-
-		setAutoOverwrite(false);
-		this.autoOverwrite = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-
+		double end = 0;
+		double start = 0;
+		for(ISeries series : getMultipleSeries().getMultipleSeries()) {
+			if(end > series.getXMax()) {
+				end = series.getXMax();
 			}
-		});
-		this.autoOverwrite.start();
+		}
+		for(IAxis axis : getAxisSet().getXAxes()) {
+			axis.adjustRange();
+		}
+		start = end - interval;
+		if((start < 0)) {
+			start = 0;
+		}
+		for(IAxis axis : getAxisSet().getXAxes()) {
+			axis.setRange(new Range(start, end));
+		}
+		redraw();
 	}
 
-	public void viewAllchromatogram(boolean autoOverwrite) {
+	public void displayAllChromatogram() {
 
-		setAutoOverwrite(false);
+		adjustRange();
+		redraw();
 	}
 }

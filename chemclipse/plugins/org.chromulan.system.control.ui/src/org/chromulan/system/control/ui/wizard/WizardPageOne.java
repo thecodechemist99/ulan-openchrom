@@ -33,54 +33,36 @@ import org.eclipse.swt.widgets.Text;
 
 public class WizardPageOne extends WizardPage {
 
-
-
-
 	public WizardPageOne() {
 
 		super("New Anlysis");
 		setTitle("New Anlysis");
-
 	}
 
 	@Override
 	public void createControl(Composite parent) {
+
 		DataBindingContext dbc = new DataBindingContext();
 		WizardPageSupport.create(this, dbc);
 		Composite composite = new Composite(parent, SWT.NONE);
 		Label label = new Label(composite, SWT.None);
 		label.setText("Name of analysis");
-		
 		final Text textName = new Text(composite, SWT.BORDER);
-		
-		WizardModelAnalysis model = ((WizardNewAnalysis) getWizard()).getModel();
-		
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textName), model.name,new UpdateValueStrategy().setAfterConvertValidator(new ValidatorName()),null);
-		
+		WizardModelAnalysis model = ((WizardNewAnalysis)getWizard()).getModel();
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textName), model.name, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorName()), null);
 		label = new Label(composite, SWT.None);
 		label.setText("Auto Continue");
-		
 		final Button buttonAutoContinue = new Button(composite, SWT.CHECK);
 		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoContinue), model.autoContinue);
-		
 		label = new Label(composite, SWT.None);
 		label.setText("Auto Stop");
 		final Button buttonAutoStop = new Button(composite, SWT.CHECK);
 		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoStop), model.autoStop);
-		
-		label = new Label(composite,SWT.None);
+		label = new Label(composite, SWT.None);
 		label.setText("Interval");
 		final Text textInterval = new Text(composite, SWT.BORDER);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textInterval), model.interval,new UpdateValueStrategy().setAfterConvertValidator(new ValidatorInterval()).setConverter(new MinutesToMilliseconds()),
-				new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
-		
-		
-		
-		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(
-				composite);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textInterval), model.interval, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorInterval()).setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
+		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		setControl(composite);
 	}
-
-
-
 }

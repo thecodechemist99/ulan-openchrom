@@ -8,7 +8,7 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.model.chromatogram;
 
 import java.util.List;
@@ -16,12 +16,15 @@ import java.util.List;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 
-
 public interface IChromatogramRecording {
-	
-	void addScan(IScan scan);
 
-	void addScans(List<IScan> scans);
+	final String DEFAULT_NAME = "chromatogram";
+
+	void setName(String name);
+
+	String getName();
+
+	void addScan(IScan scan);
 
 	void setScanInterval(int milliseconds);
 
@@ -32,7 +35,10 @@ public interface IChromatogramRecording {
 	void resetRecording();
 
 	IChromatogram getChromatogram();
-	
-	void setChromatogram(IChromatogram chromatogram);
 
+	void setChromatogram(IChromatogram chromatogram);
+	
+	int getNumberOfScans();
+	
+	void addScanAutoSet(IScan scan);
 }

@@ -8,10 +8,8 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.ui.parts;
-
-import java.io.File;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -35,110 +33,92 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-
 public class AnalysesPart {
 
-	
 	private IAnalyses analyses;
-	
 	private Table tableAnalyses;
 	private TableColumn columnName;
 	private TableColumn columnState;
 	private TableColumn columnAutoContinue;
 	private TableColumn columnAutoStop;
 	private TableColumn columnInterval;
-	
 	private Button buttonAddAnalysis;
 	private Button buttonRemoveAnalysis;
-	
-	
-	
 	@Inject
 	Composite parent;
-	
 	@Inject
 	MPart part;
-	
-	
+	@Inject
+	Display diplay;
 	@Inject
 	private IEventBroker eventBroker;
-	
+
 	public AnalysesPart() {
+
 		analyses = new Analyses();
 	}
-	
-	
+
 	@PostConstruct
-	void createComposite(){
-		
+	void createComposite() {
+
 		Composite composite = new Composite(parent, SWT.None);
-		
-		
 		GridLayout gridLayout = new GridLayout(2, false);
 		composite.setLayout(gridLayout);
-		
 		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gridData.horizontalSpan = 2;
-		tableAnalyses = new Table(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		tableAnalyses = new Table(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		tableAnalyses.setLayoutData(gridData);
 		tableAnalyses.setHeaderVisible(true);
-		
 		columnName = new TableColumn(tableAnalyses, SWT.None);
 		columnName.setText("Name");
-		columnName.setWidth(200);
-		
-		
+		columnName.setWidth(150);
 		columnState = new TableColumn(tableAnalyses, SWT.None);
 		columnState.setText("State");
-		columnState.setWidth(50);
-		
+		columnState.setWidth(70);
+		columnAutoStop = new TableColumn(tableAnalyses, SWT.None);
+		columnAutoStop.setText("Auto Stop");
+		columnAutoStop.setWidth(80);
+		columnInterval = new TableColumn(tableAnalyses, SWT.None);
+		columnInterval.setText("Interval");
+		columnInterval.setWidth(80);
 		columnAutoContinue = new TableColumn(tableAnalyses, SWT.None);
 		columnAutoContinue.setText("Auto continue");
 		columnAutoContinue.setWidth(100);
-		
-		columnAutoStop = new TableColumn(tableAnalyses, SWT.None);
-		columnAutoStop.setText("Auto Stop");
-		columnAutoStop.setWidth(100);
-		
-		columnInterval = new TableColumn(tableAnalyses, SWT.None);
-		columnInterval.setText("Interval");
-		columnInterval.setWidth(100);
-		
-		
 		buttonAddAnalysis = new Button(composite, SWT.PUSH);
 		buttonAddAnalysis.setText("Add analysis");
 		buttonAddAnalysis.addSelectionListener(new SelectionAdapter() {
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+
 				createAnalysis();
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 		buttonAddAnalysis.setLayoutData(gridData);
-		
 		buttonRemoveAnalysis = new Button(composite, SWT.PUSH);
 		buttonRemoveAnalysis.setText("Remove analysis");
 		buttonRemoveAnalysis.addSelectionListener(new SelectionAdapter() {
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+
 				int i = tableAnalyses.getSelectionIndex();
-				if(i != -1)
-				{
+				if(i != -1) {
 					removeAnalysis(i);
 				}
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 		buttonRemoveAnalysis.setLayoutData(gridData);
-	
 	}
-	
-	private void createAnalysis()
-	{
+
+	private void createAnalysis() {
 
 		WizardNewAnalysis newAnalysisWizard = new WizardNewAnalysis();
 		WizardDialog wizardDialog = new WizardDialog(parent.getShell(), newAnalysisWizard);
@@ -148,77 +128,67 @@ public class AnalysesPart {
 			analysis.setAutoContinue((Boolean)newAnalysisWizard.getModel().autoContinue.getValue());
 			analysis.setAutoStop((Boolean)newAnalysisWizard.getModel().autoStop.getValue());
 			analysis.setInterval((Long)newAnalysisWizard.getModel().interval.getValue());
-			//TODO: add directory analysis.setDirectory((File)newAnalysisWizard.getModel().folder.getValue());
+			// TODO: add directory analysis.setDirectory((File)newAnalysisWizard.getModel().folder.getValue());
 			addAnalysis(analysis);
 		}
 	}
-	
 
-	private void addAnalysis(IAnalysis analysis)
-	{
-		
-		if(analyses.getActualAnalysis() == null)
-		{
+	private void addAnalysis(IAnalysis analysis) {
+
+		if(analyses.getActualAnalysis() == null) {
 			analyses.addAnalysis(analysis);
 			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analysis);
-		}
-		else
-		{
+		} else {
 			analyses.addAnalysis(analysis);
 		}
-		
 		redrawTable();
 	}
-	
-	private void removeAnalysis(int number)
-	{
+
+	private void removeAnalysis(int number) {
+
 		IAnalysis analysis = analyses.getAnalysis(number);
-		
-		if(analyses.isActualAnalysis(analysis))
-		{
-			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analyses.setNextAnalysisActual());
+		if(analyses.isActualAnalysis(analysis)) {
+			if(!analysis.isRecording()) {
+				eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analyses.setNextAnalysisActual());
+				analyses.removeAnalysis(number);
+			} else {
+				// TODO: alert
+			}
+		} else {
+			analyses.removeAnalysis(number);
 		}
-		analyses.removeAnalysis(number);
 		redrawTable();
 	}
-	
-	
+
 	@Inject
 	@Optional
-	public void endAnalysis(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END) IAnalysis analysis) 
-	{
+	public void endAnalysis(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END) IAnalysis analysis) {
 
-		if(analyses.isActualAnalysis(analysis)){
+		if(analyses.isActualAnalysis(analysis)) {
 			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analyses.setNextAnalysisActual());
 			redrawTable();
 		}
-		
-		
 	}
 
-	private void redrawTable()
-	{
+	private void redrawTable() {
+
 		tableAnalyses.removeAll();
 		boolean finshed = true;
 		for(int i = 0; i < analyses.getNumberAnalysis(); i++) {
 			TableItem item = new TableItem(tableAnalyses, SWT.None);
 			IAnalysis analysis = analyses.getAnalysis(i);
 			item.setText(0, analysis.getName());
-			if(analyses.isActualAnalysis(analysis))
-			{
+			if(analyses.isActualAnalysis(analysis)) {
 				item.setText(1, "actual");
 				finshed = false;
-			} else if (finshed)
-			{
+			} else if(finshed) {
 				item.setText(1, "finished");
-			} else 
-			{
+			} else {
 				item.setText(1, "waiting");
 			}
-			item.setText(2, Boolean.toString(analysis.getAutoContinue()));
-			item.setText(3, Boolean.toString(analysis.getAutoStop()));
-			item.setText(4, Long.toString(analysis.getInterval()/(1000*60)));
-			
+			item.setText(4, Boolean.toString(analysis.getAutoContinue()));
+			item.setText(2, Boolean.toString(analysis.getAutoStop()));
+			item.setText(3, Long.toString(analysis.getInterval() / (1000 * 60)));
 		}
 	}
 }

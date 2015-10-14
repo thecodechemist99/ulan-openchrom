@@ -9,23 +9,10 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.ui.analysis.support;
+package org.chromulan.system.control.events;
 
-import org.eclipse.core.databinding.conversion.Converter;
+public interface IULanConnectionEvents {
 
-public class MillisecondsToMinutes extends Converter {
-
-	public MillisecondsToMinutes() {
-
-		super(Long.class, String.class);
-	}
-
-	@Override
-	public Object convert(Object fromObject) {
-
-		if(fromObject instanceof Long) {
-			return Long.toString((Long)fromObject / (1000 * 60));
-		}
-		return null;
-	}
+	String TOPIC_COMMUCATION_ULAN_OPEN = "commucation/ulan/open";
+	String TOPIC_COMMUCATION_ULAN_CLOSE = "commucation/ulan/close";
 }

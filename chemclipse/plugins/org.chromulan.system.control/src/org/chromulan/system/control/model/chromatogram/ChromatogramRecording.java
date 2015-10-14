@@ -19,21 +19,31 @@ import org.eclipse.chemclipse.model.core.IScan;
 public class ChromatogramRecording implements IChromatogramRecording {
 
 	private IChromatogram chromatogram;
+	private int numberOfScan;
+	String name;
 
 	public ChromatogramRecording() {
+		numberOfScan = 0; 
+		name = DEFAULT_NAME;
 	}
 
 	public void addScan(IScan scan) {
 
 		synchronized(chromatogram) {
 			chromatogram.addScan(scan);
+			chromatogram.recalculateScanNumbers();
+			chromatogram.recalculateRetentionTimes();
 		}
 	}
-
-	public void addScans(List<IScan> scans) {
-
+	
+	public void addScanAutoSet(IScan scan)
+	{
 		synchronized(chromatogram) {
-			chromatogram.getScans().addAll(scans);
+			int number = chromatogram.getNumberOfScans()+1;
+			scan.setParentChromatogram(chromatogram);
+			scan.setRetentionTime(chromatogram.getScanDelay()+chromatogram.getScanInterval()*(number));
+			scan.setScanNumber(number);
+			chromatogram.addScan(scan);
 		}
 	}
 
@@ -52,7 +62,6 @@ public class ChromatogramRecording implements IChromatogramRecording {
 		synchronized(chromatogram) {
 			return chromatogram.getScanInterval();
 		}
-		
 	}
 
 	public void setScanDelay(int milliseconds) {
@@ -82,13 +91,32 @@ public class ChromatogramRecording implements IChromatogramRecording {
 		synchronized(chromatogram) {
 			return chromatogram;
 		}
-		
 	}
-	
-	public void setChromatogram(IChromatogram chromatogram)
-	{
+
+	public void setChromatogram(IChromatogram chromatogram) {
+
 		synchronized(chromatogram) {
 			this.chromatogram = chromatogram;
+
+		}
+	}
+
+	@Override
+	public void setName(String name) {
+
+		this.name = name;
+	}
+
+	@Override
+	public String getName() {
+
+		return name;
+	}
+
+	@Override
+	public int getNumberOfScans() {
+		synchronized(chromatogram) {
+			return chromatogram.getNumberOfScans();
 		}
 		
 	}

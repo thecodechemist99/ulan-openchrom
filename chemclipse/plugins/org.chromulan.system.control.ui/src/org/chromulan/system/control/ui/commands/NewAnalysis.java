@@ -47,7 +47,7 @@ public class NewAnalysis {
 		WizardNewAnalysis newAnalysisWizard = new WizardNewAnalysis();
 		WizardDialog wizardDialog = new WizardDialog(parent.getShell(), newAnalysisWizard);
 		if(wizardDialog.open() == Window.OK) {
-			//String analysisName = newAnalysisWizard.getAnalysisName();
+			// String nalysisName = newAnalysisWizard.getAnalysisName();
 			IAnalysis analysis = new Analysis() {
 			};
 			analysis.setName("");
