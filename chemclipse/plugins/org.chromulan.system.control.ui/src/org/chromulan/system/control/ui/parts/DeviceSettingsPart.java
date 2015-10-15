@@ -68,7 +68,8 @@ public class DeviceSettingsPart {
 
 		chromatogramRecording = new ChromatogramRecording();
 		IChromatogramCSD chromatogramCSD = new ChromatogramCSD();
-		chromatogramCSD.setScanInterval(10);
+		chromatogramCSD.setScanInterval(100);
+		chromatogramCSD.setScanDelay(100);
 		chromatogramRecording.setChromatogram(chromatogramCSD);
 		startRecording = false;
 		stopRecording = false;

@@ -43,7 +43,7 @@ public class ChromatogramViewer {
 	public ChromatogramViewer() {
 
 		interval = 1;
-		diplayChromatogram = DISPLAY_ALL_CHROMATOGRAM;
+		diplayChromatogram = DISPLAY_INTERVAL_CHROMATOGRAM;
 		autoRedraw = true;
 		redrawChromatogram = new RedrawChromatogram();
 	}
@@ -134,13 +134,17 @@ public class ChromatogramViewer {
 		@Override
 		public void run() {
 
-			chromatogramOverView.setViewSeries();
+			
 			if(autoRedraw) {
 				if(diplayChromatogram == DISPLAY_ALL_CHROMATOGRAM) {
-					chromatogramOverView.displayAllChromatogram();
+					chromatogramOverView.displayAllChromatogram(true,0.001);
 				} else if(diplayChromatogram == DISPLAY_INTERVAL_CHROMATOGRAM) {
-					chromatogramOverView.displayInteval(interval);
+					chromatogramOverView.displayInteval(60000, true, 0.001);
 				}
+			}
+			else
+			{
+				chromatogramOverView.reloadData();
 			}
 			display.timerExec(1000, this);
 		}

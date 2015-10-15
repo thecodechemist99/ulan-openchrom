@@ -31,15 +31,13 @@ public class ChromatogramRecording implements IChromatogramRecording {
 
 		synchronized(chromatogram) {
 			chromatogram.addScan(scan);
-			chromatogram.recalculateScanNumbers();
-			chromatogram.recalculateRetentionTimes();
 		}
 	}
 	
 	public void addScanAutoSet(IScan scan)
 	{
 		synchronized(chromatogram) {
-			int number = chromatogram.getNumberOfScans()+1;
+			int number = chromatogram.getNumberOfScans();
 			scan.setParentChromatogram(chromatogram);
 			scan.setRetentionTime(chromatogram.getScanDelay()+chromatogram.getScanInterval()*(number));
 			scan.setScanNumber(number);
@@ -117,6 +115,14 @@ public class ChromatogramRecording implements IChromatogramRecording {
 	public int getNumberOfScans() {
 		synchronized(chromatogram) {
 			return chromatogram.getNumberOfScans();
+		}
+		
+	}
+
+	@Override
+	public double getMaxSignal() {
+		synchronized(chromatogram) {
+			return getChromatogram().getMaxSignal();
 		}
 		
 	}

@@ -41,4 +41,6 @@ public interface IChromatogramRecording {
 	int getNumberOfScans();
 	
 	void addScanAutoSet(IScan scan);
+	
+	double getMaxSignal();
 }
