@@ -134,16 +134,13 @@ public class ChromatogramViewer {
 		@Override
 		public void run() {
 
-			
 			if(autoRedraw) {
 				if(diplayChromatogram == DISPLAY_ALL_CHROMATOGRAM) {
-					chromatogramOverView.displayAllChromatogram(true,0.001);
+					chromatogramOverView.displayAllChromatogram(true, 0.001);
 				} else if(diplayChromatogram == DISPLAY_INTERVAL_CHROMATOGRAM) {
 					chromatogramOverView.displayInteval(60000, true, 0.001);
 				}
-			}
-			else
-			{
+			} else {
 				chromatogramOverView.reloadData();
 			}
 			display.timerExec(1000, this);

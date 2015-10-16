@@ -23,7 +23,8 @@ public class ChromatogramRecording implements IChromatogramRecording {
 	String name;
 
 	public ChromatogramRecording() {
-		numberOfScan = 0; 
+
+		numberOfScan = 0;
 		name = DEFAULT_NAME;
 	}
 
@@ -33,13 +34,13 @@ public class ChromatogramRecording implements IChromatogramRecording {
 			chromatogram.addScan(scan);
 		}
 	}
-	
-	public void addScanAutoSet(IScan scan)
-	{
+
+	public void addScanAutoSet(IScan scan) {
+
 		synchronized(chromatogram) {
 			int number = chromatogram.getNumberOfScans();
 			scan.setParentChromatogram(chromatogram);
-			scan.setRetentionTime(chromatogram.getScanDelay()+chromatogram.getScanInterval()*(number));
+			scan.setRetentionTime(chromatogram.getScanDelay() + chromatogram.getScanInterval() * (number));
 			scan.setScanNumber(number);
 			chromatogram.addScan(scan);
 		}
@@ -95,7 +96,6 @@ public class ChromatogramRecording implements IChromatogramRecording {
 
 		synchronized(chromatogram) {
 			this.chromatogram = chromatogram;
-
 		}
 	}
 
@@ -113,17 +113,17 @@ public class ChromatogramRecording implements IChromatogramRecording {
 
 	@Override
 	public int getNumberOfScans() {
+
 		synchronized(chromatogram) {
 			return chromatogram.getNumberOfScans();
 		}
-		
 	}
 
 	@Override
 	public double getMaxSignal() {
+
 		synchronized(chromatogram) {
 			return getChromatogram().getMaxSignal();
 		}
-		
 	}
 }

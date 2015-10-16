@@ -8,12 +8,11 @@
  * 
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.model;
 
-
 public class ULanConnection {
-	
+
 	public ULanConnection() {
 
 	}

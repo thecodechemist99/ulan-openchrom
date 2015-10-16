@@ -37,10 +37,10 @@ public interface IChromatogramRecording {
 	IChromatogram getChromatogram();
 
 	void setChromatogram(IChromatogram chromatogram);
-	
+
 	int getNumberOfScans();
-	
+
 	void addScanAutoSet(IScan scan);
-	
+
 	double getMaxSignal();
 }
