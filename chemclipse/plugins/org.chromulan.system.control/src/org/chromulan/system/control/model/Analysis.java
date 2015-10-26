@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
@@ -18,15 +18,15 @@ import java.util.Date;
 
 public class Analysis implements IAnalysis {
 
-	private String name;
-	private boolean recording;
-	private boolean recored;
+	private boolean autoContinue;
 	private boolean autoStop;
-	private long interval;
 	private Date date;
 	private File directory;
-	private boolean autoContinue;
+	private long interval;
+	private String name;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+	private boolean recording;
+	private boolean recored;
 
 	public Analysis() {
 
@@ -35,92 +35,6 @@ public class Analysis implements IAnalysis {
 		recored = false;
 		autoStop = false;
 		autoContinue = false;
-	}
-
-	@Override
-	public void setName(String name) {
-
-		propertyChangeSupport.firePropertyChange(PROPERTY_NAME, this.name, this.name = name);
-	}
-
-	@Override
-	public String getName() {
-
-		return this.name;
-	}
-
-	@Override
-	public void startRecording() {
-
-		if(!recording && !recored) {
-			this.date = new Date();
-			this.recording = true;
-		}
-	}
-
-	@Override
-	public void stopRecording() {
-
-		if(recording) {
-			recored = true;
-			recording = false;
-		}
-	}
-
-	@Override
-	public void setAutoStop(boolean b) {
-
-		propertyChangeSupport.firePropertyChange(PROPERTY_AUTO_STOP, this.autoStop, this.autoStop = b);
-	}
-
-	@Override
-	public boolean getAutoStop() {
-
-		return this.autoStop;
-	}
-
-	@Override
-	public boolean isRecording() {
-
-		return recording;
-	}
-
-	@Override
-	public boolean isRecored() {
-
-		return recored;
-	}
-
-	@Override
-	public Date getStartDate() {
-
-		return date;
-	}
-
-	@Override
-	public long getInterval() {
-
-		return interval;
-	}
-
-	@Override
-	public void setInterval(long interval) {
-
-		propertyChangeSupport.firePropertyChange(PROPERTY_INTERVAL, this.interval, this.interval = interval);
-	}
-
-	@Override
-	public void setDirectory(File directory) {
-
-		if(directory.isDirectory()) {
-			propertyChangeSupport.firePropertyChange(PROPERTY_DIRECTORY, this.directory, this.directory = directory);
-		}
-	}
-
-	@Override
-	public File getDirectory() {
-
-		return this.directory;
 	}
 
 	@Override
@@ -133,6 +47,54 @@ public class Analysis implements IAnalysis {
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 
 		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public boolean getAutoContinue() {
+
+		return autoContinue;
+	}
+
+	@Override
+	public boolean getAutoStop() {
+
+		return this.autoStop;
+	}
+
+	@Override
+	public File getDirectory() {
+
+		return this.directory;
+	}
+
+	@Override
+	public long getInterval() {
+
+		return interval;
+	}
+
+	@Override
+	public String getName() {
+
+		return this.name;
+	}
+
+	@Override
+	public Date getStartDate() {
+
+		return date;
+	}
+
+	@Override
+	public boolean hasBeenRecorded() {
+
+		return recored;
+	}
+
+	@Override
+	public boolean isBeingRecorded() {
+
+		return recording;
 	}
 
 	@Override
@@ -154,8 +116,46 @@ public class Analysis implements IAnalysis {
 	}
 
 	@Override
-	public boolean getAutoContinue() {
+	public void setAutoStop(boolean b) {
 
-		return autoContinue;
+		propertyChangeSupport.firePropertyChange(PROPERTY_AUTO_STOP, this.autoStop, this.autoStop = b);
+	}
+
+	@Override
+	public void setDirectory(File directory) {
+
+		if(directory.isDirectory()) {
+			propertyChangeSupport.firePropertyChange(PROPERTY_DIRECTORY, this.directory, this.directory = directory);
+		}
+	}
+
+	@Override
+	public void setInterval(long interval) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_INTERVAL, this.interval, this.interval = interval);
+	}
+
+	@Override
+	public void setName(String name) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_NAME, this.name, this.name = name);
+	}
+
+	@Override
+	public void startRecording() {
+
+		if(!recording && !recored) {
+			this.date = new Date();
+			this.recording = true;
+		}
+	}
+
+	@Override
+	public void stopRecording() {
+
+		if(recording) {
+			recored = true;
+			recording = false;
+		}
 	}
 }

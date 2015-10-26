@@ -5,45 +5,45 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
-import java.util.Iterator;
+import java.util.List;
 
 public interface IAnalyses {
 
 	final String DEFAULT_NAME = "analyses";
 
-	String getName();
-
-	void setName(String name);
-
-	Iterator<IAnalysis> getAnalyses();
-
 	void addAnalysis(IAnalysis analysis);
 
 	void addAnalysis(IAnalysis analysis, int index);
 
-	IAnalysis getAnalysis(int index);
-
 	IAnalysis getActualAnalysis();
 
-	IAnalysis setNextAnalysisActual();
+	List<IAnalysis> getAnalyses();
 
-	IAnalysis setActualAnalysis(IAnalysis analysis);
+	IAnalysis getAnalysis(int index);
 
-	boolean isActualAnalysis(IAnalysis analysis);
+	String getName();
+
+	int getNumberAnalysis();
+
+	int gettIndex(IAnalysis analysis);
 
 	boolean hasNextAnalysisActual();
 
 	void changeAnalysis(int index1, int index2, boolean changeActualAnalysis);
 
+	boolean isActualAnalysis(IAnalysis analysis);
+
 	void removeAnalysis(int intex);
 
-	int gettIndex(IAnalysis analysis);
+	IAnalysis setActualAnalysis(IAnalysis analysis);
 
-	int getNumberAnalysis();
+	void setName(String name);
+
+	IAnalysis setNextAnalysisActual();
 }

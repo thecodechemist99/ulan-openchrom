@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
@@ -14,6 +14,7 @@ package org.chromulan.system.control.ui.analysis.support;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public class ValidatorName implements IValidator {
 
@@ -44,7 +45,7 @@ public class ValidatorName implements IValidator {
 			} else if(ss.contains("*")) {
 				return ValidationStatus.error("NAME: name contains unsupported character *");
 			} else {
-				return ValidationStatus.OK_STATUS;
+				return Status.OK_STATUS;
 			}
 		} else {
 			return ValidationStatus.error("NAME: invalid name");

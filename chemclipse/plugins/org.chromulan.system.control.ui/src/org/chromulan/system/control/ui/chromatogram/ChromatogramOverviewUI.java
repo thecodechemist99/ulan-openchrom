@@ -5,16 +5,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
 package org.chromulan.system.control.ui.chromatogram;
 
 import org.chromulan.system.control.model.chromatogram.IChromatogramRecording;
-import org.chromulan.system.control.model.chromatogram.IChromatogramRecordingWSD;
-import org.eclipse.chemclipse.model.core.AbstractChromatogram;
-import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.swt.ui.components.AbstractLineSeriesUI;
 import org.eclipse.chemclipse.swt.ui.converter.SeriesConverter;
 import org.eclipse.chemclipse.swt.ui.preferences.PreferenceSupplier;
@@ -33,16 +31,70 @@ import org.swtchart.Range;
 
 public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
+	private boolean autoMinYAdjustIntensity;
 	private IChromatogramRecording chromatogramRecording;
+	private double interval;
+	private double minYAdjustIntensity;
 
 	public ChromatogramOverviewUI(Composite parent, int style) {
 
 		super(parent, style, new AxisTitlesIntensityScale());
+		autoMinYAdjustIntensity = false;
+		minYAdjustIntensity = 0.1;
+		interval = 30000;
 	}
 
-	public void setChromatogram(IChromatogramRecording chromatogramRecording) {
+	@Override
+	public void adjustRange() {
 
-		this.chromatogramRecording = chromatogramRecording;
+		adjustXRange();
+		adjustYRange();
+	}
+
+	@Override
+	public void adjustYRange() {
+
+		if(autoMinYAdjustIntensity) {
+			setAutoAdjustIntensity(true);
+			for(IAxis axis : getAxisSet().getYAxes()) {
+				axis.adjustRange();
+			}
+		} else {
+			double minY, maxY;
+			minY = getMultipleSeries().getYMin();
+			maxY = getMultipleSeries().getYMax();
+			if(maxY < minYAdjustIntensity) {
+				setAutoAdjustIntensity(false);
+				maxY = minYAdjustIntensity;
+				setMaxSignal(minYAdjustIntensity);
+				setYMaxIntensityAdjusted(minYAdjustIntensity);
+				for(IAxis axis : getAxisSet().getYAxes()) {
+					ChartUtil.setRange(axis, minY, maxY);
+				}
+			} else {
+				setAutoAdjustIntensity(true);
+				for(IAxis axis : getAxisSet().getYAxes()) {
+					axis.adjustRange();
+				}
+			}
+		}
+	}
+
+	public void displayAllChromatogram() {
+
+		if(this.chromatogramRecording != null && this.chromatogramRecording.getNumberOfScans() != 0) {
+			adjustRange();
+			redraw();
+		}
+	}
+
+	public void displayInteval() {
+
+		if(this.chromatogramRecording != null && this.chromatogramRecording.getNumberOfScans() != 0) {
+			setXAxisInterval();
+			adjustYRange();
+			redraw();
+		}
 	}
 
 	public IChromatogramRecording getChromatogram() {
@@ -50,56 +102,92 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 		return chromatogramRecording;
 	}
 
+	public double getInterval() {
+
+		return interval;
+	}
+
+	public double getMinYAdjustIntensity() {
+
+		return minYAdjustIntensity;
+	}
+
+	public boolean isAutoMinYAdjustIntensity() {
+
+		return autoMinYAdjustIntensity;
+	}
+
 	@Override
-	public void setViewSeries() {
+	public void redrawXAxisBottomScale() {
 
-		if(this.chromatogramRecording != null && this.chromatogramRecording.getNumberOfScans() != 0) {
-			ISeries series;
-			ILineSeries lineSeries;
-			deleteAllCurrentSeries();
-			boolean showChromatogramArea = PreferenceSupplier.showChromatogramArea();
-			synchronized(chromatogramRecording.getChromatogram()) {
-				series = SeriesConverter.convertChromatogram(chromatogramRecording.getChromatogram(), Sign.POSITIVE, false);
-			}
-			setMaxSignal(series.getYMax());
-			addSeries(series);
-			lineSeries = (ILineSeries)getSeriesSet().createSeries(SeriesType.LINE, series.getId());
-			lineSeries.setXSeries(series.getXSeries());
-			lineSeries.setYSeries(series.getYSeries());
-			lineSeries.enableArea(showChromatogramArea);
-			lineSeries.setSymbolType(PlotSymbolType.NONE);
-			Color chromatogramColor = PreferenceSupplier.getChromatogramColor();
-			if(chromatogramColor == null) {
-				chromatogramColor = Colors.RED;
-			}
-			lineSeries.setLineColor(chromatogramColor);
-		}
-	}
-
-	public void displayInteval(double interval, boolean setMinAdjustIntensity, double minAdjustIntensity) {
-
-		setViewSeries();
-		setXAxis(interval);
-		setYAxis(setMinAdjustIntensity, minAdjustIntensity);
-		redraw();
-	}
-
-	public void displayAllChromatogram(boolean setMinAdjustIntensity, double minAdjustIntensity) {
-
-		setViewSeries();
-		getXAxisBottom().adjustRange();
-		getXAxisTop().adjustRange();
-		setYAxis(setMinAdjustIntensity, minAdjustIntensity);
-		redraw();
+		double min, max;
+		Range range;
+		/*
+		 * Set minutes scale.
+		 */
+		range = getXAxisTop().getRange();
+		min = range.lower / IChromatogramOverview.MINUTE_CORRELATION_FACTOR;
+		max = range.upper / IChromatogramOverview.MINUTE_CORRELATION_FACTOR;
+		ChartUtil.setRange(getXAxisBottom(), min, max);
 	}
 
 	public void reloadData() {
 
-		setViewSeries();
-		redraw();
+		if(this.chromatogramRecording != null && this.chromatogramRecording.getNumberOfScans() != 0) {
+			deleteAllCurrentSeries();
+			setViewSeries();
+			redraw();
+		}
 	}
 
-	public void setXAxis(double interval) {
+	public void setAutoMinYAdjustIntensity(boolean autoMinYAdjustIntensity) {
+
+		this.autoMinYAdjustIntensity = autoMinYAdjustIntensity;
+	}
+
+	public void setChromatogram(IChromatogramRecording chromatogramRecording) {
+
+		this.chromatogramRecording = chromatogramRecording;
+	}
+
+	public void setInterval(double interval) {
+
+		if(interval > 0) {
+			this.interval = interval;
+		}
+	}
+
+	public void setMinYAdjustIntensity(double minYAdjustIntensity) {
+
+		if(minYAdjustIntensity > 0) {
+			this.minYAdjustIntensity = minYAdjustIntensity;
+		}
+	}
+
+	@Override
+	public void setViewSeries() {
+
+		ISeries series;
+		ILineSeries lineSeries;
+		boolean showChromatogramArea = PreferenceSupplier.showChromatogramArea();
+		synchronized(chromatogramRecording.getChromatogram()) {
+			series = SeriesConverter.convertChromatogramOverview(chromatogramRecording.getChromatogram(), Sign.POSITIVE, false);
+		}
+		setMaxSignal(series.getYMax());
+		addSeries(series);
+		lineSeries = (ILineSeries)getSeriesSet().createSeries(SeriesType.LINE, series.getId());
+		lineSeries.setXSeries(series.getXSeries());
+		lineSeries.setYSeries(series.getYSeries());
+		lineSeries.enableArea(showChromatogramArea);
+		lineSeries.setSymbolType(PlotSymbolType.NONE);
+		Color chromatogramColor = PreferenceSupplier.getChromatogramColor();
+		if(chromatogramColor == null) {
+			chromatogramColor = Colors.RED;
+		}
+		lineSeries.setLineColor(chromatogramColor);
+	}
+
+	public void setXAxisInterval() {
 
 		if(interval > 0) {
 			double minX, maxX;
@@ -113,47 +201,5 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 				ChartUtil.setRange(axis, minX, maxX);
 			}
 		}
-	}
-
-	public void setYAxis(boolean setMinAdjustIntensity, double minAdjustIntensity) {
-
-		if(!setMinAdjustIntensity) {
-			setAutoAdjustIntensity(true);
-			for(IAxis axis : getAxisSet().getYAxes()) {
-				axis.adjustRange();
-			}
-		} else {
-			double minY, maxY;
-			setAutoAdjustIntensity(false);
-			minY = getMultipleSeries().getYMin();
-			maxY = getMultipleSeries().getYMax();
-			if(maxY < minAdjustIntensity) {
-				maxY = minAdjustIntensity;
-				setMaxSignal(minAdjustIntensity);
-				setYMaxIntensityAdjusted(minAdjustIntensity);
-				for(IAxis axis : getAxisSet().getYAxes()) {
-					ChartUtil.setRange(axis, minY, maxY);
-				}
-			} else {
-				setAutoAdjustIntensity(true);
-				for(IAxis axis : getAxisSet().getYAxes()) {
-					axis.adjustRange();
-				}
-			}
-		}
-	}
-
-	@Override
-	public void redrawXAxisBottomScale() {
-
-		double min, max;
-		Range range;
-		/*
-		 * Set minutes scale.
-		 */
-		range = getXAxisTop().getRange();
-		min = range.lower / AbstractChromatogram.MINUTE_CORRELATION_FACTOR;
-		max = range.upper / AbstractChromatogram.MINUTE_CORRELATION_FACTOR;
-		ChartUtil.setRange(getXAxisBottom(), min, max);
 	}
 }

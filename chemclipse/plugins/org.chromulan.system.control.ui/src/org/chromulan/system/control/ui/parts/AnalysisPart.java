@@ -5,16 +5,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
 package org.chromulan.system.control.ui.parts;
-
-import java.io.IOException;
-import java.util.GregorianCalendar;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -22,7 +17,6 @@ import javax.inject.Inject;
 
 import org.chromulan.system.control.events.IAnalysisEvents;
 import org.chromulan.system.control.events.IULanConnectionEvents;
-import org.chromulan.system.control.model.Analysis;
 import org.chromulan.system.control.model.IAnalysis;
 import org.chromulan.system.control.model.ULanConnection;
 import org.chromulan.system.control.ui.analysis.support.MillisecondsToMinutes;
@@ -30,7 +24,6 @@ import org.chromulan.system.control.ui.analysis.support.MinutesToMilliseconds;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -39,7 +32,6 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -47,39 +39,55 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-import net.sourceforge.ulan.base.CompletionHandler;
-import net.sourceforge.ulan.base.IULanCommunication;
 import net.sourceforge.ulan.base.IULanCommunication.IFilt;
-import net.sourceforge.ulan.base.ULanCommunicationInterface;
-import net.sourceforge.ulan.base.ULanDrv;
-import net.sourceforge.ulan.base.ULanMsg;
 
 public class AnalysisPart {
 
-	@Inject
-	private Composite parent;
-	@Inject
-	private IEventBroker eventBroker;
+	private class ActualyationTimeRecording implements Runnable {
+
+		@Override
+		public void run() {
+
+			if(analysis.getStartDate() != null) {
+				labelTimeRecording.setText(Long.toString((System.currentTimeMillis() - analysis.getStartDate().getTime()) / (1000)));
+			}
+			display.timerExec(1000, this);
+		}
+	}
+
+	private class AutoStop implements Runnable {
+
+		@Override
+		public void run() {
+
+			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP_RECORDING, analysis);
+		}
+	}
+
+	private IAnalysis analysis;
+	private AutoStop autoStop;
+	private Button buttonAutoContinue;
+	private Button buttonAutoStop;
+	private Button buttonEnd;
+	private Button buttonSave;
+	private Button buttonStart;
+	private Button buttonStop;
+	private DataBindingContext dbc;
 	@Inject
 	private Display display;
 	@Inject
-	protected MPerspective perspective;
-	private DataBindingContext dbc;
-	private IAnalysis analysis;
-	private Label lableNameAnalysis;
-	private Label labelInterval;
-	private Label labelTimeRecording;
-	private Button buttonStart;
-	private Button buttonStop;
-	private Button buttonEnd;
-	private Button buttonSave;
-	private Button buttonAutoStop;
-	private Button buttonAutoContinue;
-	private ActualyationTimeRecording timeRecording;
-	private boolean stopRecording;
-	private AutoStop autoStop;
+	private IEventBroker eventBroker;
 	// private IULanCommunication commucation;
 	private IFilt filtStartRecording;
+	private Label labelInterval;
+	private Label labelTimeRecording;
+	private Label lableNameAnalysis;
+	@Inject
+	private Composite parent;
+	@Inject
+	protected MPerspective perspective;
+	private boolean stopRecording;
+	private ActualyationTimeRecording timeRecording;
 
 	public AnalysisPart() {
 
@@ -89,6 +97,19 @@ public class AnalysisPart {
 		stopRecording = true;
 		autoStop = new AutoStop();
 		// commucation = new ULanCommunicationInterface();
+	}
+
+	@Inject
+	@Optional
+	public void activateFiltStartRecording(@UIEventTopic(value = IULanConnectionEvents.TOPIC_COMMUCATION_ULAN_OPEN) ULanConnection connection) {
+
+		/*
+		 * try {
+		 * filtStartRecording.activateFilt();
+		 * } catch(IOException e) {
+		 * // TODO: exception logger.warn(e);
+		 * }
+		 */
 	}
 
 	@PostConstruct
@@ -183,12 +204,45 @@ public class AnalysisPart {
 		 */
 	}
 
+	private void dataBinding() {
+
+		dbc.dispose();
+		dbc.bindValue(WidgetProperties.text().observe(lableNameAnalysis), BeanProperties.value(IAnalysis.PROPERTY_NAME).observe(analysis));
+		dbc.bindValue(WidgetProperties.text().observe(labelInterval), BeanProperties.value(IAnalysis.PROPERTY_INTERVAL).observe(analysis), new UpdateValueStrategy().setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
+		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoStop), BeanProperties.value(IAnalysis.PROPERTY_AUTO_STOP).observe(analysis));
+		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoContinue), BeanProperties.value(IAnalysis.PROPERTY_AUTO_CONTINUE).observe(analysis));
+	}
+
+	protected void endAnalysis() {
+
+		if((analysis != null) && (!analysis.isBeingRecorded())) {
+			buttonStart.setEnabled(false);
+			buttonStop.setEnabled(false);
+			buttonEnd.setEnabled(false);
+			buttonSave.setEnabled(false);
+			perspective.getContext().remove(IAnalysis.class);
+			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END, analysis);
+		}
+	}
+
+	protected void exportChromatogram() {
+
+	}
+
 	private void initializationButtons() {
 
 		buttonStart.setEnabled(false);
 		buttonStop.setEnabled(false);
 		buttonEnd.setEnabled(false);
 		buttonSave.setEnabled(false);
+	}
+
+	@PreDestroy
+	void preDestroy() {
+
+		filtStartRecording.deactivateFilt();
+		display.timerExec(-1, timeRecording);
+		display.timerExec(-1, autoStop);
 	}
 
 	@Inject
@@ -226,15 +280,6 @@ public class AnalysisPart {
 		}
 	}
 
-	private void dataBinding() {
-
-		dbc.dispose();
-		dbc.bindValue(WidgetProperties.text().observe(lableNameAnalysis), BeanProperties.value(IAnalysis.PROPERTY_NAME).observe(analysis));
-		dbc.bindValue(WidgetProperties.text().observe(labelInterval), BeanProperties.value(IAnalysis.PROPERTY_INTERVAL).observe(analysis), new UpdateValueStrategy().setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
-		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoStop), BeanProperties.value(IAnalysis.PROPERTY_AUTO_STOP).observe(analysis));
-		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoContinue), BeanProperties.value(IAnalysis.PROPERTY_AUTO_CONTINUE).observe(analysis));
-	}
-
 	@Inject
 	@Optional
 	public void startRecording(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START_RECORDING) IAnalysis analysis) {
@@ -270,64 +315,6 @@ public class AnalysisPart {
 				buttonEnd.setEnabled(true);
 				buttonSave.setEnabled(true);
 			}
-		}
-	}
-
-	@Inject
-	@Optional
-	public void activateFiltStartRecording(@UIEventTopic(value = IULanConnectionEvents.TOPIC_COMMUCATION_ULAN_OPEN) ULanConnection connection) {
-
-		/*
-		 * try {
-		 * filtStartRecording.activateFilt();
-		 * } catch(IOException e) {
-		 * // TODO: exception logger.warn(e);
-		 * }
-		 */
-	}
-
-	@PreDestroy
-	void preDestroy() {
-
-		filtStartRecording.deactivateFilt();
-		display.timerExec(-1, timeRecording);
-		display.timerExec(-1, autoStop);
-	}
-
-	protected void exportChromatogram() {
-
-	}
-
-	protected void endAnalysis() {
-
-		if((analysis != null) && (!analysis.isRecording())) {
-			buttonStart.setEnabled(false);
-			buttonStop.setEnabled(false);
-			buttonEnd.setEnabled(false);
-			buttonSave.setEnabled(false);
-			perspective.getContext().remove(IAnalysis.class);
-			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END, analysis);
-		}
-	}
-
-	private class ActualyationTimeRecording implements Runnable {
-
-		@Override
-		public void run() {
-
-			if(analysis.getStartDate() != null) {
-				labelTimeRecording.setText(Long.toString((System.currentTimeMillis() - analysis.getStartDate().getTime()) / (1000)));
-			}
-			display.timerExec(1000, this);
-		}
-	}
-
-	private class AutoStop implements Runnable {
-
-		@Override
-		public void run() {
-
-			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP_RECORDING, analysis);
 		}
 	}
 }

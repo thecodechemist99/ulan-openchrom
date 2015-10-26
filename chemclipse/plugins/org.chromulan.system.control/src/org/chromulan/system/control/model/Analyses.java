@@ -5,46 +5,27 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Analyses implements IAnalyses {
 
+	IAnalysis actualAnalysis;
 	List<IAnalysis> analyses;
 	String name;
-	IAnalysis actualAnalysis;
 
 	public Analyses() {
 
 		analyses = new LinkedList<IAnalysis>();
 		name = DEFAULT_NAME;
 		actualAnalysis = null;
-	}
-
-	@Override
-	public String getName() {
-
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-
-		this.name = name;
-	}
-
-	@Override
-	public Iterator<IAnalysis> getAnalyses() {
-
-		return Collections.unmodifiableList(analyses).iterator();
 	}
 
 	@Override
@@ -66,38 +47,39 @@ public class Analyses implements IAnalyses {
 	}
 
 	@Override
-	public IAnalysis getAnalysis(int index) {
-
-		return analyses.get(index);
-	}
-
-	@Override
 	public IAnalysis getActualAnalysis() {
 
 		return actualAnalysis;
 	}
 
 	@Override
-	public IAnalysis setNextAnalysisActual() {
+	public List<IAnalysis> getAnalyses() {
 
-		if(hasNextAnalysisActual()) {
-			actualAnalysis = analyses.get(analyses.indexOf(actualAnalysis) + 1);
-			return actualAnalysis;
-		} else {
-			actualAnalysis = null;
-			return null;
-		}
+		return Collections.unmodifiableList(analyses);
 	}
 
 	@Override
-	public IAnalysis setActualAnalysis(IAnalysis analysis) {
+	public IAnalysis getAnalysis(int index) {
 
-		if(analyses.contains(analysis)) {
-			actualAnalysis = analysis;
-			return actualAnalysis;
-		} else {
-			return null;
-		}
+		return analyses.get(index);
+	}
+
+	@Override
+	public String getName() {
+
+		return name;
+	}
+
+	@Override
+	public int getNumberAnalysis() {
+
+		return analyses.size();
+	}
+
+	@Override
+	public int gettIndex(IAnalysis analysis) {
+
+		return analyses.indexOf(analysis);
 	}
 
 	@Override
@@ -124,6 +106,12 @@ public class Analyses implements IAnalyses {
 	}
 
 	@Override
+	public boolean isActualAnalysis(IAnalysis analysis) {
+
+		return analysis == this.actualAnalysis;
+	}
+
+	@Override
 	public void removeAnalysis(int intex) {
 
 		IAnalysis analysis = analyses.get(intex);
@@ -134,20 +122,31 @@ public class Analyses implements IAnalyses {
 	}
 
 	@Override
-	public int gettIndex(IAnalysis analysis) {
+	public IAnalysis setActualAnalysis(IAnalysis analysis) {
 
-		return analyses.indexOf(analysis);
+		if(analyses.contains(analysis)) {
+			actualAnalysis = analysis;
+			return actualAnalysis;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public int getNumberAnalysis() {
+	public void setName(String name) {
 
-		return analyses.size();
+		this.name = name;
 	}
 
 	@Override
-	public boolean isActualAnalysis(IAnalysis analysis) {
+	public IAnalysis setNextAnalysisActual() {
 
-		return analysis == this.actualAnalysis;
+		if(hasNextAnalysisActual()) {
+			actualAnalysis = analyses.get(analyses.indexOf(actualAnalysis) + 1);
+			return actualAnalysis;
+		} else {
+			actualAnalysis = null;
+			return null;
+		}
 	}
 }

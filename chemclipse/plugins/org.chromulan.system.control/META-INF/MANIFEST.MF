@@ -8,14 +8,16 @@ Bundle-Vendor: CHROMuLAN
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.chemclipse.support;bundle-version="0.7.0",
  org.eclipse.chemclipse.logging;bundle-version="0.7.0",
- org.eclipse.chemclipse.processing;bundle-version="0.7.0"
+ org.eclipse.chemclipse.processing;bundle-version="0.7.0",
+ org.eclipse.chemclipse.csd.model
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.chromulan.system.control.events,
  org.chromulan.system.control.model,
  org.chromulan.system.control.model.chromatogram,
  org.chromulan.system.control.preferences
-Import-Package: org.eclipse.chemclipse.model.core,
+Import-Package: org.eclipse.chemclipse.csd.model.core,
+ org.eclipse.chemclipse.model.core,
  org.eclipse.chemclipse.model.exceptions,
  org.eclipse.chemclipse.model.selection,
  org.eclipse.chemclipse.wsd.model.core

@@ -5,13 +5,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
 package org.chromulan.system.control.model.chromatogram;
-
-import java.util.List;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
@@ -19,15 +17,14 @@ import org.eclipse.chemclipse.model.core.IScan;
 public class ChromatogramRecording implements IChromatogramRecording {
 
 	private IChromatogram chromatogram;
-	private int numberOfScan;
 	String name;
 
 	public ChromatogramRecording() {
 
-		numberOfScan = 0;
 		name = DEFAULT_NAME;
 	}
 
+	@Override
 	public void addScan(IScan scan) {
 
 		synchronized(chromatogram) {
@@ -35,6 +32,7 @@ public class ChromatogramRecording implements IChromatogramRecording {
 		}
 	}
 
+	@Override
 	public void addScanAutoSet(IScan scan) {
 
 		synchronized(chromatogram) {
@@ -46,45 +44,13 @@ public class ChromatogramRecording implements IChromatogramRecording {
 		}
 	}
 
-	public void setScanInterval(int milliseconds) {
+	@Override
+	public IChromatogram copyChromatogram() {
 
-		synchronized(chromatogram) {
-			if(milliseconds != chromatogram.getScanInterval()) {
-				reset();
-				chromatogram.setScanInterval(milliseconds);
-			}
-		}
+		return null;
 	}
 
-	public int getScanInterval() {
-
-		synchronized(chromatogram) {
-			return chromatogram.getScanInterval();
-		}
-	}
-
-	public void setScanDelay(int milliseconds) {
-
-		synchronized(chromatogram) {
-			if(chromatogram.getScanDelay() != milliseconds) {
-				chromatogram.setScanDelay(milliseconds);
-				chromatogram.recalculateRetentionTimes();
-			}
-		}
-	}
-
-	public void resetRecording() {
-
-		synchronized(chromatogram) {
-			reset();
-		}
-	}
-
-	private void reset() {
-
-		chromatogram.removeScans(1, chromatogram.getNumberOfScans());
-	}
-
+	@Override
 	public IChromatogram getChromatogram() {
 
 		synchronized(chromatogram) {
@@ -92,17 +58,12 @@ public class ChromatogramRecording implements IChromatogramRecording {
 		}
 	}
 
-	public void setChromatogram(IChromatogram chromatogram) {
+	@Override
+	public double getMaxSignal() {
 
 		synchronized(chromatogram) {
-			this.chromatogram = chromatogram;
+			return getChromatogram().getMaxSignal();
 		}
-	}
-
-	@Override
-	public void setName(String name) {
-
-		this.name = name;
 	}
 
 	@Override
@@ -120,10 +81,59 @@ public class ChromatogramRecording implements IChromatogramRecording {
 	}
 
 	@Override
-	public double getMaxSignal() {
+	public int getScanInterval() {
 
 		synchronized(chromatogram) {
-			return getChromatogram().getMaxSignal();
+			return chromatogram.getScanInterval();
+		}
+	}
+
+	private void reset() {
+
+		chromatogram.removeScans(1, chromatogram.getNumberOfScans());
+	}
+
+	@Override
+	public void resetRecording() {
+
+		synchronized(chromatogram) {
+			reset();
+		}
+	}
+
+	@Override
+	public void setChromatogram(IChromatogram chromatogram) {
+
+		synchronized(chromatogram) {
+			this.chromatogram = chromatogram;
+		}
+	}
+
+	@Override
+	public void setName(String name) {
+
+		this.name = name;
+	}
+
+	@Override
+	public void setScanDelay(int milliseconds) {
+
+		synchronized(chromatogram) {
+			if(chromatogram.getScanDelay() != milliseconds) {
+				chromatogram.setScanDelay(milliseconds);
+				chromatogram.recalculateRetentionTimes();
+			}
+		}
+	}
+
+	@Override
+	public void setScanInterval(int milliseconds) {
+
+		synchronized(chromatogram) {
+			if(milliseconds != chromatogram.getScanInterval()) {
+				reset();
+				chromatogram.setScanInterval(milliseconds);
+			}
 		}
 	}
 }
