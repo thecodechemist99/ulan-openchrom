@@ -21,7 +21,6 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -65,8 +64,6 @@ public class ChromatogramViewer {
 	private IChromatogramRecording chromatogramRecording;
 	@Inject
 	private MPart part;
-	@Inject
-	private EPartService partService;
 	private RedrawChromatogram redrawChromatogram;
 
 	public ChromatogramViewer() {
@@ -125,12 +122,6 @@ public class ChromatogramViewer {
 
 	@PreDestroy
 	public void destroyPart() {
-
-		partService.hidePart(part, true);
-	}
-
-	@PreDestroy
-	public void preDestroy() {
 
 		display.timerExec(-1, redrawChromatogram);
 	}

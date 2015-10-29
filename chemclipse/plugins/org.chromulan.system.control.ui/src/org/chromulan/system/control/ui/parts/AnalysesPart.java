@@ -29,6 +29,7 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -61,6 +62,8 @@ public class AnalysesPart {
 	Composite parent;
 	@Inject
 	MPart part;
+	@Inject
+	private MPerspective perspective;
 
 	public AnalysesPart() {
 
@@ -71,7 +74,7 @@ public class AnalysesPart {
 
 		if(analyses.getActualAnalysis() == null) {
 			analyses.addAnalysis(analysis);
-			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analysis);
+			selectAnalysis();
 		} else {
 			analyses.addAnalysis(analysis);
 		}
@@ -164,7 +167,7 @@ public class AnalysesPart {
 	public void endAnalysis(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END) IAnalysis analysis) {
 
 		if(analyses.isActualAnalysis(analysis)) {
-			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analyses.setNextAnalysisActual());
+			setAnalysis(analyses.setNextAnalysisActual());
 			redrawTable();
 		}
 	}
@@ -216,7 +219,7 @@ public class AnalysesPart {
 		IAnalysis analysis = analyses.getAnalysis(number);
 		if(analyses.isActualAnalysis(analysis)) {
 			if(!analysis.isBeingRecorded()) {
-				eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analyses.setNextAnalysisActual());
+				setAnalysis(analyses.setNextAnalysisActual());
 				analyses.removeAnalysis(number);
 			} else {
 				// TODO: alert
@@ -241,6 +244,15 @@ public class AnalysesPart {
 					redrawTable();
 				}
 			}
+		}
+	}
+
+	private void setAnalysis(IAnalysis analysis) {
+
+		perspective.getContext().remove(IAnalysis.class);
+		eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analysis);
+		if(analysis != null) {
+			perspective.getContext().set(IAnalysis.class, analysis);
 		}
 	}
 }

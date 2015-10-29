@@ -16,4 +16,16 @@ import java.util.List;
 public interface IControlDevices {
 
 	List<IControlDevice> getControlDevices();
+	
+	void add(IControlDevice controlDevice);
+	
+	void remove(IControlDevice controlDevice);
+	
+	boolean contains(IControlDevice controlDevice);
+	
+	void removeAllControlDevices();
+	
+	void add(IControlDevices devices);
+	
+	
 }

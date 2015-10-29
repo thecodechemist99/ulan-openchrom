@@ -15,7 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Date;
 
-public interface IAnalysis {
+public interface IAnalysis extends IControlDevices{
 
 	final String PROPERTY_AUTO_CONTINUE = "autoContinue";
 	final String PROPERTY_AUTO_STOP = "autoStop";
@@ -60,4 +60,5 @@ public interface IAnalysis {
 	void startRecording();
 
 	void stopRecording();
+	
 }

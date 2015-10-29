@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 public abstract class AbstractAnalysis implements IAnalysis {
 
@@ -27,6 +28,7 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	protected PropertyChangeSupport propertyChangeSupport;
 	private boolean recording;
 	private boolean recored;
+
 
 	public AbstractAnalysis() {
 
@@ -159,4 +161,38 @@ public abstract class AbstractAnalysis implements IAnalysis {
 			recording = false;
 		}
 	}
+	
+	
+	@Override
+	public void add(IControlDevice controlDevice) {
+		
+	}
+	
+	@Override
+	public boolean contains(IControlDevice controlDevice) {
+	
+		return false;
+	}
+	
+	@Override
+	public void remove(IControlDevice controlDevice) {
+	
+	}
+	
+	@Override
+	public List<IControlDevice> getControlDevices() {
+	
+		return null;
+	}
+	
+	@Override
+	public void add(IControlDevices devices) {
+	
+	}
+	
+	@Override
+	public void removeAllControlDevices() {
+	
+	}
+	
 }

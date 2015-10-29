@@ -44,11 +44,6 @@ public class ChromatogramRecording implements IChromatogramRecording {
 		}
 	}
 
-	@Override
-	public IChromatogram copyChromatogram() {
-
-		return null;
-	}
 
 	@Override
 	public IChromatogram getChromatogram() {

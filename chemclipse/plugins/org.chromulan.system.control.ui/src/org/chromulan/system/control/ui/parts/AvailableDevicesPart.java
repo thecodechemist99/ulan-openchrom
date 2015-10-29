@@ -205,6 +205,15 @@ public class AvailableDevicesPart {
 				});
 			}
 		});
+		display.asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+
+				openConection();
+				loadDevice();
+			}
+		});
 	}
 
 	private void loadDevice() {

@@ -16,11 +16,6 @@ import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public class ChromatogramRecordingCSD extends AbstractChromatogramRecording implements IChromatogramRecordingCSD {
 
-	@Override
-	public IChromatogram copyChromatogram() {
-
-		return copyChromatogramCSD();
-	}
 
 	@Override
 	public IChromatogramCSD copyChromatogramCSD() {

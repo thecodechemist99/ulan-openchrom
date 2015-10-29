@@ -22,12 +22,6 @@ public class ChromatogramRecordingWSD extends AbstractChromatogramRecording impl
 	}
 
 	@Override
-	public IChromatogram copyChromatogram() {
-
-		return null;
-	}
-
-	@Override
 	public IChromatogramWSD getChromatogramWSD() {
 
 		IChromatogram chromatogram = getChromatogram();

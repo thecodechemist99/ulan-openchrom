@@ -22,8 +22,6 @@ public interface IChromatogramRecording {
 
 	void addScanAutoSet(IScan scan);
 
-	IChromatogram copyChromatogram();
-
 	IChromatogram getChromatogram();
 
 	double getMaxSignal();

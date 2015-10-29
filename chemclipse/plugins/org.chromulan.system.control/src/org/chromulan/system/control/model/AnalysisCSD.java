@@ -17,4 +17,5 @@ public class AnalysisCSD extends AbstractAnalysis implements IAnalysisCSD {
 
 		super();
 	}
+
 }

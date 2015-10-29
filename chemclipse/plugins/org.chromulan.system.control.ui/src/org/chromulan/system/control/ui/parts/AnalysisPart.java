@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.parts;
 
+import java.io.IOException;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -27,7 +29,6 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,7 +40,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
+import net.sourceforge.ulan.base.CompletionHandler;
+import net.sourceforge.ulan.base.IULanCommunication;
 import net.sourceforge.ulan.base.IULanCommunication.IFilt;
+import net.sourceforge.ulan.base.ULanCommunicationInterface;
+import net.sourceforge.ulan.base.ULanHandle;
+import net.sourceforge.ulan.base.ULanMsg;
 
 public class AnalysisPart {
 
@@ -77,15 +83,12 @@ public class AnalysisPart {
 	private Display display;
 	@Inject
 	private IEventBroker eventBroker;
-	// private IULanCommunication commucation;
 	private IFilt filtStartRecording;
 	private Label labelInterval;
 	private Label labelTimeRecording;
 	private Label lableNameAnalysis;
 	@Inject
 	private Composite parent;
-	@Inject
-	protected MPerspective perspective;
 	private boolean stopRecording;
 	private ActualyationTimeRecording timeRecording;
 
@@ -96,20 +99,38 @@ public class AnalysisPart {
 		timeRecording = new ActualyationTimeRecording();
 		stopRecording = true;
 		autoStop = new AutoStop();
-		// commucation = new ULanCommunicationInterface();
+		IULanCommunication com = new ULanCommunicationInterface();
+		filtStartRecording = com.addFilt(ULanHandle.CMD_LCDMRK, null, new CompletionHandler<ULanMsg, Void>() {
+
+			@Override
+			public void completed(ULanMsg arg0, Void arg1) {
+
+				display.asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+
+						startRecording();
+					}
+				});
+			}
+
+			@Override
+			public void failed(Exception arg0, Void arg1) {
+
+			}
+		});
 	}
 
 	@Inject
 	@Optional
 	public void activateFiltStartRecording(@UIEventTopic(value = IULanConnectionEvents.TOPIC_COMMUCATION_ULAN_OPEN) ULanConnection connection) {
 
-		/*
-		 * try {
-		 * filtStartRecording.activateFilt();
-		 * } catch(IOException e) {
-		 * // TODO: exception logger.warn(e);
-		 * }
-		 */
+		try {
+			filtStartRecording.activateFilt();
+		} catch(IOException e) {
+			// TODO: exception
+		}
 	}
 
 	@PostConstruct
@@ -129,7 +150,7 @@ public class AnalysisPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START_RECORDING, analysis);
+				startRecording();
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
@@ -141,7 +162,7 @@ public class AnalysisPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP_RECORDING, analysis);
+				stopRecording();
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
@@ -153,7 +174,7 @@ public class AnalysisPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				exportChromatogram();
+				saveAnalysis();
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
@@ -189,19 +210,13 @@ public class AnalysisPart {
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 		labelTimeRecording.setLayoutData(gridData);
 		initializationButtons();
-		/*
-		 * filtStartRecording = commucation.addFilt(ULanDrv.CMD_LCDMRK, null, new CompletionHandler<ULanMsg, Void>() {
-		 * @Override
-		 * public void completed(ULanMsg arg0, Void arg1) {
-		 * if(analysis != null) {
-		 * eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START_RECORDING, analysis);
-		 * }
-		 * }
-		 * @Override
-		 * public void failed(Exception arg0, Void arg1) {
-		 * }
-		 * });
-		 */
+		if(ULanCommunicationInterface.isOpen()) {
+			try {
+				filtStartRecording.activateFilt();
+			} catch(IOException e1) {
+				// TODO: exception logger.warn(e1);
+			}
+		}
 	}
 
 	private void dataBinding() {
@@ -220,13 +235,8 @@ public class AnalysisPart {
 			buttonStop.setEnabled(false);
 			buttonEnd.setEnabled(false);
 			buttonSave.setEnabled(false);
-			perspective.getContext().remove(IAnalysis.class);
 			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END, analysis);
 		}
-	}
-
-	protected void exportChromatogram() {
-
 	}
 
 	private void initializationButtons() {
@@ -245,47 +255,43 @@ public class AnalysisPart {
 		display.timerExec(-1, autoStop);
 	}
 
+	private void saveAnalysis() {
+
+	}
+
 	@Inject
 	@Optional
 	public void setAnalysis(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET) IAnalysis analysis) {
 
-		if(this.analysis != null && this.analysis.getAutoContinue()) {
-			exportChromatogram();
-		}
 		if((analysis != null) && this.analysis != analysis) {
 			buttonStart.setEnabled(true);
 			buttonStop.setEnabled(false);
 			buttonEnd.setEnabled(true);
 			buttonSave.setEnabled(false);
 			labelTimeRecording.setText("0");
-			perspective.getContext().set(IAnalysis.class, analysis);
 			this.analysis = analysis;
 			dataBinding();
-			eventBroker.post(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START, analysis);
 		} else {
 			if(analysis == null) {
 				dbc.dispose();
 				lableNameAnalysis.setText("");
 				labelTimeRecording.setText("0");
-				// TODO: hide interval labelInterval.setText("");
-				// TODO: hide time recording labelTimeRecording.setText("");
 				buttonStart.setEnabled(false);
 				buttonStop.setEnabled(false);
 				buttonEnd.setEnabled(false);
 				buttonSave.setEnabled(false);
-				perspective.getContext().remove(IAnalysis.class);
 				buttonAutoContinue.setSelection(false);
 				buttonAutoStop.setSelection(false);
 			}
 		}
 	}
 
-	@Inject
-	@Optional
-	public void startRecording(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START_RECORDING) IAnalysis analysis) {
+	public void startRecording() {
 
-		if((analysis != null) && (analysis == this.analysis)) {
+		// TODO:Control if analysis is recorded
+		if((analysis != null)) {
 			analysis.startRecording();
+			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START_RECORDING, analysis);
 			stopRecording = false;
 			display.timerExec(1000, timeRecording);
 			buttonStart.setEnabled(false);
@@ -298,16 +304,16 @@ public class AnalysisPart {
 		}
 	}
 
-	@Inject
-	@Optional
-	public void stopRecording(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP_RECORDING) IAnalysis analysis) {
+	public void stopRecording() {
 
-		if(!stopRecording && (analysis != null) && (analysis == this.analysis)) {
-			stopRecording = true;
+		if(!stopRecording && (analysis != null)) {
 			analysis.stopRecording();
+			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP_RECORDING, analysis);
+			stopRecording = true;
 			display.timerExec(-1, timeRecording);
 			display.timerExec(-1, autoStop);
 			if(analysis.getAutoContinue()) {
+				saveAnalysis();
 				endAnalysis();
 			} else {
 				buttonStart.setEnabled(false);
