@@ -594,7 +594,7 @@ public class AnalysesPart {
 		List<ISupplier> suppliers = support.getExportSupplier();
 		ISupplier supplier = null;
 		for(ISupplier iSupplier : suppliers) {
-			if(iSupplier.getFileExtension().equals(".xy")) {
+			if(iSupplier.getFileExtension().equals(".ocb")) {
 				supplier = iSupplier;
 				break;
 			}
