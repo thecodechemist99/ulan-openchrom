@@ -11,10 +11,37 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
-public class AnalysisCSD extends AbstractAnalysis implements IAnalysisCSD {
+public class DevicesProfile implements IDevicesProfile {
 
-	public AnalysisCSD() {
+	private IControlDevices controlDevices;
+	private String name;
 
-		super();
+	public DevicesProfile() {
+
+		controlDevices = new ControlDevices();
+	}
+
+	@Override
+	public IControlDevices getControlDevices() {
+
+		return controlDevices;
+	}
+
+	@Override
+	public String getName() {
+
+		return name;
+	}
+
+	@Override
+	public void setControlDevice(IControlDevices devices) {
+
+		this.controlDevices = devices;
+	}
+
+	@Override
+	public void setName(String name) {
+
+		this.name = name;
 	}
 }

@@ -12,9 +12,10 @@
 package org.chromulan.system.control.ui.analysis.support;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
 
+import org.chromulan.system.control.model.ControlDevice;
+import org.chromulan.system.control.model.ControlDevices;
+import org.chromulan.system.control.model.IControlDevices;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
@@ -23,23 +24,23 @@ import net.sourceforge.ulan.base.ULanCommunicationInterface;
 
 public class UlanScanNetRunnable implements IRunnableWithProgress {
 
-	private List<DeviceDescription> devices;
+	private IControlDevices controlDevices;
 
 	public UlanScanNetRunnable() {
 
-		this.devices = new LinkedList<DeviceDescription>();
+		controlDevices = new ControlDevices();
 	}
 
-	public List<DeviceDescription> getDevices() {
+	public IControlDevices getDevices() {
 
-		return devices;
+		return controlDevices;
 	}
 
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 		monitor.beginTask("Scan net", 100);
-		devices.clear();
+		controlDevices.removeAllControlDevices();
 		try {
 			try {
 				for(long i = 1; i <= 100 && !monitor.isCanceled(); i++) {
@@ -47,7 +48,7 @@ public class UlanScanNetRunnable implements IRunnableWithProgress {
 					monitor.subTask("Scan address " + i);
 					DeviceDescription device = ULanCommunicationInterface.getDevice(i);
 					if(device != null && device.containsTag("oi")) {
-						devices.add(device);
+						controlDevices.add(new ControlDevice(device));
 					}
 				}
 			} catch(Exception e) {

@@ -34,11 +34,14 @@ public class AnalysesTable {
 	private TableViewer viewer;
 	private ViewerFilter viewerfilterName;
 
-	public AnalysesTable(Composite parent, int style, IAnalyses analyses) {
+	public AnalysesTable(Composite parent, int style) {
 
-		this.analyses = analyses;
 		containsFilterName = false;
-		createPartControl(parent, style);
+		this.viewer = new TableViewer(parent, style);
+		createColumns(parent, viewer);
+		table = viewer.getTable();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 	}
 
 	public void addFilterName(String text) {
@@ -49,6 +52,21 @@ public class AnalysesTable {
 			viewer.refresh();
 			containsFilterName = true;
 		}
+	}
+
+	private void bindTable() {
+
+		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setInput(analyses.getAnalyses());
+		viewerfilterName = new ViewerFilter() {
+
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+
+				IAnalysis analysis = (IAnalysis)element;
+				return analysis.getName().contains(filterName);
+			}
+		};
 	}
 
 	public boolean containsFilterName() {
@@ -96,7 +114,11 @@ public class AnalysesTable {
 			public String getText(Object element) {
 
 				IAnalysis analysis = (IAnalysis)element;
-				return Boolean.toString(analysis.getAutoStop());
+				if(analysis.getAutoStop()) {
+					return "Yes";
+				} else {
+					return "No";
+				}
 			}
 		});
 		// column for the interval
@@ -122,29 +144,13 @@ public class AnalysesTable {
 			public String getText(Object element) {
 
 				IAnalysis analysis = (IAnalysis)element;
-				return Boolean.toString(analysis.getAutoContinue());
+				if(analysis.getAutoContinue()) {
+					return "Yes";
+				} else {
+					return "No";
+				}
 			}
 		});
-	}
-
-	private void createPartControl(Composite parent, int style) {
-
-		this.viewer = new TableViewer(parent, style);
-		createColumns(parent, viewer);
-		table = viewer.getTable();
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setInput(analyses.getAnalyses());
-		viewerfilterName = new ViewerFilter() {
-
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-
-				IAnalysis analysis = (IAnalysis)element;
-				return analysis.getName().contains(filterName);
-			}
-		};
 	}
 
 	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
@@ -173,6 +179,11 @@ public class AnalysesTable {
 		}
 	}
 
+	public IAnalyses getAnalyse() {
+
+		return analyses;
+	}
+
 	public TableViewer getViewer() {
 
 		return viewer;
@@ -196,5 +207,11 @@ public class AnalysesTable {
 				viewer.getTable().select(num);
 			}
 		}
+	}
+
+	public void setAnalyses(IAnalyses analyses) {
+
+		this.analyses = analyses;
+		bindTable();
 	}
 }

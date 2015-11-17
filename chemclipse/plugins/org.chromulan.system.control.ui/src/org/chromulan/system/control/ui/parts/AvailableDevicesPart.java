@@ -14,26 +14,29 @@ package org.chromulan.system.control.ui.parts;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.chromulan.system.control.events.IControlDeviceEvents;
+import org.chromulan.system.control.events.IControlDevicesEvents;
 import org.chromulan.system.control.events.IULanConnectionEvents;
+import org.chromulan.system.control.model.ControlDevice;
+import org.chromulan.system.control.model.ControlDevices;
+import org.chromulan.system.control.model.IControlDevice;
+import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.ULanConnection;
 import org.chromulan.system.control.ui.analysis.support.UlanScanNetRunnable;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -55,18 +58,18 @@ import net.sourceforge.ulan.base.ULanMsg;
 
 public class AvailableDevicesPart {
 
+	public final static String ID = "org.chromulan.system.control.ui.part.availableDevices";
 	static {
-		if(ULanDrv.isLibraryLoaded()) {
+		if(!ULanCommunicationInterface.isHandleInitialized()) {
 			ULanCommunicationInterface.setHandle(new ULanDrv());
 		}
 	}
 	@Inject
 	private MApplication application;
-	private Button buttonConnection;
 	private Button buttonRefreshDevices;
 	private ULanCommunicationInterface communication;
 	private ULanConnection connection;
-	private List<DeviceDescription> devices;
+	private IControlDevices devices;
 	@Inject
 	private Display display;
 	@Inject
@@ -76,22 +79,22 @@ public class AvailableDevicesPart {
 	@Inject
 	private EModelService modelService;
 	@Inject
-	private Composite parent;
+	private MPart part;
 	@Inject
 	private EPartService partService;
 	private Table table;
 
 	public AvailableDevicesPart() {
 
-		if(ULanDrv.isLibraryLoaded()) {
-			communication = new ULanCommunicationInterface();
-		}
+		communication = new ULanCommunicationInterface();
 		connection = new ULanConnection();
+		devices = new ControlDevices();
 	}
 
 	private void closeConnection() {
 
-		table.clearAll();
+		devices.removeAllControlDevices();
+		rewriteTable();
 		if(ULanDrv.isLibraryLoaded()) {
 			try {
 				if(ULanCommunicationInterface.isOpen()) {
@@ -103,29 +106,49 @@ public class AvailableDevicesPart {
 				labelConnection.setText("Connection is closed");
 				labelConnection.setBackground(display.getSystemColor(SWT.COLOR_RED));
 				labelConnection.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-				buttonRefreshDevices.setEnabled(false);
-				buttonConnection.setText("Open Conection");
 				eventBroker.post(IULanConnectionEvents.TOPIC_COMMUCATION_ULAN_CLOSE, connection);
-				parent.layout();
+			}
+		}
+	}
+
+	@Inject
+	@Optional
+	public void conectReqiredDevice(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_REQIRED) ControlDevices devices) {
+
+		for(IControlDevice device : devices.getControlDevices()) {
+			MPart part = partService.findPart(device.getID());
+			if(part == null) {
+				try {
+					DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
+					if(description != null) {
+						IControlDevice controlDevice = new ControlDevice(description);
+						if(!this.devices.contains(controlDevice.getID())) {
+							this.devices.add(controlDevice);
+							rewriteTable();
+						}
+						eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, controlDevice);
+					}
+				} catch(Exception e) {
+					// TODO: logger.warn(e);
+				}
 			}
 		}
 	}
 
 	@PostConstruct
-	public void createPartControl() {
+	public void createPartControl(Composite parent) {
 
-		GridLayout gridLayout = new GridLayout(2, false);
-		parent.setLayout(gridLayout);
-		labelConnection = new Label(parent, SWT.LEFT | SWT.BORDER);
+		Composite composite = new Composite(parent, SWT.None);
+		GridLayout gridLayout = new GridLayout(1, false);
+		composite.setLayout(gridLayout);
+		labelConnection = new Label(composite, SWT.LEFT | SWT.BORDER);
 		labelConnection.setText("Connection is closed");
 		labelConnection.setBackground(display.getSystemColor(SWT.COLOR_RED));
 		labelConnection.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
 		GridData gridData = new GridData(GridData.END, GridData.FILL, true, false);
-		gridData.horizontalSpan = 2;
 		labelConnection.setLayoutData(gridData);
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
-		gridData.horizontalSpan = 2;
-		table = new Table(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+		table = new Table(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(gridData);
 		table.setHeaderVisible(true);
 		final TableColumn columnAdr = new TableColumn(table, SWT.NULL);
@@ -137,20 +160,8 @@ public class AvailableDevicesPart {
 		final TableColumn columnDescription = new TableColumn(table, SWT.None);
 		columnDescription.setText("Description");
 		columnDescription.setWidth(400);
-		table.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-
-				int i = table.getSelectionIndex();
-				if(i != -1) {
-					openDeviceSettingsPart(i);
-				}
-			}
-		});
-		buttonRefreshDevices = new Button(parent, SWT.PUSH);
+		buttonRefreshDevices = new Button(composite, SWT.PUSH);
 		buttonRefreshDevices.setText("Scan Net");
-		buttonRefreshDevices.setEnabled(false);
 		buttonRefreshDevices.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -161,30 +172,14 @@ public class AvailableDevicesPart {
 					@Override
 					public void run() {
 
+						openConection();
 						loadDevice();
 					}
 				});
 			}
 		});
-		gridData = new GridData(GridData.BEGINNING, GridData.FILL, false, false);
+		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 		buttonRefreshDevices.setLayoutData(gridData);
-		buttonConnection = new Button(parent, SWT.PUSH);
-		buttonConnection.setText("Open Conection");
-		buttonConnection.setEnabled(true);
-		buttonConnection.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				if(ULanCommunicationInterface.isOpen()) {
-					closeConnection();
-				} else {
-					openConection();
-				}
-			}
-		});
-		gridData = new GridData(GridData.END, GridData.FILL, true, false);
-		buttonConnection.setLayoutData(gridData);
 		filtCloseConnection = communication.addFilt(0, null, new CompletionHandler<ULanMsg, Void>() {
 
 			@Override
@@ -205,15 +200,6 @@ public class AvailableDevicesPart {
 				});
 			}
 		});
-		display.asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-
-				openConection();
-				loadDevice();
-			}
-		});
 	}
 
 	private void loadDevice() {
@@ -222,23 +208,31 @@ public class AvailableDevicesPart {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 			UlanScanNetRunnable runnable = new UlanScanNetRunnable();
 			try {
-				dialog.run(true, true, runnable);
-				this.devices = runnable.getDevices();
+				dialog.run(true, false, runnable);
+				devices = runnable.getDevices();
 				rewriteTable();
+				part.getContext().set(IControlDevices.class, devices);
+				for(IControlDevice controlDevice : devices.getControlDevices()) {
+					if(partService.findPart(controlDevice.getID()) == null) {
+						eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, controlDevice);
+					}
+				}
+				eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE, devices);
+				MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
+				if(!stack.getChildren().isEmpty()) {
+					stack.setVisible(true);
+				}
 			} catch(InvocationTargetException e) {
 				// /logger.warn(e);
 			} catch(InterruptedException e) {
 				// logger.warn(e);
 			}
-		} else {
-			MessageDialog.openWarning(parent.getShell(), "Net warning", "Net has not been founded, please control net conection.");
-			closeConnection();
 		}
 	}
 
 	private void openConection() {
 
-		if(ULanDrv.isLibraryLoaded()) {
+		if(ULanDrv.isLibraryLoaded() && ULanCommunicationInterface.isHandleInitialized()) {
 			try {
 				if(!ULanCommunicationInterface.isOpen()) {
 					ULanCommunicationInterface.open();
@@ -249,10 +243,8 @@ public class AvailableDevicesPart {
 					labelConnection.redraw();
 					labelConnection.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
 					labelConnection.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-					eventBroker.post(IULanConnectionEvents.TOPIC_COMMUCATION_ULAN_OPEN, connection);
-					buttonConnection.setText("Close conection");
-					buttonRefreshDevices.setEnabled(true);
-					parent.layout();
+					eventBroker.send(IULanConnectionEvents.TOPIC_COMMUCATION_ULAN_OPEN, connection);
+					labelConnection.getParent().layout();
 				}
 			} catch(IOException e) {
 				// TODO:Exception
@@ -260,30 +252,14 @@ public class AvailableDevicesPart {
 		}
 	}
 
-	private void openDeviceSettingsPart(int numberDevice) {
-
-		if(ULanCommunicationInterface.isOpen() && this.devices != null && numberDevice < this.devices.size()) {
-			DeviceDescription device = this.devices.get(numberDevice);
-			MPart part = MBasicFactory.INSTANCE.createPart();
-			part.setLabel(device.getModulType());
-			part.setObject(device);
-			part.setElementId("Device");
-			part.setCloseable(true);
-			part.setContributionURI("bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.DeviceSettingsPart");
-			MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
-			stack.getChildren().add(part);
-			partService.activate(part);
-		}
-	}
-
 	private void rewriteTable() {
 
 		table.removeAll();
-		for(DeviceDescription deviceDescription : devices) {
+		for(IControlDevice device : devices.getControlDevices()) {
 			TableItem item = new TableItem(table, SWT.None);
-			item.setText(0, Long.toString(deviceDescription.getAdr()));
-			item.setText(1, deviceDescription.getModulType());
-			item.setText(2, deviceDescription.getDescription());
+			item.setText(0, Long.toString(device.getDeviceDescription().getAdr()));
+			item.setText(1, device.getDeviceDescription().getModulType());
+			item.setText(2, device.getDeviceDescription().getDescription());
 		}
 	}
 }

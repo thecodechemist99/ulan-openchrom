@@ -3,9 +3,8 @@
   <imports xsi:type="basic:Part" xmi:id="_s74ScLtVEeSOd4rPaPqFeA" elementId="org.eclipse.ui.console.ConsoleView"/>
   <imports xsi:type="advanced:Area" xmi:id="_uF4ncLtVEeSOd4rPaPqFeA" elementId="org.eclipse.chemclipse.rcp.app.ui.editor"/>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_cs0e4JmgEeSpTYJdjhxkxw" featurename="sharedElements" parentElementId="org.eclipse.chemclipse.rcp.app.ui.trimmedwindow.main">
-    <elements xsi:type="basic:Part" xmi:id="_6EKToEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.part.availableDevices" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AvailableDevicesPart" label="Available Devices" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/devices.gif" closeable="true">
-      <toolbar xmi:id="_Xi-XsHixEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.toolbar.1"/>
-    </elements>
+    <elements xsi:type="basic:Part" xmi:id="_6EKToEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.part.availableDevices" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AvailableDevicesPart" label="Available Devices" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/devices.gif" closeable="true"/>
+    <elements xsi:type="basic:Part" xmi:id="_OtmA0I1JEeWfqJmgycqKzw" elementId="org.chromulan.system.control.ui.part.devicesProfiles" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.DevicesProfilesPart" label="Devices Profiles"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_0J-34LtVEeSOd4rPaPqFeA" featurename="children" parentElementId="org.eclipse.chemclipse.rcp.app.ui.perspectivestack.main">
     <elements xsi:type="advanced:Perspective" xmi:id="_5ACA0LtVEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.perspective.chromulan" label="CHROMuLAN" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/perspective.gif">
@@ -21,15 +20,13 @@
                     </toolbar>
                   </children>
                 </children>
-                <children xsi:type="basic:PartStack" xmi:id="_IZTz0GzSEeWhB_dhmOjHpg" elementId="org.chromulan.system.control.ui.partstack.3">
-                  <children xsi:type="basic:Part" xmi:id="_fCLloG24EeWhB_dhmOjHpg" elementId="org.chromulan.system.control.ui.part.actualAnalysis" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AnalysisPart" label="Actual analysis"/>
-                </children>
               </children>
               <children xsi:type="basic:PartSashContainer" xmi:id="_IGKvcG7BEeW6RKiMBdftrA" elementId="org.chromulan.system.control.ui.partsashcontainer.6">
-                <children xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.devicesSetting"/>
                 <children xsi:type="basic:PartStack" xmi:id="_5KlnUEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.partstack.1">
                   <children xsi:type="advanced:Placeholder" xmi:id="_S78TQEygEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.placeholder.1" ref="_6EKToEyaEeWRzKmWon3PLg"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_nOEF8I1JEeWfqJmgycqKzw" elementId="org.chromulan.system.control.ui.placeholder.2" accessibilityPhrase="" ref="_OtmA0I1JEeWfqJmgycqKzw"/>
                 </children>
+                <children xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.devicesSetting" visible="false"/>
               </children>
             </children>
           </children>
@@ -43,11 +40,6 @@
       </children>
     </elements>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_GtTWAEtJEeWFBNjUJiIrKw" featurename="children" parentElementId="org.eclipse.chemclipse.ux.extension.ui.controls.menu">
-    <elements xsi:type="menu:Menu" xmi:id="_JPdwwEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.menu.recordAnalysis" label="Record Analysis">
-      <children xsi:type="menu:HandledMenuItem" xmi:id="_RRXxsEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.handledmenuitem.newanalysis" label="New Analysis" command="_3OKFIHizEeWB3ebT_GT_3Q"/>
-    </elements>
-  </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Wr8kAEtJEeWFBNjUJiIrKw" featurename="commands" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="commands:Command" xmi:id="_jP3OIHgYEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.chromatogram.displayAllData" commandName="Display all data" description="chromatogramdisplay" category="_IDBJcHZDEeWkxZUZTkqg1A"/>
     <elements xsi:type="commands:Command" xmi:id="_4HfJkHiiEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.chromatogram.displayLastData" commandName="Display last data" description="chromatogramdisplay" category="_IDBJcHZDEeWkxZUZTkqg1A"/>
@@ -58,10 +50,8 @@
     </elements>
     <elements xsi:type="commands:Command" xmi:id="_E2x28Hi0EeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.command.analyses.searchRemove" commandName="Search remove"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_bq38IEtJEeWFBNjUJiIrKw" featurename="handlers" parentElementId="org.eclipse.chemclipse.rcp.ide.application"/>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ioKeYEtJEeWFBNjUJiIrKw" featurename="addons" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_nP10IEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.addon.diplayChromatogram" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.CreateChromatogram"/>
-    <elements xsi:type="application:Addon" xmi:id="_bncGYHqYEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.addon.exportChroamtogram"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_z-d2AHZCEeWkxZUZTkqg1A" featurename="category" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="commands:Category" xmi:id="_IDBJcHZDEeWkxZUZTkqg1A" elementId="org.chromulan.system.control.ui.category.chromatogramoverview" name="ChromatogramDisplay"/>

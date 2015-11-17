@@ -9,7 +9,15 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.ui.chromatogram;
+package org.chromulan.system.control.model;
 
-public class ChromatogramExport {
+public interface IDevicesProfile {
+
+	IControlDevices getControlDevices();
+
+	String getName();
+
+	void setControlDevice(IControlDevices devices);
+
+	void setName(String name);
 }

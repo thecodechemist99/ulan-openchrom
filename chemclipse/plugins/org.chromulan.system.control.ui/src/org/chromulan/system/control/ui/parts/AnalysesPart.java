@@ -11,19 +11,40 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.parts;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.chromulan.system.control.events.IAnalysisEvents;
+import org.chromulan.system.control.events.IControlDevicesEvents;
+import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.AnalysesCSD;
 import org.chromulan.system.control.model.AnalysisCSD;
 import org.chromulan.system.control.model.IAnalyses;
 import org.chromulan.system.control.model.IAnalysis;
 import org.chromulan.system.control.model.IAnalysisCSD;
+import org.chromulan.system.control.model.IControlDevice;
+import org.chromulan.system.control.model.IControlDevices;
+import org.chromulan.system.control.model.IDevicesProfile;
+import org.chromulan.system.control.model.ULanConnection;
+import org.chromulan.system.control.model.chromatogram.IChromatogramRecordingCSD;
 import org.chromulan.system.control.ui.analysis.support.AnalysesTable;
 import org.chromulan.system.control.ui.analysis.support.AnalysisSettingsPreferencePage;
+import org.chromulan.system.control.ui.analysis.support.LabelAnalysisInterval;
+import org.chromulan.system.control.ui.devices.support.ProfilePreferencePage;
+import org.chromulan.system.control.ui.wizard.WizardNewAnalyses;
 import org.chromulan.system.control.ui.wizard.WizardNewAnalysis;
+import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
+import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
+import org.eclipse.chemclipse.model.core.IChromatogramOverview;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -31,14 +52,18 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -47,72 +72,265 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
+import net.sourceforge.ulan.base.CompletionHandler;
+import net.sourceforge.ulan.base.IULanCommunication;
+import net.sourceforge.ulan.base.IULanCommunication.IFilt;
+import net.sourceforge.ulan.base.ULanCommunicationInterface;
+import net.sourceforge.ulan.base.ULanHandle;
+import net.sourceforge.ulan.base.ULanMsg;
+
+@SuppressWarnings("restriction")
 public class AnalysesPart {
+
+	private class ActualyationTimeRecording implements Runnable {
+
+		@Override
+		public void run() {
+
+			if(analysis.getStartDate() != null) {
+				analysisInterval.setTime(System.currentTimeMillis() - analysis.getStartDate().getTime());
+			}
+			if(analysis.getAutoStop()) {
+				long time = analysis.getStartDate().getTime() + analysis.getInterval() - System.currentTimeMillis();
+				if(time < 0) {
+					stopRecording();
+					progressBarTimeRemain.setSelection(progressBarTimeRemain.getMaximum());
+				} else {
+					progressBarTimeRemain.setSelection((int)(analysis.getInterval() - time));
+				}
+			}
+			display.timerExec(500, this);
+		}
+	}
 
 	private IAnalyses analyses;
 	private AnalysesTable analysesTable;
+	private IAnalysis analysis;
+	private LabelAnalysisInterval analysisInterval;
+	private Button buttonActualAnalysis;
+	private Button buttonAddAnalysis;
+	private Button buttonEnd;
+	private Button buttonSave;
+	private Button buttonStart;
+	private Button buttonStartMeasurement;
+	private Button buttonStop;
+	private PropertyChangeListener dataAnalysisChange;
 	@Inject
-	Display diplay;
+	private Display display;
 	@Inject
 	private IEventBroker eventBroker;
+	private File file;
+	private IFilt filtStartRecording;
 	@Inject
-	EHandlerService handlerService;
+	private EHandlerService handlerService;
+	private boolean isSetAnalysis;
+	private Label lableNameAnalysis;
 	@Inject
-	Composite parent;
+	private Composite parent;
 	@Inject
-	MPart part;
+	private EPartService partService;
 	@Inject
 	private MPerspective perspective;
+	private ProgressBar progressBarTimeRemain;
+	private boolean stopRecording;
+	private Table tableActualAnalysis;
+	private ActualyationTimeRecording timeRecording;
 
 	public AnalysesPart() {
 
-		analyses = new AnalysesCSD();
+		analysis = null;
+		timeRecording = new ActualyationTimeRecording();
+		stopRecording = true;
+		IULanCommunication com = new ULanCommunicationInterface();
+		filtStartRecording = com.addFilt(ULanHandle.CMD_LCDMRK, null, new CompletionHandler<ULanMsg, Void>() {
+
+			@Override
+			public void completed(ULanMsg arg0, Void arg1) {
+
+				display.asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+
+						startRecording();
+					}
+				});
+			}
+
+			@Override
+			public void failed(Exception arg0, Void arg1) {
+
+			}
+		});
+		dataAnalysisChange = new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+
+				setData();
+			}
+		};
 	}
 
 	private void addAnalysis(IAnalysis analysis) {
 
 		if(analyses.getActualAnalysis() == null) {
 			analyses.addAnalysis(analysis);
-			selectAnalysis();
+			setAnalysis(analysis);
 		} else {
 			analyses.addAnalysis(analysis);
 		}
 		redrawTable();
 	}
 
-	private void createAnalysis() {
+	private void analysisSettings() {
 
-		WizardNewAnalysis newAnalysisWizard = new WizardNewAnalysis();
-		WizardDialog wizardDialog = new WizardDialog(parent.getShell(), newAnalysisWizard);
-		if(wizardDialog.open() == Window.OK) {
-			int numberAnalysis = (Integer)newAnalysisWizard.getModel().numberAnalyses.getValue();
-			for(int i = 1; i <= numberAnalysis; i++) {
-				IAnalysisCSD analysis = new AnalysisCSD();
-				String name = getNameAnalysis((String)newAnalysisWizard.getModel().name.getValue(), i, numberAnalysis);
-				analysis.setName(name);
-				analysis.setAutoContinue((Boolean)newAnalysisWizard.getModel().autoContinue.getValue());
-				analysis.setAutoStop((Boolean)newAnalysisWizard.getModel().autoStop.getValue());
-				analysis.setInterval((Long)newAnalysisWizard.getModel().interval.getValue());
-				addAnalysis(analysis);
+		int index = analysesTable.getViewer().getTable().getSelectionIndex();
+		if(index != -1) {
+			if(index < analyses.getNumberAnalysis()) {
+				PreferenceManager manager = new PreferenceManager();
+				AnalysisSettingsPreferencePage settings = new AnalysisSettingsPreferencePage(analyses.getAnalysis(index), true);
+				ProfilePreferencePage page = new ProfilePreferencePage(analyses.getAnalysis(index).getDevicesProfile());
+				PreferenceNode nodeBase = new PreferenceNode("base", settings);
+				PreferenceNode nodeProfile = new PreferenceNode("devices", page);
+				manager.addToRoot(nodeBase);
+				manager.addToRoot(nodeProfile);
+				PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
+				if(Window.OK == dialog.open()) {
+					redrawTable();
+				}
 			}
 		}
 	}
 
-	@PostConstruct
-	void createComposite() {
+	private boolean controlAnalysis(IAnalysis analysis) {
 
+		return controlDevices(analysis.getDevicesProfile()) && controlNet();
+	}
+
+	private boolean controlDevices(IDevicesProfile profile) {
+
+		eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_REQIRED, analysis.getDevicesProfile().getControlDevices());
+		for(IControlDevice device : profile.getControlDevices().getControlDevices()) {
+			MPart part = partService.findPart(device.getID());
+			if(part == null) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean controlNet() {
+
+		return ULanCommunicationInterface.isOpen();
+	}
+
+	private void createActualAnalysisControl(Composite composite) {
+
+		GridLayout gridLayout = new GridLayout(4, false);
+		composite.setLayout(gridLayout);
+		lableNameAnalysis = new Label(composite, SWT.LEFT);
+		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
+		gridData.horizontalSpan = 3;
+		lableNameAnalysis.setLayoutData(gridData);
+		buttonEnd = new Button(composite, SWT.PUSH);
+		buttonEnd.setText("Next Analysis");
+		buttonEnd.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				endAnalysis();
+				setAnalysis(analyses.setNextAnalysisActual());
+			}
+		});
+		gridData = new GridData(GridData.END, GridData.FILL, false, false);
+		buttonEnd.setLayoutData(gridData);
+		buttonStart = new Button(composite, SWT.PUSH);
+		buttonStart.setText("Start recording");
+		buttonStart.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				startRecording();
+			}
+		});
+		gridData = new GridData(GridData.FILL, GridData.FILL, false, false);
+		buttonStart.setLayoutData(gridData);
+		buttonStop = new Button(composite, SWT.PUSH);
+		buttonStop.setText("Stop Recording");
+		buttonStop.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				stopRecording();
+			}
+		});
+		gridData = new GridData(GridData.FILL, GridData.FILL, false, false);
+		buttonStop.setLayoutData(gridData);
+		buttonSave = new Button(composite, SWT.PUSH);
+		buttonSave.setText("Save");
+		buttonSave.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				saveAnalysis();
+			}
+		});
+		gridData = new GridData(GridData.BEGINNING, GridData.FILL, false, false);
+		buttonSave.setLayoutData(gridData);
+		analysisInterval = new LabelAnalysisInterval(composite, SWT.RIGHT);
+		analysisInterval.setTime(0);
+		gridData = new GridData(GridData.CENTER, GridData.CENTER, true, false);
+		analysisInterval.getLabel().setLayoutData(gridData);
+		tableActualAnalysis = new Table(composite, SWT.BORDER | SWT.MULTI);
+		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
+		gridData.horizontalSpan = 4;
+		tableActualAnalysis.setLayoutData(gridData);
+		TableColumn columnVariable = new TableColumn(tableActualAnalysis, SWT.None);
+		columnVariable.setText("variable");
+		columnVariable.setWidth(100);
+		TableColumn columnValue = new TableColumn(tableActualAnalysis, SWT.None);
+		columnValue.setText("value");
+		columnValue.setWidth(200);
+		progressBarTimeRemain = new ProgressBar(composite, SWT.HORIZONTAL);
+		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
+		gridData.horizontalSpan = 4;
+		progressBarTimeRemain.setLayoutData(gridData);
+	}
+
+	@PostConstruct
+	public void createAnalysesArea() {
+
+		if(ULanCommunicationInterface.isOpen()) {
+			try {
+				filtStartRecording.activateFilt();
+			} catch(IOException e1) {
+				// TODO: exception logger.warn(e1);
+			}
+		}
+		Composite composite = new Composite(parent, SWT.None);
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 3;
+		gridLayout.numColumns = 2;
+		composite.setLayout(gridLayout);
 		GridData gridData;
-		parent.setLayout(gridLayout);
-		final Composite tableComposite = new Composite(parent, SWT.None);
-		analysesTable = new AnalysesTable(tableComposite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER, analyses);
-		gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
-		gridData.horizontalSpan = 35;
+		final Composite tableComposite = new Composite(composite, SWT.None);
+		analysesTable = new AnalysesTable(tableComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		tableComposite.setLayout(new FillLayout());
+		gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
+		gridData.horizontalSpan = 2;
 		tableComposite.setLayoutData(gridData);
-		final Button buttonAddAnalysis = new Button(parent, SWT.PUSH);
+		buttonAddAnalysis = new Button(composite, SWT.PUSH);
 		buttonAddAnalysis.setText("Add");
 		buttonAddAnalysis.addSelectionListener(new SelectionAdapter() {
 
@@ -124,22 +342,7 @@ public class AnalysesPart {
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 		buttonAddAnalysis.setLayoutData(gridData);
-		final Button buttonRemoveAnalysis = new Button(parent, SWT.PUSH);
-		buttonRemoveAnalysis.setText("Remove");
-		buttonRemoveAnalysis.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				int i = analysesTable.getViewer().getTable().getSelectionIndex();
-				if(i != -1) {
-					removeAnalysis(i);
-				}
-			}
-		});
-		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
-		buttonRemoveAnalysis.setLayoutData(gridData);
-		final Button buttonActualAnalysis = new Button(parent, SWT.PUSH);
+		buttonActualAnalysis = new Button(composite, SWT.PUSH);
 		buttonActualAnalysis.setText("Select Actual");
 		buttonActualAnalysis.addSelectionListener(new SelectionAdapter() {
 
@@ -156,19 +359,115 @@ public class AnalysesPart {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 
-				selectAnalysis();
+				analysisSettings();
 			}
 		});
+		analysesTable.getViewer().getTable().addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+
+				if(e.keyCode == SWT.DEL) {
+					removeSelecetion();
+				}
+			}
+		});
+		Group group = new Group(composite, SWT.SHADOW_ETCHED_IN);
+		group.setText("Actual analysis");
+		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
+		gridData.horizontalSpan = 2;
+		gridData.minimumWidth = 300;
+		group.setLayoutData(gridData);
+		createActualAnalysisControl(group);
+		buttonStartMeasurement = new Button(composite, SWT.PUSH);
+		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
+		gridData.horizontalSpan = 2;
+		buttonStartMeasurement.setText("New Measurement");
+		buttonStartMeasurement.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				createMeasurement();
+			}
+		});
+		buttonStartMeasurement.setLayoutData(gridData);
 		initializationHandler();
+		initializationButtons();
 	}
 
-	@Inject
-	@Optional
-	public void endAnalysis(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END) IAnalysis analysis) {
+	private void createAnalysis() {
 
-		if(analyses.isActualAnalysis(analysis)) {
-			setAnalysis(analyses.setNextAnalysisActual());
-			redrawTable();
+		WizardNewAnalysis newAnalysisWizard = new WizardNewAnalysis(getDevicesProfile());
+		newAnalysisWizard.getModel().folder.setValue(file);
+		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAnalysisWizard);
+		if(wizardDialog.open() == Window.OK) {
+			int numberAnalysis = (Integer)newAnalysisWizard.getModel().numberAnalyses.getValue();
+			for(int i = 1; i <= numberAnalysis; i++) {
+				IAnalysisCSD analysis = new AnalysisCSD();
+				String name = getNameAnalysis((String)newAnalysisWizard.getModel().name.getValue(), i, numberAnalysis);
+				analysis.setName(name);
+				analysis.setAutoContinue((Boolean)newAnalysisWizard.getModel().autoContinue.getValue());
+				analysis.setAutoStop((Boolean)newAnalysisWizard.getModel().autoStop.getValue());
+				analysis.setInterval((Long)newAnalysisWizard.getModel().interval.getValue());
+				analysis.setDevicesProfile((IDevicesProfile)newAnalysisWizard.getModel().devicesProfile.getValue());
+				analysis.setDescription((String)newAnalysisWizard.getModel().description.getValue());
+				addAnalysis(analysis);
+			}
+		}
+	}
+
+	private void createMeasurement() {
+
+		if(this.analysis != null && this.analysis.isBeingRecorded()) {
+			// TODO: alert
+			return;
+		}
+		if(this.analysis != null) {
+			// TODO: alert
+			analysis.removePropertyChangeListener(dataAnalysisChange);
+			removeData();
+		}
+		if(this.analyses != null) {
+			this.analyses.removeAllAnalysis();
+		}
+		this.analyses = new AnalysesCSD();
+		analysesTable.setAnalyses(analyses);
+		WizardNewAnalyses newAnalysisWizard = new WizardNewAnalyses();
+		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAnalysisWizard);
+		if(wizardDialog.open() == Window.OK) {
+			buttonActualAnalysis.setEnabled(true);
+			buttonAddAnalysis.setEnabled(true);
+			this.file = newAnalysisWizard.getFile();
+		}
+	}
+
+	private void endAnalysis() {
+
+		if((analysis != null) && (isSetAnalysis) && (!analysis.isBeingRecorded())) {
+			analysis.removePropertyChangeListener(dataAnalysisChange);
+			buttonStart.setEnabled(false);
+			buttonStop.setEnabled(false);
+			buttonEnd.setEnabled(false);
+			buttonSave.setEnabled(false);
+			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END, analysis);
+			isSetAnalysis = false;
+			analysis = null;
+			perspective.getContext().remove(IAnalysis.class);
+		}
+		removeData();
+	}
+
+	private List<IDevicesProfile> getDevicesProfile() {
+
+		MPart part = partService.findPart(DevicesProfilesPart.ID);
+		if(part.getContext() == null) {
+			partService.activate(part, false);
+		}
+		if(part.getContext().containsKey(DevicesProfilesPart.DEVICES_PROFILES_DATA)) {
+			return (List<IDevicesProfile>)part.getContext().get(DevicesProfilesPart.DEVICES_PROFILES_DATA);
+		} else {
+			return null;
 		}
 	}
 
@@ -192,7 +491,17 @@ public class AnalysesPart {
 		}
 	}
 
-	@SuppressWarnings("restriction")
+	private void initializationButtons() {
+
+		buttonStart.setEnabled(false);
+		buttonStop.setEnabled(false);
+		buttonEnd.setEnabled(false);
+		buttonSave.setEnabled(false);
+		progressBarTimeRemain.setEnabled(false);
+		buttonAddAnalysis.setEnabled(false);
+		buttonActualAnalysis.setEnabled(false);
+	}
+
 	private void initializationHandler() {
 
 		handlerService.activateHandler(AnalysesSearchToolItem.ID_COMMAND_SEARCH, new Object() {
@@ -209,18 +518,40 @@ public class AnalysesPart {
 		});
 	}
 
+	@Inject
+	@Optional
+	public void openCommunicationEvent(@UIEventTopic(value = IULanConnectionEvents.TOPIC_COMMUCATION_ULAN_OPEN) ULanConnection connection) {
+
+		try {
+			filtStartRecording.activateFilt();
+		} catch(IOException e) {
+			// TODO: exception
+		}
+	}
+
+	@PreDestroy
+	public void preDestroy() {
+
+		filtStartRecording.deactivateFilt();
+		display.timerExec(-1, timeRecording);
+	}
+
 	private void redrawTable() {
 
 		analysesTable.getViewer().refresh();
 	}
 
-	private void removeAnalysis(int number) {
+	private void removeAnalysis(IAnalysis analysis) {
 
-		IAnalysis analysis = analyses.getAnalysis(number);
+		int number = analyses.gettIndex(analysis);
 		if(analyses.isActualAnalysis(analysis)) {
 			if(!analysis.isBeingRecorded()) {
-				setAnalysis(analyses.setNextAnalysisActual());
+				if(isSetAnalysis) {
+					endAnalysis();
+				}
+				analyses.setNextAnalysisActual();
 				analyses.removeAnalysis(number);
+				setAnalysis(analyses.getActualAnalysis());
 			} else {
 				// TODO: alert
 			}
@@ -230,18 +561,52 @@ public class AnalysesPart {
 		redrawTable();
 	}
 
-	private void selectAnalysis() {
+	private void removeData() {
 
-		int index = analysesTable.getViewer().getTable().getSelectionIndex();
-		if(index != -1) {
-			if(index < analyses.getNumberAnalysis()) {
-				PreferenceManager manager = new PreferenceManager();
-				AnalysisSettingsPreferencePage settings = new AnalysisSettingsPreferencePage(analyses.getAnalysis(index), true);
-				PreferenceNode nodeBase = new PreferenceNode("base", settings);
-				manager.addToRoot(nodeBase);
-				PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
-				if(Window.OK == dialog.open()) {
-					redrawTable();
+		analysisInterval.setTime(0);
+		tableActualAnalysis.removeAll();
+		lableNameAnalysis.setText("");
+		progressBarTimeRemain.setSelection(0);
+	}
+
+	private void removeSelecetion() {
+
+		IStructuredSelection selection = (IStructuredSelection)analysesTable.getViewer().getSelection();
+		List<IAnalysis> selections = selection.toList();
+		for(IAnalysis analysis : selections) {
+			removeAnalysis(analysis);
+		}
+	}
+
+	private void saveAnalysis() {
+
+		String path = file.getAbsolutePath() + File.separator + analysis.getName();
+		File nFile = new File(path);
+		if(!nFile.exists()) {
+			if(!nFile.mkdir()) {
+				// TODO:excetpiton
+				return;
+			}
+		}
+		saveChromaptogram(file);
+	}
+
+	private void saveChromaptogram(File file) {
+
+		for(IControlDevice device : analysis.getDevicesProfile().getControlDevices().getControlDevices()) {
+			MPart part = partService.findPart(device.getID());
+			if(part != null && part.getContext() != null && part.getContext().containsKey(IChromatogramRecordingCSD.class)) {
+				IChromatogramRecordingCSD chromatogramRecording = part.getContext().get(IChromatogramRecordingCSD.class);
+				if(chromatogramRecording != null) {
+					IChromatogramCSD chromatogram = chromatogramRecording.getChromatogramCSD();
+					if(chromatogram != null) {
+						String description = analysis.getDescription() + System.getProperty("line.separator") + chromatogramRecording.getDescription();
+						chromatogram.setShortInfo(description);
+						if(chromatogram != null) {
+							File fileOutput = new File(file.getAbsolutePath() + File.pathSeparator + device.getID() + ".ocb");
+							ChromatogramConverterCSD.convert(fileOutput, chromatogram, "ocb", new NullProgressMonitor());
+						}
+					}
 				}
 			}
 		}
@@ -249,10 +614,99 @@ public class AnalysesPart {
 
 	private void setAnalysis(IAnalysis analysis) {
 
-		perspective.getContext().remove(IAnalysis.class);
-		eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analysis);
-		if(analysis != null) {
-			perspective.getContext().set(IAnalysis.class, analysis);
+		if(analysis != null && !isSetAnalysis) {
+			if(this.analysis == null) {
+				this.analysis = analysis;
+				analysis.addPropertyChangeListener(dataAnalysisChange);
+				setData();
+			}
+			if(this.analysis == analysis) {
+				if(controlAnalysis(analysis)) {
+					eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET, analysis);
+					isSetAnalysis = true;
+					perspective.getContext().set(IAnalysis.class, analysis);
+					buttonStart.setEnabled(true);
+					buttonStop.setEnabled(false);
+					buttonEnd.setEnabled(true);
+					buttonSave.setEnabled(false);
+				} else {
+					buttonStart.setEnabled(false);
+					buttonStop.setEnabled(false);
+					buttonEnd.setEnabled(false);
+					buttonSave.setEnabled(false);
+				}
+			}
+		}
+		redrawTable();
+	}
+
+	@Inject
+	@Optional
+	public void setAnalysis(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE) IControlDevices devices) {
+
+		setAnalysis(analysis);
+	}
+
+	private void setData() {
+
+		if(this.analysis != null) {
+			tableActualAnalysis.removeAll();
+			lableNameAnalysis.setText(analysis.getName());
+			TableItem tableItem = new TableItem(tableActualAnalysis, SWT.NONE);
+			tableItem.setText(0, "AutoStop");
+			if(analysis.getAutoStop()) {
+				tableItem.setText(1, "Yes");
+				tableItem = new TableItem(tableActualAnalysis, SWT.NONE);
+				progressBarTimeRemain.setEnabled(true);
+				progressBarTimeRemain.setMaximum((int)analysis.getInterval());
+				tableItem.setText("Interval");
+				tableItem.setText(1, Long.toString(analysis.getInterval() / (long)IChromatogramOverview.MINUTE_CORRELATION_FACTOR));
+			} else {
+				progressBarTimeRemain.setSelection(0);
+				progressBarTimeRemain.setEnabled(false);
+				tableItem.setText(1, "No");
+			}
+			tableItem = new TableItem(tableActualAnalysis, SWT.NONE);
+			tableItem.setText(0, "AutoContinue");
+			if(analysis.getAutoContinue()) {
+				tableItem.setText(1, "Yes");
+			} else {
+				tableItem.setText(1, "No");
+			}
+		}
+	}
+
+	public void startRecording() {
+
+		if((analysis != null) && isSetAnalysis) {
+			analysis.startRecording();
+			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START_RECORDING, analysis);
+			stopRecording = false;
+			display.asyncExec(timeRecording);
+			buttonStart.setEnabled(false);
+			buttonStop.setEnabled(true);
+			buttonEnd.setEnabled(false);
+			buttonSave.setEnabled(false);
+		}
+	}
+
+	public void stopRecording() {
+
+		if(!stopRecording && (analysis != null) && isSetAnalysis) {
+			analysis.stopRecording();
+			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP_RECORDING, analysis);
+			stopRecording = true;
+			display.timerExec(-1, timeRecording);
+			if(analysis.getAutoContinue()) {
+				saveAnalysis();
+				endAnalysis();
+				setAnalysis(analyses.setNextAnalysisActual());
+			} else {
+				buttonStart.setEnabled(false);
+				buttonStop.setEnabled(false);
+				buttonEnd.setEnabled(true);
+				buttonSave.setEnabled(true);
+			}
 		}
 	}
 }

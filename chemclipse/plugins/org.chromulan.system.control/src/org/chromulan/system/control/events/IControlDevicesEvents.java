@@ -9,10 +9,10 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.ui.chromatogram;
+package org.chromulan.system.control.events;
 
-public class ChromatogramViewerModel {
+public interface IControlDevicesEvents {
 
-	final static public int DISPLAY_ALL_CHROMATOGRAM = 1;
-	final static public int DISPLAY_INTERVAL_CHROMATOGRAM = 2;
+	String TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE = "controlDevices/ulan/available";
+	String TOPIC_CONTROL_DEVICES_ULAN_REQIRED = "controlDevices/ulan/required";
 }

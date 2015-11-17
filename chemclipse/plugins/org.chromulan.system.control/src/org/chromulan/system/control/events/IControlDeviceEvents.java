@@ -9,11 +9,9 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.chromatogram;
+package org.chromulan.system.control.events;
 
-import org.eclipse.chemclipse.model.core.IChromatogram;
+public interface IControlDeviceEvents {
 
-public interface IChromatogramCopyable extends IChromatogram {
-
-	IChromatogram copyChromatogram();
+	String TOPIC_CONTROL_DEVICE_ULAN_CONNECT = "controlDevice/ulan/connect";
 }

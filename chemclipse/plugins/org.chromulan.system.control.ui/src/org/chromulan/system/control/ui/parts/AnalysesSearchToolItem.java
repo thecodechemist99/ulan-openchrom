@@ -31,17 +31,16 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public class AnalysesSearchToolItem {
 
 	public final static String ID_COMMAND_SEARCH = "org.chromulan.system.control.ui.command.analyses.search";
 	public final static String ID_COMMAND_SEARCH_REMOVE = "org.chromulan.system.control.ui.command.analyses.searchRemove";
 	public final static String ID_PARAMETER_NAME = "name";
-	@SuppressWarnings("restriction")
 	@Inject
-	ECommandService commandService;
-	@SuppressWarnings("restriction")
+	private ECommandService commandService;
 	@Inject
-	EHandlerService handlerService;
+	private EHandlerService handlerService;
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
@@ -55,7 +54,6 @@ public class AnalysesSearchToolItem {
 		text.setLayoutData(new RowData(150, SWT.DEFAULT));
 		text.addKeyListener(new KeyAdapter() {
 
-			@SuppressWarnings("restriction")
 			@Override
 			public void keyReleased(KeyEvent e) {
 
@@ -82,7 +80,6 @@ public class AnalysesSearchToolItem {
 		button.setText("X");
 		button.addSelectionListener(new SelectionAdapter() {
 
-			@SuppressWarnings("restriction")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 

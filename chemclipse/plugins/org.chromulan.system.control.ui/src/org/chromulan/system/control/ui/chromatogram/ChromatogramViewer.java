@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Jan Holý.
+ * Copyright (c) 2015 Jan Holy.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Jan Holý - initial API and implementation
+ * Jan Holy - initial API and implementation
  *******************************************************************************/
 package org.chromulan.system.control.ui.chromatogram;
 
@@ -19,12 +19,12 @@ import org.chromulan.system.control.model.chromatogram.IChromatogramRecording;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
+@SuppressWarnings("restriction")
 public class ChromatogramViewer {
 
 	private class RedrawChromatogram implements Runnable {
@@ -38,9 +38,9 @@ public class ChromatogramViewer {
 
 			chromatogramOverView.reloadData();
 			if(autoRedraw) {
-				if(diplayChromatogram == ChromatogramViewerModel.DISPLAY_ALL_CHROMATOGRAM) {
+				if(diplayChromatogram == DISPLAY_ALL_CHROMATOGRAM) {
 					chromatogramOverView.displayAllChromatogram();
-				} else if(diplayChromatogram == ChromatogramViewerModel.DISPLAY_INTERVAL_CHROMATOGRAM) {
+				} else if(diplayChromatogram == DISPLAY_INTERVAL_CHROMATOGRAM) {
 					chromatogramOverView.displayInteval();
 				}
 			}
@@ -48,16 +48,14 @@ public class ChromatogramViewer {
 		}
 	}
 
+	final static public int DISPLAY_ALL_CHROMATOGRAM = 1;
+	final static public int DISPLAY_INTERVAL_CHROMATOGRAM = 2;
 	private boolean autoRedraw;
-	@SuppressWarnings("restriction")
 	@Inject
 	private ECommandService commandService;
-	@Inject
-	MContext context;
 	private int diplayChromatogram;
 	@Inject
 	private Display display;
-	@SuppressWarnings("restriction")
 	@Inject
 	private EHandlerService handlerService;
 	private ChromatogramOverviewUI chromatogramOverView;
@@ -68,12 +66,11 @@ public class ChromatogramViewer {
 
 	public ChromatogramViewer() {
 
-		diplayChromatogram = ChromatogramViewerModel.DISPLAY_INTERVAL_CHROMATOGRAM;
+		diplayChromatogram = DISPLAY_INTERVAL_CHROMATOGRAM;
 		autoRedraw = true;
 		redrawChromatogram = new RedrawChromatogram();
 	}
 
-	@SuppressWarnings("restriction")
 	private void addHandler() {
 
 		commandService.getCommand("org.chromulan.system.control.ui.chromatogram.displayAllData");
@@ -82,7 +79,7 @@ public class ChromatogramViewer {
 			@Execute
 			public void execute() {
 
-				diplayChromatogram = ChromatogramViewerModel.DISPLAY_ALL_CHROMATOGRAM;
+				diplayChromatogram = DISPLAY_ALL_CHROMATOGRAM;
 				chromatogramOverView.displayAllChromatogram();
 			}
 		};
@@ -93,7 +90,7 @@ public class ChromatogramViewer {
 			@Execute
 			public void execute() {
 
-				diplayChromatogram = ChromatogramViewerModel.DISPLAY_INTERVAL_CHROMATOGRAM;
+				diplayChromatogram = DISPLAY_INTERVAL_CHROMATOGRAM;
 				chromatogramOverView.displayInteval();
 			}
 		};

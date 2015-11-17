@@ -15,20 +15,20 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.Date;
-import java.util.List;
 
 public abstract class AbstractAnalysis implements IAnalysis {
 
 	private boolean autoContinue;
 	private boolean autoStop;
 	private Date date;
+	private String description;
+	private IDevicesProfile devicesProfile;
 	private File directory;
 	private long interval;
 	private String name;
 	protected PropertyChangeSupport propertyChangeSupport;
 	private boolean recording;
 	private boolean recored;
-
 
 	public AbstractAnalysis() {
 
@@ -62,6 +62,18 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	public boolean getAutoStop() {
 
 		return this.autoStop;
+	}
+
+	@Override
+	public String getDescription() {
+
+		return description;
+	}
+
+	@Override
+	public IDevicesProfile getDevicesProfile() {
+
+		return devicesProfile;
 	}
 
 	@Override
@@ -125,6 +137,18 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	}
 
 	@Override
+	public void setDescription(String description) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_DESCRIPTION, this.description, this.description = description);
+	}
+
+	@Override
+	public void setDevicesProfile(IDevicesProfile devicesProfile) {
+
+		this.devicesProfile = devicesProfile;
+	}
+
+	@Override
 	public void setDirectory(File directory) {
 
 		if(directory.isDirectory()) {
@@ -161,38 +185,4 @@ public abstract class AbstractAnalysis implements IAnalysis {
 			recording = false;
 		}
 	}
-	
-	
-	@Override
-	public void add(IControlDevice controlDevice) {
-		
-	}
-	
-	@Override
-	public boolean contains(IControlDevice controlDevice) {
-	
-		return false;
-	}
-	
-	@Override
-	public void remove(IControlDevice controlDevice) {
-	
-	}
-	
-	@Override
-	public List<IControlDevice> getControlDevices() {
-	
-		return null;
-	}
-	
-	@Override
-	public void add(IControlDevices devices) {
-	
-	}
-	
-	@Override
-	public void removeAllControlDevices() {
-	
-	}
-	
 }

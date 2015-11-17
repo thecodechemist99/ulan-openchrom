@@ -11,22 +11,27 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.wizard;
 
+import java.util.List;
+
+import org.chromulan.system.control.model.IDevicesProfile;
 import org.eclipse.jface.wizard.Wizard;
 
 public class WizardNewAnalysis extends Wizard {
 
 	private WizardModelAnalysis modelAnalysis;
-	private WizardNewAnalysisPageOne page1;
-	private WizardNewAnalysisPageTwo page2;
+	private WizardNewAnalysisProfile page1;
+	private WizardNewAnalysisMain page2;
+	private WizardNewAnalysisMultiple page3;
 
-	public WizardNewAnalysis() {
+	public WizardNewAnalysis(List<IDevicesProfile> devicesProfil) {
 
 		super();
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Analysis wizard");
 		modelAnalysis = new WizardModelAnalysis();
-		page1 = new WizardNewAnalysisPageOne();
-		page2 = new WizardNewAnalysisPageTwo();
+		page1 = new WizardNewAnalysisProfile(devicesProfil);
+		page2 = new WizardNewAnalysisMain();
+		page3 = new WizardNewAnalysisMultiple();
 	}
 
 	@Override
@@ -34,6 +39,7 @@ public class WizardNewAnalysis extends Wizard {
 
 		addPage(page1);
 		addPage(page2);
+		addPage(page3);
 	}
 
 	public WizardModelAnalysis getModel() {
@@ -44,6 +50,6 @@ public class WizardNewAnalysis extends Wizard {
 	@Override
 	public boolean performFinish() {
 
-		return page1.isPageComplete();
+		return page2.isPageComplete() && page1.isPageComplete();
 	}
 }

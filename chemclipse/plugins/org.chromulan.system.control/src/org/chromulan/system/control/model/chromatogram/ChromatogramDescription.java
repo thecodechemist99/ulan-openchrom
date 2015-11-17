@@ -11,23 +11,10 @@
  *******************************************************************************/
 package org.chromulan.system.control.model.chromatogram;
 
-import org.eclipse.chemclipse.model.core.IChromatogram;
-import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
+public class ChromatogramDescription extends AbstractChromatogramDescription {
 
-public class ChromatogramRecordingWSD extends AbstractChromatogramRecording implements IChromatogramRecordingWSD {
-
-	public ChromatogramRecordingWSD() {
+	public ChromatogramDescription() {
 
 		super();
-	}
-
-	@Override
-	public IChromatogramWSD getChromatogramWSD() {
-
-		IChromatogram chromatogram = getChromatogram();
-		if(chromatogram instanceof IChromatogramWSD) {
-			return (IChromatogramWSD)chromatogram;
-		}
-		return null;
 	}
 }

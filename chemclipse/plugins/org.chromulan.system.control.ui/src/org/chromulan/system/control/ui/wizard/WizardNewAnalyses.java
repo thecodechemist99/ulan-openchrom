@@ -9,12 +9,36 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model;
+package org.chromulan.system.control.ui.wizard;
 
-public class AnalysisCSD extends AbstractAnalysis implements IAnalysisCSD {
+import java.io.File;
 
-	public AnalysisCSD() {
+import org.eclipse.jface.wizard.Wizard;
+
+public class WizardNewAnalyses extends Wizard {
+
+	private WizarPageNewAnalysesBase base;
+
+	public WizardNewAnalyses() {
 
 		super();
+		base = new WizarPageNewAnalysesBase("Select Default Directory");
+	}
+
+	@Override
+	public void addPages() {
+
+		addPage(base);
+	}
+
+	public File getFile() {
+
+		return base.getFile();
+	}
+
+	@Override
+	public boolean performFinish() {
+
+		return base.isPageComplete();
 	}
 }

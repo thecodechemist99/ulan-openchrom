@@ -17,9 +17,9 @@ import java.util.List;
 
 public abstract class AbstractAnalyses implements IAnalyses {
 
-	IAnalysis actualAnalysis;
-	List<IAnalysis> analyses;
-	String name;
+	private IAnalysis actualAnalysis;
+	private List<IAnalysis> analyses;
+	private String name;
 
 	public AbstractAnalyses() {
 
@@ -109,6 +109,13 @@ public abstract class AbstractAnalyses implements IAnalyses {
 	public boolean isActualAnalysis(IAnalysis analysis) {
 
 		return analysis == this.actualAnalysis;
+	}
+
+	@Override
+	public void removeAllAnalysis() {
+
+		analyses.clear();
+		actualAnalysis = null;
 	}
 
 	@Override

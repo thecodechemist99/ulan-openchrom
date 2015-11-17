@@ -15,17 +15,13 @@ import java.util.List;
 
 public interface IControlDevices {
 
+	void add(IControlDevice device);
+
+	boolean contains(String id);
+
 	List<IControlDevice> getControlDevices();
-	
-	void add(IControlDevice controlDevice);
-	
-	void remove(IControlDevice controlDevice);
-	
-	boolean contains(IControlDevice controlDevice);
-	
+
+	void remove(String id);
+
 	void removeAllControlDevices();
-	
-	void add(IControlDevices devices);
-	
-	
 }

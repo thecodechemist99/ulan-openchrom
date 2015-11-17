@@ -39,6 +39,8 @@ public interface IAnalyses {
 
 	boolean isActualAnalysis(IAnalysis analysis);
 
+	void removeAllAnalysis();
+
 	void removeAnalysis(int intex);
 
 	IAnalysis setActualAnalysis(IAnalysis analysis);

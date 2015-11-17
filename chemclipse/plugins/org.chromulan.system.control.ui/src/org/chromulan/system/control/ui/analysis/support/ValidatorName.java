@@ -28,6 +28,8 @@ public class ValidatorName implements IValidator {
 			String ss = (String)value;
 			if(ss.isEmpty()) {
 				return ValidationStatus.error("NAME: name is empty");
+			} else if(!ss.trim().equals(ss)) {
+				return ValidationStatus.error("NAME: name can not start or end whitespace");
 			} else if(ss.contains("<")) {
 				return ValidationStatus.error("NAME: name contains unsupported character <");
 			} else if(ss.contains(">")) {

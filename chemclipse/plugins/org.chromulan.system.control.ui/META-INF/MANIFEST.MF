@@ -9,15 +9,20 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.chemclipse.support.ui;bundle-version="0.7.0",
  org.chromulan.system.control;bundle-version="1.1.0",
+ org.chromulan.system.control.net;bundle-version="1.1.0",
  org.eclipse.chemclipse.logging;bundle-version="0.7.0",
  org.eclipse.chemclipse.support;bundle-version="0.7.0",
  org.eclipse.chemclipse.ux.extension.ui;bundle-version="0.7.0",
  org.eclipse.equinox.common,
  org.eclipse.swt,
- org.eclipse.core.commands
+ org.eclipse.core.commands,
+ org.eclipse.jface,
+ org.eclipse.chemclipse.converter
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.chromulan.system.control.model.chromatogram,
+Import-Package: org.chromulan.system.control.model,
+ org.chromulan.system.control.model.chromatogram,
+ org.eclipse.chemclipse.csd.converter.chromatogram,
  org.eclipse.chemclipse.csd.model.core,
  org.eclipse.chemclipse.csd.model.implementation,
  org.eclipse.chemclipse.csd.swt.ui.components.chromatogram,
@@ -54,6 +59,7 @@ Import-Package: org.chromulan.system.control.model.chromatogram,
  org.eclipse.e4.ui.model.application.ui.advanced,
  org.eclipse.e4.ui.model.application.ui.basic,
  org.eclipse.e4.ui.model.application.ui.menu,
+ org.eclipse.e4.ui.services,
  org.eclipse.e4.ui.workbench.modeling,
  org.eclipse.jface.databinding.dialog,
  org.eclipse.jface.databinding.preference,
@@ -62,8 +68,4 @@ Import-Package: org.chromulan.system.control.model.chromatogram,
  org.eclipse.jface.databinding.wizard,
  org.eclipse.ui.dialogs,
  org.swtchart
-Bundle-ClassPath: lib/ulan-java.jar,
- lib/guava-18.0.jar,
- .
-Bundle-NativeCode: lib/libulan_drv_jni64.dll
-Export-Package: net.sourceforge.ulan.base
+Export-Package: org.chromulan.system.control.ui.events

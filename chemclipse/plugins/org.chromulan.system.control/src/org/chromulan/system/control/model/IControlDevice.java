@@ -13,12 +13,11 @@ package org.chromulan.system.control.model;
 
 import net.sourceforge.ulan.base.DeviceDescription;
 
-
-public interface IControlDevice  extends Comparable<IControlDevice>{
+public interface IControlDevice {
 
 	DeviceDescription getDeviceDescription();
-	
-	void setDeviceDescription(DeviceDescription description);
-	
+
 	String getID();
+
+	void setDeviceDescription(DeviceDescription description);
 }

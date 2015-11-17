@@ -14,14 +14,14 @@ package org.chromulan.system.control.model.chromatogram;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 
-public abstract class AbstractChromatogramRecording implements IChromatogramRecording {
+public abstract class AbstractChromatogramRecording extends AbstractChromatogramDescription implements IChromatogramRecording {
 
 	private IChromatogram chromatogram;
-	String name;
 
-	public AbstractChromatogramRecording() {
+	public AbstractChromatogramRecording(int scanDelay, int scanInterval) {
 
-		name = DEFAULT_NAME;
+		setName(DEFAULT_NAME);
+		chromatogram = createChromatogram(scanDelay, scanInterval);
 	}
 
 	@Override
@@ -44,6 +44,8 @@ public abstract class AbstractChromatogramRecording implements IChromatogramReco
 		}
 	}
 
+	abstract protected IChromatogram createChromatogram(int scanDelay, int scanInterval);
+
 	@Override
 	public IChromatogram getChromatogram() {
 
@@ -61,12 +63,6 @@ public abstract class AbstractChromatogramRecording implements IChromatogramReco
 	}
 
 	@Override
-	public String getName() {
-
-		return name;
-	}
-
-	@Override
 	public int getNumberOfScans() {
 
 		synchronized(chromatogram) {
@@ -75,10 +71,26 @@ public abstract class AbstractChromatogramRecording implements IChromatogramReco
 	}
 
 	@Override
+	public int getScanDelay() {
+
+		synchronized(chromatogram) {
+			return chromatogram.getScanDelay();
+		}
+	}
+
+	@Override
 	public int getScanInterval() {
 
 		synchronized(chromatogram) {
 			return chromatogram.getScanInterval();
+		}
+	}
+
+	@Override
+	public void newRecord(int scanDelay, int scanInterval) {
+
+		synchronized(chromatogram) {
+			this.chromatogram = createChromatogram(scanDelay, scanInterval);
 		}
 	}
 
@@ -93,20 +105,6 @@ public abstract class AbstractChromatogramRecording implements IChromatogramReco
 		synchronized(chromatogram) {
 			reset();
 		}
-	}
-
-	@Override
-	public void setChromatogram(IChromatogram chromatogram) {
-
-		synchronized(chromatogram) {
-			this.chromatogram = chromatogram;
-		}
-	}
-
-	@Override
-	public void setName(String name) {
-
-		this.name = name;
 	}
 
 	@Override

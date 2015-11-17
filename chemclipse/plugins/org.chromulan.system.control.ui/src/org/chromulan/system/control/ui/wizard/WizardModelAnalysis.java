@@ -13,6 +13,7 @@ package org.chromulan.system.control.ui.wizard;
 
 import java.io.File;
 
+import org.chromulan.system.control.model.IDevicesProfile;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 
@@ -20,6 +21,8 @@ public class WizardModelAnalysis {
 
 	public IObservableValue autoContinue;
 	public IObservableValue autoStop;
+	public IObservableValue description;
+	public IObservableValue devicesProfile;
 	public IObservableValue folder;
 	public IObservableValue interval;
 	public IObservableValue name;
@@ -33,5 +36,7 @@ public class WizardModelAnalysis {
 		interval = new WritableValue(600000L, Long.class);
 		name = new WritableValue("", String.class);
 		numberAnalyses = new WritableValue(1, Integer.class);
+		devicesProfile = new WritableValue(null, IDevicesProfile.class);
+		description = new WritableValue("", String.class);
 	}
 }

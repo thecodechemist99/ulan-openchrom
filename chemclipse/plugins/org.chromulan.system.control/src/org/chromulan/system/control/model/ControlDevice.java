@@ -13,37 +13,36 @@ package org.chromulan.system.control.model;
 
 import net.sourceforge.ulan.base.DeviceDescription;
 
-public abstract class AbstractControlDevice implements IControlDevice {
+public class ControlDevice implements IControlDevice {
 
-	DeviceDescription description;
+	private DeviceDescription description;
 
-	public AbstractControlDevice(DeviceDescription description) {
+	public ControlDevice() {
 
 		super();
+	}
+
+	public ControlDevice(DeviceDescription description) {
+
+		this();
 		this.description = description;
 	}
-	
-	@Override
-	public void setDeviceDescription(DeviceDescription description) {
-		this.description = description;
-	}
-	
+
 	@Override
 	public DeviceDescription getDeviceDescription() {
-	
+
 		return description;
 	}
-	
+
 	@Override
 	public String getID() {
-		
-		return description.getModulType() + "." + Long.toString(description.getAdr());
+
+		return description.getModulType() + "_" + Long.toString(description.getAdr());
 	}
-	
+
 	@Override
-	public int compareTo(IControlDevice o) {
-	
-		
-		return 0;
+	public void setDeviceDescription(DeviceDescription description) {
+
+		this.description = description;
 	}
 }

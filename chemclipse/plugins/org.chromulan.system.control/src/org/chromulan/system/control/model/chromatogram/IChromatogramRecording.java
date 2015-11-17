@@ -14,9 +14,7 @@ package org.chromulan.system.control.model.chromatogram;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 
-public interface IChromatogramRecording {
-
-	final String DEFAULT_NAME = "chromatogram";
+public interface IChromatogramRecording extends IChromatogramDescription {
 
 	void addScan(IScan scan);
 
@@ -26,17 +24,15 @@ public interface IChromatogramRecording {
 
 	double getMaxSignal();
 
-	String getName();
-
 	int getNumberOfScans();
+
+	int getScanDelay();
 
 	int getScanInterval();
 
+	void newRecord(int scanDelay, int scanInterval);
+
 	void resetRecording();
-
-	void setChromatogram(IChromatogram chromatogram);
-
-	void setName(String name);
 
 	void setScanDelay(int milliseconds);
 

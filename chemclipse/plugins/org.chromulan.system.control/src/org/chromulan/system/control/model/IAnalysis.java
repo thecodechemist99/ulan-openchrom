@@ -15,10 +15,11 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Date;
 
-public interface IAnalysis extends IControlDevices{
+public interface IAnalysis {
 
 	final String PROPERTY_AUTO_CONTINUE = "autoContinue";
 	final String PROPERTY_AUTO_STOP = "autoStop";
+	final String PROPERTY_DESCRIPTION = "description";
 	final String PROPERTY_DIRECTORY = "directory";
 	final String PROPERTY_INTERVAL = "interval";
 	final String PROPERTY_NAME = "name";
@@ -30,6 +31,10 @@ public interface IAnalysis extends IControlDevices{
 	boolean getAutoContinue();
 
 	boolean getAutoStop();
+
+	String getDescription();
+
+	IDevicesProfile getDevicesProfile();
 
 	File getDirectory();
 
@@ -51,6 +56,10 @@ public interface IAnalysis extends IControlDevices{
 
 	void setAutoStop(boolean b);
 
+	void setDescription(String description);
+
+	void setDevicesProfile(IDevicesProfile devicesProfile);
+
 	void setDirectory(File directory);
 
 	void setInterval(long interval);
@@ -60,5 +69,4 @@ public interface IAnalysis extends IControlDevices{
 	void startRecording();
 
 	void stopRecording();
-	
 }

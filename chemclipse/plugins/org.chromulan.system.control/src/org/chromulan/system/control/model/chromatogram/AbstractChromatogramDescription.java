@@ -11,9 +11,32 @@
  *******************************************************************************/
 package org.chromulan.system.control.model.chromatogram;
 
-import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
+public abstract class AbstractChromatogramDescription implements IChromatogramDescription {
 
-public interface IChromatogramRecordingCSD extends IChromatogramRecording {
+	private String description;
+	private String name;
 
-	IChromatogramCSD getChromatogramCSD();
+	@Override
+	public String getDescription() {
+
+		return description;
+	}
+
+	@Override
+	public String getName() {
+
+		return name;
+	}
+
+	@Override
+	public void setDescription(String description) {
+
+		this.description = description;
+	}
+
+	@Override
+	public void setName(String name) {
+
+		this.name = name;
+	}
 }

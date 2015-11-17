@@ -39,13 +39,14 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 	private Button buttonAutoStop;
 	private Button buttonDefault;
 	private DataBindingContext dbc;
+	private Text textDescription;
 	private Text textInterval;
 	private Text textName;
 	private boolean updatable;
 
 	public AnalysisSettingsPreferencePage(IAnalysis analysis, boolean updatable) {
 
-		super("base");
+		super("Main");
 		this.analysis = analysis;
 		this.dbc = new DataBindingContext();
 		this.updatable = updatable;
@@ -90,21 +91,28 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 		label = new Label(composite, SWT.None);
 		label.setText("Interval");
 		textInterval = new Text(composite, SWT.BORDER);
-		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
+		label = new Label(composite, SWT.None);
+		label.setText("Description");
+		textDescription = new Text(composite, SWT.MULTI | SWT.V_SCROLL);
+		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gridData.heightHint = 3 * textDescription.getLineHeight();
+		textDescription.setLayoutData(gridData);
 		PreferencePageSupport.create(this, dbc);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textName), BeanProperties.value(IAnalysis.class, IAnalysis.PROPERTY_NAME).observe(analysis), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterGetValidator(new ValidatorName()), null);
 		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoContinue), BeanProperties.value(IAnalysis.class, IAnalysis.PROPERTY_AUTO_CONTINUE).observe(analysis), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
 		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoStop), BeanProperties.value(IAnalysis.class, IAnalysis.PROPERTY_AUTO_STOP).observe(analysis), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textInterval), BeanProperties.value(IAnalysis.class, IAnalysis.PROPERTY_INTERVAL).observe(analysis), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterConvertValidator(new ValidatorInterval()).setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
 		dbc.bindValue(WidgetProperties.enabled().observe(textInterval), WidgetProperties.selection().observe(buttonAutoStop));
-		if(!updatable || analysis.isBeingRecorded() || analysis.hasBeenRecorded()) {
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textDescription), BeanProperties.value(IAnalysis.class, IAnalysis.PROPERTY_DESCRIPTION).observe(analysis), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		if(!updatable || analysis.hasBeenRecorded()) {
 			disableEdition();
 			if(updatable) {
 				setErrors();
 			}
 		} else {
 		}
-		return parent;
+		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
+		return composite;
 	}
 
 	private void disableEdition() {
@@ -113,6 +121,7 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 		textInterval.setEnabled(false);
 		buttonAutoContinue.setEnabled(false);
 		buttonAutoStop.setEnabled(false);
+		textDescription.setEnabled(false);
 	}
 
 	@Override
@@ -124,9 +133,6 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 	@Override
 	public boolean isValid() {
 
-		if(analysis.isBeingRecorded() || analysis.hasBeenRecorded()) {
-			return false;
-		}
 		return super.isValid();
 	}
 
@@ -140,7 +146,7 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 	@Override
 	public boolean performOk() {
 
-		if(analysis.isBeingRecorded() || analysis.hasBeenRecorded()) {
+		if(analysis.hasBeenRecorded()) {
 			performDefaults();
 			disableEdition();
 			return false;
@@ -152,9 +158,7 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 
 	private void setErrors() {
 
-		if(analysis.isBeingRecorded()) {
-			setErrorMessage("Can not change analysis because Analysis is being recored");
-		} else if(analysis.hasBeenRecorded()) {
+		if(analysis.hasBeenRecorded()) {
 			setErrorMessage("Can not change analysis because Anaysis has been recorded");
 		}
 	}

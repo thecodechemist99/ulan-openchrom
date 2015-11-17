@@ -12,22 +12,23 @@
 package org.chromulan.system.control.model.chromatogram;
 
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
+import org.eclipse.chemclipse.csd.model.implementation.ChromatogramCSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public class ChromatogramRecordingCSD extends AbstractChromatogramRecording implements IChromatogramRecordingCSD {
 
+	public ChromatogramRecordingCSD(int scanDelay, int scanInterval) {
+
+		super(scanDelay, scanInterval);
+	}
 
 	@Override
-	public IChromatogramCSD copyChromatogramCSD() {
+	protected IChromatogram createChromatogram(int scanDelay, int scanInterval) {
 
-		IChromatogram chromatogram = getChromatogram();
-		synchronized(chromatogram) {
-			if(chromatogram instanceof IChromatogramCSDCopyable) {
-				IChromatogramCSDCopyable chromOld = (IChromatogramCSDCopyable)chromatogram;
-				return chromOld.copyChromatogramCSD();
-			}
-		}
-		return null;
+		IChromatogramCSD chromatogram = new ChromatogramCSD();
+		chromatogram.setScanDelay(scanDelay);
+		chromatogram.setScanInterval(scanInterval);
+		return chromatogram;
 	}
 
 	@Override

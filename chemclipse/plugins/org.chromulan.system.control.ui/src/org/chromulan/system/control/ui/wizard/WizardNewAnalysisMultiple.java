@@ -24,20 +24,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class WizardNewAnalysisPageTwo extends WizardPage {
+public class WizardNewAnalysisMultiple extends WizardPage {
 
-	public WizardNewAnalysisPageTwo() {
+	public WizardNewAnalysisMultiple() {
 
 		super("New Analysis");
 		setTitle("Set multiple analysis");
 	}
 
-	public WizardNewAnalysisPageTwo(String pageName) {
+	public WizardNewAnalysisMultiple(String pageName) {
 
 		super(pageName);
 	}
 
-	public WizardNewAnalysisPageTwo(String pageName, String title, ImageDescriptor titleImage) {
+	public WizardNewAnalysisMultiple(String pageName, String title, ImageDescriptor titleImage) {
 
 		super(pageName, title, titleImage);
 	}

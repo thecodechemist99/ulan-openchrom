@@ -23,25 +23,26 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class WizardNewAnalysisPageOne extends WizardPage {
+public class WizardNewAnalysisMain extends WizardPage {
 
-	public WizardNewAnalysisPageOne() {
+	public WizardNewAnalysisMain() {
 
-		super("New Analysis ");
+		super("New Analysis");
 		setTitle("Paramenter of Analysis");
 	}
 
-	public WizardNewAnalysisPageOne(String pageName) {
+	public WizardNewAnalysisMain(String pageName) {
 
 		super(pageName);
 	}
 
-	public WizardNewAnalysisPageOne(String pageName, String title, ImageDescriptor titleImage) {
+	public WizardNewAnalysisMain(String pageName, String title, ImageDescriptor titleImage) {
 
 		super(pageName, title, titleImage);
 	}
@@ -49,9 +50,9 @@ public class WizardNewAnalysisPageOne extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 
+		Composite composite = new Composite(parent, SWT.NONE);
 		DataBindingContext dbc = new DataBindingContext();
 		WizardPageSupport.create(this, dbc);
-		Composite composite = new Composite(parent, SWT.NONE);
 		Label label = new Label(composite, SWT.None);
 		label.setText("Name of analysis");
 		final Text textName = new Text(composite, SWT.BORDER);
@@ -69,6 +70,13 @@ public class WizardNewAnalysisPageOne extends WizardPage {
 		label.setText("Interval");
 		final Text textInterval = new Text(composite, SWT.BORDER);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textInterval), model.interval, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorInterval()).setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
+		label = new Label(composite, SWT.None);
+		label.setText("Description");
+		final Text textDescription = new Text(composite, SWT.MULTI | SWT.V_SCROLL);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textDescription), model.description);
+		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gridData.heightHint = 3 * textDescription.getLineHeight();
+		textDescription.setLayoutData(gridData);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		setControl(composite);
 	}

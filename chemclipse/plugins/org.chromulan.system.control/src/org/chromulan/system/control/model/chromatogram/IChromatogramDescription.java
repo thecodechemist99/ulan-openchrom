@@ -11,9 +11,15 @@
  *******************************************************************************/
 package org.chromulan.system.control.model.chromatogram;
 
-import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
+public interface IChromatogramDescription {
 
-public interface IChromatogramCSDCopyable extends IChromatogramCopyable, IChromatogramCSD {
+	final String DEFAULT_NAME = "chromatogram";
 
-	IChromatogramCSD copyChromatogramCSD();
+	String getDescription();
+
+	String getName();
+
+	void setDescription(String description);
+
+	void setName(String name);
 }
