@@ -12,4 +12,6 @@
 package org.chromulan.system.control.model;
 
 public interface IAnalysisCSD extends IAnalysis {
+
+	IAnalysisCSDSaver getAnalysisCSDSaver();
 }

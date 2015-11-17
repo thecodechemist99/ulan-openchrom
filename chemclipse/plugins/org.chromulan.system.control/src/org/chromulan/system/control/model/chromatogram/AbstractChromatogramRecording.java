@@ -39,7 +39,7 @@ public abstract class AbstractChromatogramRecording extends AbstractChromatogram
 			int number = chromatogram.getNumberOfScans();
 			scan.setParentChromatogram(chromatogram);
 			scan.setRetentionTime(chromatogram.getScanDelay() + chromatogram.getScanInterval() * (number));
-			scan.setScanNumber(number);
+			scan.setScanNumber(number + 1);
 			chromatogram.addScan(scan);
 		}
 	}

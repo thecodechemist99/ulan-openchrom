@@ -27,9 +27,12 @@ import org.chromulan.system.control.events.IControlDevicesEvents;
 import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.AnalysesCSD;
 import org.chromulan.system.control.model.AnalysisCSD;
-import org.chromulan.system.control.model.IAnalyses;
+import org.chromulan.system.control.model.AnalysisCSDSaver;
+import org.chromulan.system.control.model.IAnalysesCSD;
 import org.chromulan.system.control.model.IAnalysis;
 import org.chromulan.system.control.model.IAnalysisCSD;
+import org.chromulan.system.control.model.IAnalysisCSDSaver;
+import org.chromulan.system.control.model.IAnalysisSaver;
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
@@ -41,8 +44,9 @@ import org.chromulan.system.control.ui.analysis.support.LabelAnalysisInterval;
 import org.chromulan.system.control.ui.devices.support.ProfilePreferencePage;
 import org.chromulan.system.control.ui.wizard.WizardNewAnalyses;
 import org.chromulan.system.control.ui.wizard.WizardNewAnalysis;
+import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
+import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
-import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.commands.EHandlerService;
@@ -110,9 +114,9 @@ public class AnalysesPart {
 		}
 	}
 
-	private IAnalyses analyses;
+	private IAnalysesCSD analyses;
 	private AnalysesTable analysesTable;
-	private IAnalysis analysis;
+	private IAnalysisCSD analysis;
 	private LabelAnalysisInterval analysisInterval;
 	private Button buttonActualAnalysis;
 	private Button buttonAddAnalysis;
@@ -179,7 +183,7 @@ public class AnalysesPart {
 		};
 	}
 
-	private void addAnalysis(IAnalysis analysis) {
+	private void addAnalysis(IAnalysisCSD analysis) {
 
 		if(analyses.getActualAnalysis() == null) {
 			analyses.addAnalysis(analysis);
@@ -248,7 +252,7 @@ public class AnalysesPart {
 			public void widgetSelected(SelectionEvent e) {
 
 				endAnalysis();
-				setAnalysis(analyses.setNextAnalysisActual());
+				setAnalysis((IAnalysisCSD)analyses.setNextAnalysisActual());
 			}
 		});
 		gridData = new GridData(GridData.END, GridData.FILL, false, false);
@@ -412,6 +416,9 @@ public class AnalysesPart {
 				analysis.setInterval((Long)newAnalysisWizard.getModel().interval.getValue());
 				analysis.setDevicesProfile((IDevicesProfile)newAnalysisWizard.getModel().devicesProfile.getValue());
 				analysis.setDescription((String)newAnalysisWizard.getModel().description.getValue());
+				IAnalysisSaver saver = new AnalysisCSDSaver();
+				saver.setFile(file);
+				analysis.setAnalysisSaver(saver);
 				addAnalysis(analysis);
 			}
 		}
@@ -551,7 +558,7 @@ public class AnalysesPart {
 				}
 				analyses.setNextAnalysisActual();
 				analyses.removeAnalysis(number);
-				setAnalysis(analyses.getActualAnalysis());
+				setAnalysis((IAnalysisCSD)analyses.getActualAnalysis());
 			} else {
 				// TODO: alert
 			}
@@ -580,39 +587,30 @@ public class AnalysesPart {
 
 	private void saveAnalysis() {
 
-		String path = file.getAbsolutePath() + File.separator + analysis.getName();
-		File nFile = new File(path);
-		if(!nFile.exists()) {
-			if(!nFile.mkdir()) {
-				// TODO:excetpiton
-				return;
+		IAnalysisCSDSaver saver = analysis.getAnalysisCSDSaver();
+		saver.setName(analysis.getName());
+		saver.addDescription(analysis);
+		ChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
+		List<ISupplier> suppliers = support.getExportSupplier();
+		ISupplier supplier = null;
+		for(ISupplier iSupplier : suppliers) {
+			if(iSupplier.getFileExtension().equals(".xy")) {
+				supplier = iSupplier;
+				break;
 			}
 		}
-		saveChromaptogram(file);
-	}
-
-	private void saveChromaptogram(File file) {
-
+		saver.setSuplier(supplier);
 		for(IControlDevice device : analysis.getDevicesProfile().getControlDevices().getControlDevices()) {
 			MPart part = partService.findPart(device.getID());
 			if(part != null && part.getContext() != null && part.getContext().containsKey(IChromatogramRecordingCSD.class)) {
 				IChromatogramRecordingCSD chromatogramRecording = part.getContext().get(IChromatogramRecordingCSD.class);
-				if(chromatogramRecording != null) {
-					IChromatogramCSD chromatogram = chromatogramRecording.getChromatogramCSD();
-					if(chromatogram != null) {
-						String description = analysis.getDescription() + System.getProperty("line.separator") + chromatogramRecording.getDescription();
-						chromatogram.setShortInfo(description);
-						if(chromatogram != null) {
-							File fileOutput = new File(file.getAbsolutePath() + File.pathSeparator + device.getID() + ".ocb");
-							ChromatogramConverterCSD.convert(fileOutput, chromatogram, "ocb", new NullProgressMonitor());
-						}
-					}
-				}
+				saver.addChromatogam(chromatogramRecording);
 			}
 		}
+		saver.save(new NullProgressMonitor());
 	}
 
-	private void setAnalysis(IAnalysis analysis) {
+	private void setAnalysis(IAnalysisCSD analysis) {
 
 		if(analysis != null && !isSetAnalysis) {
 			if(this.analysis == null) {
@@ -700,7 +698,7 @@ public class AnalysesPart {
 			if(analysis.getAutoContinue()) {
 				saveAnalysis();
 				endAnalysis();
-				setAnalysis(analyses.setNextAnalysisActual());
+				setAnalysis((IAnalysisCSD)analyses.setNextAnalysisActual());
 			} else {
 				buttonStart.setEnabled(false);
 				buttonStop.setEnabled(false);

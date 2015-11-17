@@ -15,7 +15,9 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Date;
 
-public interface IAnalysis {
+import org.chromulan.system.control.model.chromatogram.IChromatogramDescription;
+
+public interface IAnalysis extends IChromatogramDescription {
 
 	final String PROPERTY_AUTO_CONTINUE = "autoContinue";
 	final String PROPERTY_AUTO_STOP = "autoStop";
@@ -28,19 +30,17 @@ public interface IAnalysis {
 
 	void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
+	IAnalysisSaver getAnalysisSaver();
+
 	boolean getAutoContinue();
 
 	boolean getAutoStop();
-
-	String getDescription();
 
 	IDevicesProfile getDevicesProfile();
 
 	File getDirectory();
 
 	long getInterval();
-
-	String getName();
 
 	Date getStartDate();
 
@@ -52,19 +52,17 @@ public interface IAnalysis {
 
 	void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
+	void setAnalysisSaver(IAnalysisSaver saver);
+
 	void setAutoContinue(boolean b);
 
 	void setAutoStop(boolean b);
-
-	void setDescription(String description);
 
 	void setDevicesProfile(IDevicesProfile devicesProfile);
 
 	void setDirectory(File directory);
 
 	void setInterval(long interval);
-
-	void setName(String name);
 
 	void startRecording();
 

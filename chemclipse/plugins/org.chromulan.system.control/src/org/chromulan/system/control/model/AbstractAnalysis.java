@@ -18,6 +18,7 @@ import java.util.Date;
 
 public abstract class AbstractAnalysis implements IAnalysis {
 
+	private IAnalysisSaver analysisSaver;
 	private boolean autoContinue;
 	private boolean autoStop;
 	private Date date;
@@ -50,6 +51,12 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 
 		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public IAnalysisSaver getAnalysisSaver() {
+
+		return analysisSaver;
 	}
 
 	@Override
@@ -122,6 +129,12 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 
 		propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public void setAnalysisSaver(IAnalysisSaver saver) {
+
+		this.analysisSaver = saver;
 	}
 
 	@Override

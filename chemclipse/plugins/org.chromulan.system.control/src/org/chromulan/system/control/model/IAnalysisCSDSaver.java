@@ -11,20 +11,17 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
-public class AnalysisCSD extends AbstractAnalysis implements IAnalysisCSD {
+import java.util.List;
 
-	public AnalysisCSD() {
+import org.chromulan.system.control.model.chromatogram.IChromatogramRecordingCSD;
 
-		super();
-	}
+public interface IAnalysisCSDSaver extends IAnalysisSaver {
 
-	@Override
-	public IAnalysisCSDSaver getAnalysisCSDSaver() {
+	void addChromatogam(IChromatogramRecordingCSD chromatogram);
 
-		IAnalysisSaver analysisSaver = getAnalysisSaver();
-		if(analysisSaver instanceof IAnalysisCSDSaver) {
-			return (IAnalysisCSDSaver)analysisSaver;
-		}
-		return null;
-	}
+	List<IChromatogramRecordingCSD> getChromatograms();
+
+	void removeAllChromatograms();
+
+	void removeChromatogam(IChromatogramRecordingCSD chromatogram);
 }

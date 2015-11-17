@@ -64,7 +64,7 @@ public class ULad3xPart {
 
 		parent.setLayout(new GridLayout(3, false));
 		controlDevice = (IControlDevice)part.getObject();
-		uLad3x = new ULad3x(controlDevice.getDeviceDescription());
+		uLad3x = new ULad3x(controlDevice);
 		try {
 			uLad3x.connect();
 			uLad3x.start(false);
