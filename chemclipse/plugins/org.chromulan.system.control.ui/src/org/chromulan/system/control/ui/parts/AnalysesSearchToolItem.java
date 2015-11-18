@@ -35,8 +35,7 @@ import org.eclipse.swt.widgets.Text;
 public class AnalysesSearchToolItem {
 
 	public final static String ID_COMMAND_SEARCH = "org.chromulan.system.control.ui.command.analyses.search";
-	public final static String ID_COMMAND_SEARCH_REMOVE = "org.chromulan.system.control.ui.command.analyses.searchRemove";
-	public final static String ID_PARAMETER_NAME = "name";
+	public final static String ID_PARAMETER_SEARCH_NAME = "name";
 	@Inject
 	private ECommandService commandService;
 	@Inject
@@ -60,7 +59,7 @@ public class AnalysesSearchToolItem {
 				String search = text.getText();
 				if(search.isEmpty()) {
 					Map<String, Object> parameters = new HashMap<String, Object>();
-					parameters.put(ID_PARAMETER_NAME, search);
+					parameters.put(ID_PARAMETER_SEARCH_NAME, search);
 					ParameterizedCommand com = commandService.createCommand(ID_COMMAND_SEARCH, parameters);
 					if(handlerService.canExecute(com)) {
 						handlerService.executeHandler(com);
@@ -69,7 +68,7 @@ public class AnalysesSearchToolItem {
 				}
 				if(e.keyCode == SWT.LF || e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
 					Map<String, Object> parameters = new HashMap<String, Object>();
-					parameters.put(ID_PARAMETER_NAME, search);
+					parameters.put(ID_PARAMETER_SEARCH_NAME, search);
 					ParameterizedCommand com = commandService.createCommand(ID_COMMAND_SEARCH, parameters);
 					if(handlerService.canExecute(com)) {
 						handlerService.executeHandler(com);
@@ -85,7 +84,7 @@ public class AnalysesSearchToolItem {
 
 				text.setText("");
 				Map<String, Object> parameters = new HashMap<String, Object>();
-				parameters.put(ID_PARAMETER_NAME, "");
+				parameters.put(ID_PARAMETER_SEARCH_NAME, "");
 				ParameterizedCommand com = commandService.createCommand(ID_COMMAND_SEARCH, parameters);
 				if(handlerService.canExecute(com)) {
 					handlerService.executeHandler(com);

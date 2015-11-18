@@ -98,6 +98,10 @@ public class AnalysesPart {
 		@Override
 		public void run() {
 
+			IAnalysis analysis = AnalysesPart.this.analysis;
+			if(analysis == null || analysis.hasBeenRecorded()) {
+				return;
+			}
 			if(analysis.getStartDate() != null) {
 				analysisInterval.setTime(System.currentTimeMillis() - analysis.getStartDate().getTime());
 			}
@@ -106,6 +110,7 @@ public class AnalysesPart {
 				if(time < 0) {
 					stopRecording();
 					progressBarTimeRemain.setSelection(progressBarTimeRemain.getMaximum());
+					return;
 				} else {
 					progressBarTimeRemain.setSelection((int)(analysis.getInterval() - time));
 				}
@@ -143,7 +148,6 @@ public class AnalysesPart {
 	@Inject
 	private MPerspective perspective;
 	private ProgressBar progressBarTimeRemain;
-	private boolean stopRecording;
 	private Table tableActualAnalysis;
 	private ActualyationTimeRecording timeRecording;
 
@@ -151,7 +155,6 @@ public class AnalysesPart {
 
 		analysis = null;
 		timeRecording = new ActualyationTimeRecording();
-		stopRecording = true;
 		IULanCommunication com = new ULanCommunicationInterface();
 		filtStartRecording = com.addFilt(ULanHandle.CMD_LCDMRK, null, new CompletionHandler<ULanMsg, Void>() {
 
@@ -449,7 +452,7 @@ public class AnalysesPart {
 		}
 	}
 
-	private void endAnalysis() {
+	synchronized private void endAnalysis() {
 
 		if((analysis != null) && (isSetAnalysis) && (!analysis.isBeingRecorded())) {
 			analysis.removePropertyChangeListener(dataAnalysisChange);
@@ -514,7 +517,7 @@ public class AnalysesPart {
 		handlerService.activateHandler(AnalysesSearchToolItem.ID_COMMAND_SEARCH, new Object() {
 
 			@Execute
-			public void execute(@Named(AnalysesSearchToolItem.ID_PARAMETER_NAME) final String nameSearch) {
+			public void execute(@Named(AnalysesSearchToolItem.ID_PARAMETER_SEARCH_NAME) final String nameSearch) {
 
 				if(nameSearch == null || nameSearch.isEmpty()) {
 					analysesTable.removeFilterName();
@@ -610,7 +613,7 @@ public class AnalysesPart {
 		saver.save(new NullProgressMonitor());
 	}
 
-	private void setAnalysis(IAnalysisCSD analysis) {
+	synchronized private void setAnalysis(IAnalysisCSD analysis) {
 
 		if(analysis != null && !isSetAnalysis) {
 			if(this.analysis == null) {
@@ -674,12 +677,11 @@ public class AnalysesPart {
 		}
 	}
 
-	public void startRecording() {
+	synchronized public void startRecording() {
 
-		if((analysis != null) && isSetAnalysis) {
+		if((analysis != null) && isSetAnalysis && !analysis.isBeingRecorded() && !analysis.hasBeenRecorded()) {
 			analysis.startRecording();
 			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START_RECORDING, analysis);
-			stopRecording = false;
 			display.asyncExec(timeRecording);
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(true);
@@ -688,12 +690,11 @@ public class AnalysesPart {
 		}
 	}
 
-	public void stopRecording() {
+	synchronized public void stopRecording() {
 
-		if(!stopRecording && (analysis != null) && isSetAnalysis) {
+		if((analysis != null) && isSetAnalysis && analysis.isBeingRecorded()) {
 			analysis.stopRecording();
 			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP_RECORDING, analysis);
-			stopRecording = true;
 			display.timerExec(-1, timeRecording);
 			if(analysis.getAutoContinue()) {
 				saveAnalysis();

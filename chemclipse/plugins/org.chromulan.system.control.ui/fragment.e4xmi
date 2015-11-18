@@ -48,7 +48,6 @@
     <elements xsi:type="commands:Command" xmi:id="_3OKFIHizEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.command.analyses.search" commandName="Search">
       <parameters xmi:id="_5aLwMHlVEeWB3ebT_GT_3Q" elementId="name" name="Name"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_E2x28Hi0EeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.command.analyses.searchRemove" commandName="Search remove"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ioKeYEtJEeWFBNjUJiIrKw" featurename="addons" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_nP10IEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.addon.diplayChromatogram" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.CreateChromatogram"/>
@@ -60,8 +59,8 @@
     <elements xsi:type="basic_1:PartDescriptor" xmi:id="_EsgscHgLEeWkxZUZTkqg1A" elementId="org.chromulan.system.control.ui.ChromatogramRecording" allowMultiple="true" closeable="true" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramViewer">
       <toolbar xmi:id="_ctMbsHojEeWegb6SmdMD8w" elementId="org.chromulan.system.control.ui.toolbar.0">
         <children xsi:type="menu:HandledToolItem" xmi:id="_KuJ2EHqNEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.handledtoolitem.0" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/updates.gif" selected="true" type="Check" command="_mWfs0HilEeWB3ebT_GT_3Q"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_LF19UHqNEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.handledtoolitem.1" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/ion.gif" type="Radio" command="_4HfJkHiiEeWB3ebT_GT_3Q"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_LdPwsHqNEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.handledtoolitem.2" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/massSpectrum.gif" selected="true" type="Radio" command="_jP3OIHgYEeWB3ebT_GT_3Q"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_LF19UHqNEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.handledtoolitem.1" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/ion.gif" selected="true" type="Radio" command="_4HfJkHiiEeWB3ebT_GT_3Q"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_LdPwsHqNEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.handledtoolitem.2" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/massSpectrum.gif" type="Radio" command="_jP3OIHgYEeWB3ebT_GT_3Q"/>
       </toolbar>
     </elements>
   </fragments>

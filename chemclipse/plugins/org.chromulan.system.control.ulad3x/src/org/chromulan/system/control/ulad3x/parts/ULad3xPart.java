@@ -166,8 +166,12 @@ public class ULad3xPart {
 
 		if(this.analysis == analisis) {
 			part.getContext().remove(IChromatogramRecordingCSD.class);
-			this.analysis = null;
 			enableButton(true);
+			this.analysis = null;
+			if(analisis.hasBeenRecorded()) {
+				uLad3x.newRecord();
+				uLad3x.start(false);
+			}
 		}
 	}
 
@@ -177,7 +181,6 @@ public class ULad3xPart {
 
 		if(this.analysis == null && analisis.getDevicesProfile() != null && analisis.getDevicesProfile().getControlDevices().contains(controlDevice.getID())) {
 			this.analysis = analisis;
-			uLad3x.newRecord();
 		}
 	}
 
