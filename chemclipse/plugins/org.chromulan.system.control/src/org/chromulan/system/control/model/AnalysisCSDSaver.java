@@ -155,7 +155,7 @@ public class AnalysisCSDSaver implements IAnalysisCSDSaver {
 				}
 				chromatogramCSD.setShortInfo(shortInfo);
 				chromatogramCSD.setFile(nFile);
-				File fileSave = new File(nFile + File.separator + chromatogramRecordingCSD.getName());
+				File fileSave = new File(nFile + File.separator + getName() + "_" + chromatogramRecordingCSD.getName());
 				IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterCSD.convert(fileSave, chromatogramCSD, supplier.getId(), progressMonitor);
 				converterProcessingInfos.add(procesInfo);
 				chromatogramExportConverterProcessingInfos.add(procesInfo);

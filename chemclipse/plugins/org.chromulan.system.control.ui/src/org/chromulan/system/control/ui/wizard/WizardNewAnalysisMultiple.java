@@ -29,7 +29,7 @@ public class WizardNewAnalysisMultiple extends WizardPage {
 	public WizardNewAnalysisMultiple() {
 
 		super("New Analysis");
-		setTitle("Set multiple analysis");
+		setTitle("");
 	}
 
 	public WizardNewAnalysisMultiple(String pageName) {

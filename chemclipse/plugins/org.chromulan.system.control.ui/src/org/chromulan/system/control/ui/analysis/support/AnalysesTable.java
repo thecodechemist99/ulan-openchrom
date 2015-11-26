@@ -14,14 +14,20 @@ package org.chromulan.system.control.ui.analysis.support;
 import org.chromulan.system.control.model.IAnalyses;
 import org.chromulan.system.control.model.IAnalysis;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapCellLabelProvider;
+import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -31,6 +37,7 @@ public class AnalysesTable {
 	private boolean containsFilterName;
 	private String filterName;
 	private Table table;
+	private ObservableListContentProvider viewContentProvider;
 	private TableViewer viewer;
 	private ViewerFilter viewerfilterName;
 
@@ -38,10 +45,21 @@ public class AnalysesTable {
 
 		containsFilterName = false;
 		this.viewer = new TableViewer(parent, style);
+		viewContentProvider = new ObservableListContentProvider();
+		viewer.setContentProvider(viewContentProvider);
 		createColumns(parent, viewer);
 		table = viewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+		viewerfilterName = new ViewerFilter() {
+
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+
+				IAnalysis analysis = (IAnalysis)element;
+				return analysis.getName().contains(filterName);
+			}
+		};
 	}
 
 	public void addFilterName(String text) {
@@ -54,103 +72,82 @@ public class AnalysesTable {
 		}
 	}
 
-	private void bindTable() {
-
-		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setInput(analyses.getAnalyses());
-		viewerfilterName = new ViewerFilter() {
-
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-
-				IAnalysis analysis = (IAnalysis)element;
-				return analysis.getName().contains(filterName);
-			}
-		};
-	}
-
 	public boolean containsFilterName() {
 
 		return containsFilterName;
 	}
 
-	private void createColumns(Composite parent, TableViewer viewer) {
+	private void createColumns(Composite parent, final TableViewer viewer) {
 
-		String[] titles = {IAnalysis.PROPERTY_NAME, "State", IAnalysis.PROPERTY_AUTO_STOP, IAnalysis.PROPERTY_INTERVAL, IAnalysis.PROPERTY_AUTO_CONTINUE, IAnalysis.PROPERTY_DIRECTORY};
+		String[] titles = {IAnalysis.PROPERTY_NAME, "State", IAnalysis.PROPERTY_AUTO_STOP, IAnalysis.PROPERTY_DURATION, IAnalysis.PROPERTY_AUTO_CONTINUE, IAnalysis.PROPERTY_DIRECTORY};
 		int[] bounds = {100, 100, 100, 100, 100, 100};
 		// column for the name
 		TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0], 0);
-		col.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(Object element) {
-
-				IAnalysis analysis = (IAnalysis)element;
-				return analysis.getName();
-			}
-		});
+		IObservableMap attributeMapName = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_NAME);
+		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapName));
 		// column for the state
 		col = createTableViewerColumn(titles[1], bounds[1], 1);
-		col.setLabelProvider(new ColumnLabelProvider() {
+		col.setLabelProvider(new CellLabelProvider() {
 
 			@Override
-			public String getText(Object element) {
+			public void update(ViewerCell cell) {
 
-				IAnalysis analysis = (IAnalysis)element;
+				IAnalysis analysis = (IAnalysis)cell.getElement();
 				if(analyses.isActualAnalysis(analysis)) {
-					return "Actual";
+					cell.setText("Actual");
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
 				} else if(analysis.hasBeenRecorded()) {
-					return "Recored";
+					cell.setText("Record");
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 				} else {
-					return "Ready";
+					cell.setText("Ready");
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 				}
 			}
 		});
 		// column for the auto stop
 		col = createTableViewerColumn(titles[2], bounds[2], 2);
-		col.setLabelProvider(new ColumnLabelProvider() {
+		IObservableMap attributeMapAutoStop = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_AUTO_STOP);
+		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapAutoStop) {
 
 			@Override
-			public String getText(Object element) {
+			public void update(ViewerCell cell) {
 
-				IAnalysis analysis = (IAnalysis)element;
-				if(analysis.getAutoStop()) {
-					return "Yes";
-				} else {
-					return "No";
-				}
+				Object element = cell.getElement();
+				boolean value = (boolean)attributeMaps[0].get(element);
+				cell.setText(value == true ? "Yes" : "No"); //$NON-NLS-1$
 			}
 		});
 		// column for the interval
 		col = createTableViewerColumn(titles[3], bounds[3], 3);
-		col.setLabelProvider(new ColumnLabelProvider() {
+		IObservableMap attributeMapInterval = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_DURATION);
+		col.setLabelProvider(new ObservableMapCellLabelProvider(new IObservableMap[]{attributeMapAutoStop, attributeMapInterval}) {
 
 			@Override
-			public String getText(Object element) {
+			public void update(ViewerCell cell) {
 
+				Object element = cell.getElement();
 				IAnalysis analysis = (IAnalysis)element;
 				if(analysis.getAutoStop()) {
-					return Long.toString(analysis.getInterval() / (long)IChromatogramOverview.MINUTE_CORRELATION_FACTOR);
+					cell.setText(Long.toString(analysis.getDuration() / (long)IChromatogramOverview.MINUTE_CORRELATION_FACTOR));
 				} else {
-					return "";
+					cell.setText("");
 				}
 			}
 		});
 		// column for the auto continue
 		col = createTableViewerColumn(titles[4], bounds[4], 4);
-		col.setLabelProvider(new ColumnLabelProvider() {
+		IObservableMap attributeMapAutoContinue = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_AUTO_CONTINUE);
+		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapAutoContinue) {
 
 			@Override
-			public String getText(Object element) {
+			public void update(ViewerCell cell) {
 
-				IAnalysis analysis = (IAnalysis)element;
-				if(analysis.getAutoContinue()) {
-					return "Yes";
-				} else {
-					return "No";
-				}
+				Object element = cell.getElement();
+				boolean value = (boolean)attributeMaps[0].get(element);
+				cell.setText(value == true ? "Yes" : "No");
 			}
-		});
+		});/**/
 	}
 
 	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
@@ -204,7 +201,6 @@ public class AnalysesTable {
 			if(num != -1) {
 				viewer.getTable().deselectAll();
 				viewer.getTable().setTopIndex(num);
-				viewer.getTable().select(num);
 			}
 		}
 	}
@@ -212,6 +208,6 @@ public class AnalysesTable {
 	public void setAnalyses(IAnalyses analyses) {
 
 		this.analyses = analyses;
-		bindTable();
+		viewer.setInput(new WritableList(analyses.getAnalyses(), IAnalysis.class));
 	}
 }

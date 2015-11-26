@@ -24,7 +24,7 @@ public class WizardNewDevicesProfile extends Wizard {
 	public WizardNewDevicesProfile(IControlDevices devices) {
 
 		super();
-		page1 = new WizarsNewDevicesProfilePageOne(devices);
+		page1 = new WizarsNewDevicesProfilePage(devices);
 	}
 
 	@Override

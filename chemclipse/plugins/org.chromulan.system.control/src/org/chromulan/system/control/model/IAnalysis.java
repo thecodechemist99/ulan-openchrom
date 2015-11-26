@@ -23,7 +23,7 @@ public interface IAnalysis extends IChromatogramDescription {
 	final String PROPERTY_AUTO_STOP = "autoStop";
 	final String PROPERTY_DESCRIPTION = "description";
 	final String PROPERTY_DIRECTORY = "directory";
-	final String PROPERTY_INTERVAL = "interval";
+	final String PROPERTY_DURATION = "duration";
 	final String PROPERTY_NAME = "name";
 
 	void addPropertyChangeListener(PropertyChangeListener listener);
@@ -40,7 +40,7 @@ public interface IAnalysis extends IChromatogramDescription {
 
 	File getDirectory();
 
-	long getInterval();
+	long getDuration();
 
 	Date getStartDate();
 
@@ -62,7 +62,7 @@ public interface IAnalysis extends IChromatogramDescription {
 
 	void setDirectory(File directory);
 
-	void setInterval(long interval);
+	void setDuration(long duration);
 
 	void startRecording();
 

@@ -61,7 +61,11 @@ public class AvailableDevicesPart {
 	public final static String ID = "org.chromulan.system.control.ui.part.availableDevices";
 	static {
 		if(!ULanCommunicationInterface.isHandleInitialized()) {
-			ULanCommunicationInterface.setHandle(new ULanDrv());
+			try {
+				ULanCommunicationInterface.setHandle(new ULanDrv());
+			} catch(Exception e) {
+				// TODO: logger.warn(e);
+			}
 		}
 	}
 	@Inject

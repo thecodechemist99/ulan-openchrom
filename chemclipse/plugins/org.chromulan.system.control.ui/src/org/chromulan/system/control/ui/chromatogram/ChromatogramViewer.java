@@ -16,10 +16,13 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.model.chromatogram.IChromatogramRecording;
-import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -51,8 +54,6 @@ public class ChromatogramViewer {
 	final static public int DISPLAY_ALL_CHROMATOGRAM = 1;
 	final static public int DISPLAY_INTERVAL_CHROMATOGRAM = 2;
 	private boolean autoRedraw;
-	@Inject
-	private ECommandService commandService;
 	private int diplayChromatogram;
 	@Inject
 	private Display display;
@@ -62,6 +63,8 @@ public class ChromatogramViewer {
 	private IChromatogramRecording chromatogramRecording;
 	@Inject
 	private MPart part;
+	@Inject
+	private EPartService partService;
 	private RedrawChromatogram redrawChromatogram;
 
 	public ChromatogramViewer() {
@@ -73,7 +76,6 @@ public class ChromatogramViewer {
 
 	private void addHandler() {
 
-		commandService.getCommand("org.chromulan.system.control.ui.chromatogram.displayAllData");
 		Object handler = new Object() {
 
 			@Execute
@@ -84,7 +86,6 @@ public class ChromatogramViewer {
 			}
 		};
 		handlerService.activateHandler("org.chromulan.system.control.ui.chromatogram.displayAllData", handler);
-		commandService.getCommand("org.chromulan.system.control.ui.chromatogram.displayLastData");
 		Object handler2 = new Object() {
 
 			@Execute
@@ -95,7 +96,6 @@ public class ChromatogramViewer {
 			}
 		};
 		handlerService.activateHandler("org.chromulan.system.control.ui.chromatogram.displayLastData", handler2);
-		commandService.getCommand("org.chromulan.system.control.ui.command.chromatogram.displayRefreshData");
 		Object handler3 = new Object() {
 
 			@Execute
@@ -105,6 +105,20 @@ public class ChromatogramViewer {
 			}
 		};
 		handlerService.activateHandler("org.chromulan.system.control.ui.command.chromatogram.displayRefreshData", handler3);
+		Object handler4 = new Object() {
+
+			@Execute
+			public void execute() {
+
+				PreferenceManager manager = new PreferenceManager();
+				ChromatogramPreferencePage page = new ChromatogramPreferencePage(chromatogramOverView);
+				PreferenceNode mainNode = new PreferenceNode("Main", page);
+				manager.addToRoot(mainNode);
+				PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
+				dialog.open();
+			}
+		};
+		handlerService.activateHandler("org.chromulan.system.control.ui.command.chromatogram.displaySettings", handler4);
 	}
 
 	@PostConstruct
@@ -120,6 +134,7 @@ public class ChromatogramViewer {
 	@PreDestroy
 	public void destroyPart() {
 
+		partService.hidePart(part, true);
 		display.timerExec(-1, redrawChromatogram);
 	}
 

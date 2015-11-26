@@ -23,8 +23,8 @@ public class WizardModelAnalysis {
 	public IObservableValue autoStop;
 	public IObservableValue description;
 	public IObservableValue devicesProfile;
+	public IObservableValue duration;
 	public IObservableValue folder;
-	public IObservableValue interval;
 	public IObservableValue name;
 	public IObservableValue numberAnalyses;
 
@@ -33,7 +33,7 @@ public class WizardModelAnalysis {
 		autoContinue = new WritableValue(false, Boolean.class);
 		autoStop = new WritableValue(false, Boolean.class);
 		folder = new WritableValue(null, File.class);
-		interval = new WritableValue(600000L, Long.class);
+		duration = new WritableValue(600000L, Long.class);
 		name = new WritableValue("", String.class);
 		numberAnalyses = new WritableValue(1, Integer.class);
 		devicesProfile = new WritableValue(null, IDevicesProfile.class);

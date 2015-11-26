@@ -25,7 +25,7 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	private String description;
 	private IDevicesProfile devicesProfile;
 	private File directory;
-	private long interval;
+	private long duration;
 	private String name;
 	protected PropertyChangeSupport propertyChangeSupport;
 	private boolean recording;
@@ -90,9 +90,9 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	}
 
 	@Override
-	public long getInterval() {
+	public long getDuration() {
 
-		return interval;
+		return duration;
 	}
 
 	@Override
@@ -170,9 +170,9 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	}
 
 	@Override
-	public void setInterval(long interval) {
+	public void setDuration(long duration) {
 
-		propertyChangeSupport.firePropertyChange(PROPERTY_INTERVAL, this.interval, this.interval = interval);
+		propertyChangeSupport.firePropertyChange(PROPERTY_DURATION, this.duration, this.duration = duration);
 	}
 
 	@Override

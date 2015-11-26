@@ -88,7 +88,7 @@ public class ULad3xPart {
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 0);
 		textDescription.setLayoutData(gridData);
 		Button button = new Button(parent, SWT.PUSH);
-		button.setText("Display Chromatogtam");
+		button.setText("Signal Monitor");
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override

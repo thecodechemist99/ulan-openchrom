@@ -39,23 +39,30 @@ import org.chromulan.system.control.model.IDevicesProfile;
 import org.chromulan.system.control.model.ULanConnection;
 import org.chromulan.system.control.model.chromatogram.IChromatogramRecordingCSD;
 import org.chromulan.system.control.ui.analysis.support.AnalysesTable;
+import org.chromulan.system.control.ui.analysis.support.AnalysisCDSSavePreferencePage;
 import org.chromulan.system.control.ui.analysis.support.AnalysisSettingsPreferencePage;
-import org.chromulan.system.control.ui.analysis.support.LabelAnalysisInterval;
+import org.chromulan.system.control.ui.analysis.support.ChromatogramFilesDialog;
+import org.chromulan.system.control.ui.analysis.support.LabelAnalysisDuration;
 import org.chromulan.system.control.ui.devices.support.ProfilePreferencePage;
 import org.chromulan.system.control.ui.wizard.WizardNewAnalyses;
 import org.chromulan.system.control.ui.wizard.WizardNewAnalysis;
 import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
 import org.eclipse.chemclipse.converter.core.ISupplier;
+import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
+import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
+import org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -106,13 +113,13 @@ public class AnalysesPart {
 				analysisInterval.setTime(System.currentTimeMillis() - analysis.getStartDate().getTime());
 			}
 			if(analysis.getAutoStop()) {
-				long time = analysis.getStartDate().getTime() + analysis.getInterval() - System.currentTimeMillis();
+				long time = analysis.getStartDate().getTime() + analysis.getDuration() - System.currentTimeMillis();
 				if(time < 0) {
 					stopRecording();
 					progressBarTimeRemain.setSelection(progressBarTimeRemain.getMaximum());
 					return;
 				} else {
-					progressBarTimeRemain.setSelection((int)(analysis.getInterval() - time));
+					progressBarTimeRemain.setSelection((int)(analysis.getDuration() - time));
 				}
 			}
 			display.timerExec(500, this);
@@ -122,7 +129,9 @@ public class AnalysesPart {
 	private IAnalysesCSD analyses;
 	private AnalysesTable analysesTable;
 	private IAnalysisCSD analysis;
-	private LabelAnalysisInterval analysisInterval;
+	private LabelAnalysisDuration analysisInterval;
+	@Inject
+	private MApplication application;
 	private Button buttonActualAnalysis;
 	private Button buttonAddAnalysis;
 	private Button buttonEnd;
@@ -142,12 +151,15 @@ public class AnalysesPart {
 	private boolean isSetAnalysis;
 	private Label lableNameAnalysis;
 	@Inject
+	private EModelService modelService;
+	@Inject
 	private Composite parent;
 	@Inject
 	private EPartService partService;
 	@Inject
 	private MPerspective perspective;
 	private ProgressBar progressBarTimeRemain;
+	private ISupplier supplier;
 	private Table tableActualAnalysis;
 	private ActualyationTimeRecording timeRecording;
 
@@ -181,7 +193,7 @@ public class AnalysesPart {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 
-				setData();
+				setTable();
 			}
 		};
 	}
@@ -202,16 +214,34 @@ public class AnalysesPart {
 		int index = analysesTable.getViewer().getTable().getSelectionIndex();
 		if(index != -1) {
 			if(index < analyses.getNumberAnalysis()) {
-				PreferenceManager manager = new PreferenceManager();
-				AnalysisSettingsPreferencePage settings = new AnalysisSettingsPreferencePage(analyses.getAnalysis(index), true);
-				ProfilePreferencePage page = new ProfilePreferencePage(analyses.getAnalysis(index).getDevicesProfile());
-				PreferenceNode nodeBase = new PreferenceNode("base", settings);
-				PreferenceNode nodeProfile = new PreferenceNode("devices", page);
-				manager.addToRoot(nodeBase);
-				manager.addToRoot(nodeProfile);
-				PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
-				if(Window.OK == dialog.open()) {
-					redrawTable();
+				IAnalysisCSD analysis = (IAnalysisCSD)analyses.getAnalysis(index);
+				if(!analysis.hasBeenRecorded()) {
+					PreferenceManager manager = new PreferenceManager();
+					AnalysisSettingsPreferencePage settings = new AnalysisSettingsPreferencePage(analysis);
+					ProfilePreferencePage page = new ProfilePreferencePage(analysis.getDevicesProfile());
+					AnalysisCDSSavePreferencePage save = new AnalysisCDSSavePreferencePage(analysis);
+					PreferenceNode nodeBase = new PreferenceNode("Main", settings);
+					PreferenceNode nodeProfile = new PreferenceNode("Devices", page);
+					PreferenceNode nodeSave = new PreferenceNode("Save", save);
+					manager.addToRoot(nodeBase);
+					manager.addToRoot(nodeProfile);
+					manager.addToRoot(nodeSave);
+					PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
+					dialog.open();
+				} else {
+					ChromatogramFilesDialog dialog = new ChromatogramFilesDialog(Display.getCurrent().getActiveShell(), analysis.getAnalysisSaver());
+					if(dialog.open() == Window.OK) {
+						List<IChromatogramExportConverterProcessingInfo> chromatogramFiles = dialog.getChromatogramExportConverterProcessingInfos();
+						ChromatogramEditorSupport support = new ChromatogramEditorSupport();
+						for(IChromatogramExportConverterProcessingInfo chromatogramFile : chromatogramFiles) {
+							try {
+								support.openEditor(chromatogramFile.getFile(), modelService, application, partService);
+							} catch(TypeCastException e) {
+								// TODO: logger.warn(e);
+							}
+						}
+					}
+					;
 				}
 			}
 		}
@@ -219,10 +249,15 @@ public class AnalysesPart {
 
 	private boolean controlAnalysis(IAnalysis analysis) {
 
-		return controlDevices(analysis.getDevicesProfile()) && controlNet();
+		return controlUsingDevices(analysis.getDevicesProfile()) && controlConnection();
 	}
 
-	private boolean controlDevices(IDevicesProfile profile) {
+	private boolean controlConnection() {
+
+		return ULanCommunicationInterface.isOpen();
+	}
+
+	private boolean controlUsingDevices(IDevicesProfile profile) {
 
 		eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_REQIRED, analysis.getDevicesProfile().getControlDevices());
 		for(IControlDevice device : profile.getControlDevices().getControlDevices()) {
@@ -232,11 +267,6 @@ public class AnalysesPart {
 			}
 		}
 		return true;
-	}
-
-	private boolean controlNet() {
-
-		return ULanCommunicationInterface.isOpen();
 	}
 
 	private void createActualAnalysisControl(Composite composite) {
@@ -296,7 +326,7 @@ public class AnalysesPart {
 		});
 		gridData = new GridData(GridData.BEGINNING, GridData.FILL, false, false);
 		buttonSave.setLayoutData(gridData);
-		analysisInterval = new LabelAnalysisInterval(composite, SWT.RIGHT);
+		analysisInterval = new LabelAnalysisDuration(composite, SWT.RIGHT);
 		analysisInterval.setTime(0);
 		gridData = new GridData(GridData.CENTER, GridData.CENTER, true, false);
 		analysisInterval.getLabel().setLayoutData(gridData);
@@ -416,11 +446,12 @@ public class AnalysesPart {
 				analysis.setName(name);
 				analysis.setAutoContinue((Boolean)newAnalysisWizard.getModel().autoContinue.getValue());
 				analysis.setAutoStop((Boolean)newAnalysisWizard.getModel().autoStop.getValue());
-				analysis.setInterval((Long)newAnalysisWizard.getModel().interval.getValue());
+				analysis.setDuration((Long)newAnalysisWizard.getModel().duration.getValue());
 				analysis.setDevicesProfile((IDevicesProfile)newAnalysisWizard.getModel().devicesProfile.getValue());
 				analysis.setDescription((String)newAnalysisWizard.getModel().description.getValue());
 				IAnalysisSaver saver = new AnalysisCSDSaver();
 				saver.setFile(file);
+				saver.setSuplier(supplier);
 				analysis.setAnalysisSaver(saver);
 				addAnalysis(analysis);
 			}
@@ -441,14 +472,15 @@ public class AnalysesPart {
 		if(this.analyses != null) {
 			this.analyses.removeAllAnalysis();
 		}
-		this.analyses = new AnalysesCSD();
-		analysesTable.setAnalyses(analyses);
 		WizardNewAnalyses newAnalysisWizard = new WizardNewAnalyses();
 		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAnalysisWizard);
 		if(wizardDialog.open() == Window.OK) {
+			this.analyses = new AnalysesCSD();
+			analysesTable.setAnalyses(analyses);
 			buttonActualAnalysis.setEnabled(true);
 			buttonAddAnalysis.setEnabled(true);
 			this.file = newAnalysisWizard.getFile();
+			this.supplier = newAnalysisWizard.getSupplier();
 		}
 	}
 
@@ -619,7 +651,7 @@ public class AnalysesPart {
 			if(this.analysis == null) {
 				this.analysis = analysis;
 				analysis.addPropertyChangeListener(dataAnalysisChange);
-				setData();
+				setTable();
 			}
 			if(this.analysis == analysis) {
 				if(controlAnalysis(analysis)) {
@@ -648,7 +680,7 @@ public class AnalysesPart {
 		setAnalysis(analysis);
 	}
 
-	private void setData() {
+	private void setTable() {
 
 		if(this.analysis != null) {
 			tableActualAnalysis.removeAll();
@@ -659,9 +691,9 @@ public class AnalysesPart {
 				tableItem.setText(1, "Yes");
 				tableItem = new TableItem(tableActualAnalysis, SWT.NONE);
 				progressBarTimeRemain.setEnabled(true);
-				progressBarTimeRemain.setMaximum((int)analysis.getInterval());
-				tableItem.setText("Interval");
-				tableItem.setText(1, Long.toString(analysis.getInterval() / (long)IChromatogramOverview.MINUTE_CORRELATION_FACTOR));
+				progressBarTimeRemain.setMaximum((int)analysis.getDuration());
+				tableItem.setText("Duration (min)");
+				tableItem.setText(1, Long.toString(analysis.getDuration() / (long)IChromatogramOverview.MINUTE_CORRELATION_FACTOR));
 			} else {
 				progressBarTimeRemain.setSelection(0);
 				progressBarTimeRemain.setEnabled(false);

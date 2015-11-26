@@ -3,6 +3,8 @@ package org.chromulan.system.control.net;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import net.sourceforge.ulan.base.ULanDrv;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -20,6 +22,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 
 		Activator.context = bundleContext;
+		ULanDrv.loadLibrary(false);
 	}
 
 	/*

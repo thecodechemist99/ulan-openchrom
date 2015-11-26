@@ -70,6 +70,7 @@ public class ULad3x {
 	public void connect() throws ClosedChannelException, IOException {
 
 		if(ULanCommunicationInterface.isOpen()) {
+			System.out.println("is active " + filtGetData.isFiltActive());
 			filtGetData.activateFilt();
 		}
 	}

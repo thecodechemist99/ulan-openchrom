@@ -13,16 +13,17 @@ package org.chromulan.system.control.ui.wizard;
 
 import java.io.File;
 
+import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.jface.wizard.Wizard;
 
 public class WizardNewAnalyses extends Wizard {
 
-	private WizarPageNewAnalysesBase base;
+	private WizarPageNewAnalysesMain base;
 
 	public WizardNewAnalyses() {
 
 		super();
-		base = new WizarPageNewAnalysesBase("Select Default Directory");
+		base = new WizarPageNewAnalysesMain("Select Default Directory");
 	}
 
 	@Override
@@ -34,6 +35,11 @@ public class WizardNewAnalyses extends Wizard {
 	public File getFile() {
 
 		return base.getFile();
+	}
+
+	public ISupplier getSupplier() {
+
+		return base.getSupplier();
 	}
 
 	@Override

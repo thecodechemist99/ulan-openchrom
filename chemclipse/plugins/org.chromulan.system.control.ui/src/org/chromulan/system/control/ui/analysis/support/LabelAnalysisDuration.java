@@ -14,12 +14,12 @@ package org.chromulan.system.control.ui.analysis.support;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-public class LabelAnalysisInterval {
+public class LabelAnalysisDuration {
 
 	private Label label;
 	private long time;
 
-	public LabelAnalysisInterval(Composite composite, int style) {
+	public LabelAnalysisDuration(Composite composite, int style) {
 
 		label = new Label(composite, style);
 		label.setText("00:00:00");

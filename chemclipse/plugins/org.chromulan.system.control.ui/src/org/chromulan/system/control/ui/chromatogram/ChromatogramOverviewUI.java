@@ -40,7 +40,7 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 		super(parent, style, new AxisTitlesIntensityScale());
 		autoMinYAdjustIntensity = false;
-		minYAdjustIntensity = 0.1;
+		minYAdjustIntensity = 0.01;
 		interval = 30000;
 	}
 
@@ -136,7 +136,6 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 		if(this.chromatogramRecording != null && this.chromatogramRecording.getNumberOfScans() != 0) {
 			deleteAllCurrentSeries();
 			setViewSeries();
-			redraw();
 		}
 	}
 

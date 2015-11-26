@@ -11,25 +11,27 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.analysis.support;
 
+import java.io.File;
+
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-public class ValidatorInterval implements IValidator {
+public class ValidatorDirectory implements IValidator {
 
 	@Override
 	public IStatus validate(Object value) {
 
-		if(value != null) {
-			long i = (Long)value;
-			if(i >= 1) {
+		if(value instanceof File) {
+			File file = (File)value;
+			if(file.isDirectory()) {
 				return Status.OK_STATUS;
 			} else {
-				return ValidationStatus.error("INTERVAL: value have to be larger then zero");
+				return ValidationStatus.error("directory path is not valid");
 			}
 		} else {
-			return ValidationStatus.error("INTERVAL: is not number");
+			return ValidationStatus.error("directory path is not valid");
 		}
 	}
 }

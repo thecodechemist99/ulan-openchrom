@@ -14,8 +14,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/ulan-java.jar,
  lib/guava-18.0.jar,
  .
-Bundle-NativeCode: lib/libulan_drv_jni64.dll
+Bundle-NativeCode: lib/win64/ulan_drv_jni.dll; osname=Win32; processor=x86-64,
+ lib/linux_x86_64/libulan_drv_jni.so; osname=Linux; processor=x86-64
 Export-Package: net.sourceforge.ulan.annotation,
  net.sourceforge.ulan.base,
- net.sourceforge.ulan.base.exceptions,
- net.sourceforge.ulan.supports
+ net.sourceforge.ulan.base.exceptions

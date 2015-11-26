@@ -13,7 +13,7 @@ package org.chromulan.system.control.ui.wizard;
 
 import org.chromulan.system.control.ui.analysis.support.MillisecondsToMinutes;
 import org.chromulan.system.control.ui.analysis.support.MinutesToMilliseconds;
-import org.chromulan.system.control.ui.analysis.support.ValidatorInterval;
+import org.chromulan.system.control.ui.analysis.support.ValidatorDuration;
 import org.chromulan.system.control.ui.analysis.support.ValidatorName;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -57,7 +57,7 @@ public class WizardPageOne extends WizardPage {
 		label = new Label(composite, SWT.None);
 		label.setText("Interval");
 		final Text textInterval = new Text(composite, SWT.BORDER);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textInterval), model.interval, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorInterval()).setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textInterval), model.duration, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorDuration()).setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		setControl(composite);
 	}
