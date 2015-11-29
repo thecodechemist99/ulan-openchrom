@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.model.chromatogram.IChromatogramRecording;
+import org.chromulan.system.control.model.data.IChromatogramData;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -59,8 +59,8 @@ public class ChromatogramViewer {
 	private Display display;
 	@Inject
 	private EHandlerService handlerService;
+	private IChromatogramData chromatogramData;
 	private ChromatogramOverviewUI chromatogramOverView;
-	private IChromatogramRecording chromatogramRecording;
 	@Inject
 	private MPart part;
 	@Inject
@@ -124,10 +124,10 @@ public class ChromatogramViewer {
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 
-		chromatogramRecording = (IChromatogramRecording)part.getObject();
+		chromatogramData = (IChromatogramData)part.getObject();
 		redrawChromatogram(autoRedraw);
 		chromatogramOverView = new ChromatogramOverviewUI(parent, SWT.NONE);
-		chromatogramOverView.setChromatogram(chromatogramRecording);
+		chromatogramOverView.setChromatogram(chromatogramData);
 		addHandler();
 	}
 

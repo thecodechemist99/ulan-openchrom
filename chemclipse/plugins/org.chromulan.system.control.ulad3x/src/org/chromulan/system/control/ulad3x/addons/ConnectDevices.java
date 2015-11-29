@@ -14,6 +14,7 @@ package org.chromulan.system.control.ulad3x.addons;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.events.IControlDeviceEvents;
+import org.chromulan.system.control.model.DeviceType;
 import org.chromulan.system.control.model.IControlDevice;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -38,15 +39,18 @@ public class ConnectDevices {
 	public void connectDevice(@UIEventTopic(value = IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT) IControlDevice device) {
 
 		if(device.getDeviceDescription().getModulType().toLowerCase().equals("ulad31") || device.getDeviceDescription().getModulType().toLowerCase().equals("ulad32")) {
-			MPart part = MBasicFactory.INSTANCE.createPart();
-			part.setLabel(device.getID());
-			part.setObject(device);
-			part.setElementId(device.getID());
-			part.setCloseable(false);
-			part.setContributionURI("bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.ulad3x.parts.ULad3xPart");
-			MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
-			stack.getChildren().add(part);
-			partService.activate(part);
+			device.setDeviceType(DeviceType.DETECTOR);
+			if(modelService.find(device.getID(), application) == null) {
+				MPart part = MBasicFactory.INSTANCE.createPart();
+				part.setLabel(device.getID());
+				part.setObject(device);
+				part.setElementId(device.getID());
+				part.setCloseable(false);
+				part.setContributionURI("bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.ulad3x.parts.ULad3xPart");
+				MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
+				stack.getChildren().add(part);
+				partService.activate(part);
+			}
 		}
 	}
 }

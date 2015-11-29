@@ -21,7 +21,7 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: org.chromulan.system.control.model,
- org.chromulan.system.control.model.chromatogram,
+ org.chromulan.system.control.model.data,
  org.eclipse.chemclipse.converter.processing,
  org.eclipse.chemclipse.csd.converter.chromatogram,
  org.eclipse.chemclipse.csd.model.core,

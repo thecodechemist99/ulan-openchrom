@@ -9,18 +9,19 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.chromatogram;
+package org.chromulan.system.control.model.data;
 
+import org.chromulan.system.control.model.IControlDevice;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 
-public abstract class AbstractChromatogramRecording extends AbstractChromatogramDescription implements IChromatogramRecording {
+public abstract class AbstractChromatogramData extends AbstractDeviceData implements IChromatogramData {
 
 	private IChromatogram chromatogram;
 
-	public AbstractChromatogramRecording(int scanDelay, int scanInterval) {
+	public AbstractChromatogramData(IControlDevice device, int scanDelay, int scanInterval) {
 
-		setName(DEFAULT_NAME);
+		super(device);
 		chromatogram = createChromatogram(scanDelay, scanInterval);
 	}
 

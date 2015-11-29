@@ -9,19 +9,11 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model;
+package org.chromulan.system.control.model.data;
 
-import java.util.List;
+import org.chromulan.system.control.model.IControlDevice;
 
-import org.chromulan.system.control.model.data.IChromatogramCSDData;
+public interface IDeviceData extends IAnalysisData {
 
-public interface IAnalysisCSDSaver extends IAnalysisSaver {
-
-	void addChromatogam(IChromatogramCSDData chromatogram);
-
-	List<IChromatogramCSDData> getChromatograms();
-
-	void removeAllChromatograms();
-
-	void removeChromatogam(IChromatogramCSDData chromatogram);
+	IControlDevice getControlDevice();
 }

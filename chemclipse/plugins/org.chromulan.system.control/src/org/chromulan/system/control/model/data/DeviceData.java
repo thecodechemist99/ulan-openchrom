@@ -9,11 +9,14 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.chromatogram;
+package org.chromulan.system.control.model.data;
 
-import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
+import org.chromulan.system.control.model.IControlDevice;
 
-public interface IChromatogramRecordingCSD extends IChromatogramRecording {
+public class DeviceData extends AbstractDeviceData {
 
-	IChromatogramCSD getChromatogramCSD();
+	public DeviceData(IControlDevice device) {
+
+		super(device);
+	}
 }

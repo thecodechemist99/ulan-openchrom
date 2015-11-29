@@ -13,16 +13,11 @@ package org.chromulan.system.control.ui.devices.support;
 
 import org.chromulan.system.control.model.IDevicesProfile;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 
 public class ProfileDialog extends Dialog {
 
@@ -44,26 +39,9 @@ public class ProfileDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.None);
-		GridLayoutFactory.swtDefaults().numColumns(1).generateLayout(composite);
-		final Label lable = new Label(composite, SWT.None);
-		lable.setText("Name");
-		final Text textName = new Text(composite, SWT.None);
-		textName.setText(profile.getName());
-		textName.setEnabled(false);
-		final Table table = new Table(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
-		table.setHeaderVisible(true);
-		final TableColumn column1 = new TableColumn(table, SWT.None);
-		column1.setText("Port");
-		column1.setWidth(80);
-		final TableColumn column2 = new TableColumn(table, SWT.None);
-		column2.setText("Description");
-		column2.setWidth(300);
-		for(int i = 0; i < profile.getControlDevices().getControlDevices().size(); i++) {
-			TableItem item = new TableItem(table, SWT.None);
-			item.setText(1, profile.getControlDevices().getControlDevices().get(i).getDeviceDescription().getDescription());
-			item.setText(0, Long.toString(profile.getControlDevices().getControlDevices().get(i).getDeviceDescription().getAdr()));
-			item.setData(profile.getControlDevices().getControlDevices().get(i));
-		}
+		composite.setLayout(new FillLayout());
+		DevicesTable devicesTable = new DevicesTable(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+		devicesTable.setDevices(profile.getControlDevices());
 		return super.createDialogArea(parent);
 	}
 }

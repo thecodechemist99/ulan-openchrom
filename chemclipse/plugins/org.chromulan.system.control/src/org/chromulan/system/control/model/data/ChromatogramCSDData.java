@@ -9,17 +9,18 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.chromatogram;
+package org.chromulan.system.control.model.data;
 
+import org.chromulan.system.control.model.IControlDevice;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.csd.model.implementation.ChromatogramCSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
-public class ChromatogramRecordingCSD extends AbstractChromatogramRecording implements IChromatogramRecordingCSD {
+public class ChromatogramCSDData extends AbstractChromatogramData implements IChromatogramCSDData {
 
-	public ChromatogramRecordingCSD(int scanDelay, int scanInterval) {
+	public ChromatogramCSDData(IControlDevice device, int scanDelay, int scanInterval) {
 
-		super(scanDelay, scanInterval);
+		super(device, scanDelay, scanInterval);
 	}
 
 	@Override

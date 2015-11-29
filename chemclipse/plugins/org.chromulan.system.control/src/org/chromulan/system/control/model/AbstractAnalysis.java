@@ -13,10 +13,11 @@ package org.chromulan.system.control.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.File;
 import java.util.Date;
 
-public abstract class AbstractAnalysis implements IAnalysis {
+import org.chromulan.system.control.model.data.AbstractAnalysisData;
+
+public abstract class AbstractAnalysis extends AbstractAnalysisData implements IAnalysis {
 
 	private IAnalysisSaver analysisSaver;
 	private boolean autoContinue;
@@ -24,7 +25,6 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	private Date date;
 	private String description;
 	private IDevicesProfile devicesProfile;
-	private File directory;
 	private long duration;
 	private String name;
 	protected PropertyChangeSupport propertyChangeSupport;
@@ -81,12 +81,6 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	public IDevicesProfile getDevicesProfile() {
 
 		return devicesProfile;
-	}
-
-	@Override
-	public File getDirectory() {
-
-		return this.directory;
 	}
 
 	@Override
@@ -159,14 +153,6 @@ public abstract class AbstractAnalysis implements IAnalysis {
 	public void setDevicesProfile(IDevicesProfile devicesProfile) {
 
 		this.devicesProfile = devicesProfile;
-	}
-
-	@Override
-	public void setDirectory(File directory) {
-
-		if(directory.isDirectory()) {
-			propertyChangeSupport.firePropertyChange(PROPERTY_DIRECTORY, this.directory, this.directory = directory);
-		}
 	}
 
 	@Override

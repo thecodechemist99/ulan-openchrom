@@ -37,7 +37,7 @@ import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
 import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.model.chromatogram.IChromatogramRecordingCSD;
+import org.chromulan.system.control.model.data.IChromatogramCSDData;
 import org.chromulan.system.control.ui.analysis.support.AnalysesTable;
 import org.chromulan.system.control.ui.analysis.support.AnalysisCDSSavePreferencePage;
 import org.chromulan.system.control.ui.analysis.support.AnalysisSettingsPreferencePage;
@@ -46,10 +46,8 @@ import org.chromulan.system.control.ui.analysis.support.LabelAnalysisDuration;
 import org.chromulan.system.control.ui.devices.support.ProfilePreferencePage;
 import org.chromulan.system.control.ui.wizard.WizardNewAnalyses;
 import org.chromulan.system.control.ui.wizard.WizardNewAnalysis;
-import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
-import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport;
@@ -261,6 +259,9 @@ public class AnalysesPart {
 
 		eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_REQIRED, analysis.getDevicesProfile().getControlDevices());
 		for(IControlDevice device : profile.getControlDevices().getControlDevices()) {
+			if(!device.isConnected()) {
+				return false;
+			}
 			MPart part = partService.findPart(device.getID());
 			if(part == null) {
 				return false;
@@ -449,7 +450,7 @@ public class AnalysesPart {
 				analysis.setDuration((Long)newAnalysisWizard.getModel().duration.getValue());
 				analysis.setDevicesProfile((IDevicesProfile)newAnalysisWizard.getModel().devicesProfile.getValue());
 				analysis.setDescription((String)newAnalysisWizard.getModel().description.getValue());
-				IAnalysisSaver saver = new AnalysisCSDSaver();
+				IAnalysisSaver saver = new AnalysisCSDSaver(analysis);
 				saver.setFile(file);
 				saver.setSuplier(supplier);
 				analysis.setAnalysisSaver(saver);
@@ -623,22 +624,12 @@ public class AnalysesPart {
 	private void saveAnalysis() {
 
 		IAnalysisCSDSaver saver = analysis.getAnalysisCSDSaver();
-		saver.setName(analysis.getName());
-		saver.addDescription(analysis);
-		ChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
-		List<ISupplier> suppliers = support.getExportSupplier();
-		ISupplier supplier = null;
-		for(ISupplier iSupplier : suppliers) {
-			if(iSupplier.getFileExtension().equals(".ocb")) {
-				supplier = iSupplier;
-				break;
-			}
-		}
-		saver.setSuplier(supplier);
+		saver.removeAllChromatograms();
+		saver.removeAllAnalysisData();
 		for(IControlDevice device : analysis.getDevicesProfile().getControlDevices().getControlDevices()) {
 			MPart part = partService.findPart(device.getID());
-			if(part != null && part.getContext() != null && part.getContext().containsKey(IChromatogramRecordingCSD.class)) {
-				IChromatogramRecordingCSD chromatogramRecording = part.getContext().get(IChromatogramRecordingCSD.class);
+			if(part != null && part.getContext() != null && part.getContext().containsKey(IChromatogramCSDData.class)) {
+				IChromatogramCSDData chromatogramRecording = part.getContext().get(IChromatogramCSDData.class);
 				saver.addChromatogam(chromatogramRecording);
 			}
 		}

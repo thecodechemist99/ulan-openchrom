@@ -30,8 +30,8 @@ public class WizardModelAnalysis {
 
 	public WizardModelAnalysis() {
 
-		autoContinue = new WritableValue(false, Boolean.class);
-		autoStop = new WritableValue(false, Boolean.class);
+		autoContinue = new WritableValue(true, Boolean.class);
+		autoStop = new WritableValue(true, Boolean.class);
 		folder = new WritableValue(null, File.class);
 		duration = new WritableValue(600000L, Long.class);
 		name = new WritableValue("", String.class);

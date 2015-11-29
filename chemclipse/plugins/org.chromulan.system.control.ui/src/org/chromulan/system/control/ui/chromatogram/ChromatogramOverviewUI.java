@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.chromatogram;
 
-import org.chromulan.system.control.model.chromatogram.IChromatogramRecording;
+import org.chromulan.system.control.model.data.IChromatogramData;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.swt.ui.components.AbstractLineSeriesUI;
 import org.eclipse.chemclipse.swt.ui.converter.SeriesConverter;
@@ -32,7 +32,7 @@ import org.swtchart.Range;
 public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	private boolean autoMinYAdjustIntensity;
-	private IChromatogramRecording chromatogramRecording;
+	private IChromatogramData chromatogramData;
 	private double interval;
 	private double minYAdjustIntensity;
 
@@ -82,7 +82,7 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	public void displayAllChromatogram() {
 
-		if(this.chromatogramRecording != null && this.chromatogramRecording.getNumberOfScans() != 0) {
+		if(this.chromatogramData != null && this.chromatogramData.getNumberOfScans() != 0) {
 			adjustRange();
 			redraw();
 		}
@@ -90,16 +90,16 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	public void displayInteval() {
 
-		if(this.chromatogramRecording != null && this.chromatogramRecording.getNumberOfScans() != 0) {
+		if(this.chromatogramData != null && this.chromatogramData.getNumberOfScans() != 0) {
 			setXAxisInterval();
 			adjustYRange();
 			redraw();
 		}
 	}
 
-	public IChromatogramRecording getChromatogram() {
+	public IChromatogramData getChromatogram() {
 
-		return chromatogramRecording;
+		return chromatogramData;
 	}
 
 	public double getInterval() {
@@ -133,7 +133,7 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	public void reloadData() {
 
-		if(this.chromatogramRecording != null && this.chromatogramRecording.getNumberOfScans() != 0) {
+		if(this.chromatogramData != null && this.chromatogramData.getNumberOfScans() != 0) {
 			deleteAllCurrentSeries();
 			setViewSeries();
 		}
@@ -144,9 +144,9 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 		this.autoMinYAdjustIntensity = autoMinYAdjustIntensity;
 	}
 
-	public void setChromatogram(IChromatogramRecording chromatogramRecording) {
+	public void setChromatogram(IChromatogramData chromatogramData) {
 
-		this.chromatogramRecording = chromatogramRecording;
+		this.chromatogramData = chromatogramData;
 	}
 
 	public void setInterval(double interval) {
@@ -169,8 +169,8 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 		ISeries series;
 		ILineSeries lineSeries;
 		boolean showChromatogramArea = PreferenceSupplier.showChromatogramArea();
-		synchronized(chromatogramRecording.getChromatogram()) {
-			series = SeriesConverter.convertChromatogramOverview(chromatogramRecording.getChromatogram(), Sign.POSITIVE, false);
+		synchronized(chromatogramData.getChromatogram()) {
+			series = SeriesConverter.convertChromatogramOverview(chromatogramData.getChromatogram(), Sign.POSITIVE, false);
 		}
 		setMaxSignal(series.getYMax());
 		addSeries(series);

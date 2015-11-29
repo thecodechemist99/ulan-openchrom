@@ -15,10 +15,9 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.chromulan.system.control.model.chromatogram.IChromatogramDescription;
-import org.chromulan.system.control.model.chromatogram.IChromatogramRecordingCSD;
+import org.chromulan.system.control.model.data.IAnalysisData;
+import org.chromulan.system.control.model.data.IChromatogramCSDData;
 import org.eclipse.chemclipse.converter.core.ISupplier;
-import org.eclipse.chemclipse.converter.processing.IExportConverterProcessingInfo;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
@@ -26,38 +25,43 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class AnalysisCSDSaver implements IAnalysisCSDSaver {
 
-	private List<IExportConverterProcessingInfo> converterProcessingInfos;
-	private List<IChromatogramDescription> descriptions;
+	private IAnalysis analysis;
+	private List<IAnalysisData> analysisDataList;
 	private File file;
 	private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos;
-	private List<IChromatogramRecordingCSD> chromatograms;
-	private String name;
+	private List<IChromatogramCSDData> chromatograms;
 	private ISupplier supplier;
 
-	public AnalysisCSDSaver() {
+	public AnalysisCSDSaver(IAnalysis analysis) {
 
-		chromatograms = new LinkedList<IChromatogramRecordingCSD>();
-		descriptions = new LinkedList<IChromatogramDescription>();
-		converterProcessingInfos = new LinkedList<IExportConverterProcessingInfo>();
+		chromatograms = new LinkedList<IChromatogramCSDData>();
+		analysisDataList = new LinkedList<IAnalysisData>();
 		chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
+		this.analysis = analysis;
 	}
 
 	@Override
-	public void addDescription(IChromatogramDescription description) {
+	public void addDescription(IAnalysisData description) {
 
-		descriptions.add(description);
+		analysisDataList.add(description);
 	}
 
 	@Override
-	public void addChromatogam(IChromatogramRecordingCSD chromatogram) {
+	public void addChromatogam(IChromatogramCSDData chromatogram) {
 
 		chromatograms.add(chromatogram);
 	}
 
 	@Override
-	public List<IChromatogramDescription> getDescriptions() {
+	public IAnalysis getAnalysis() {
 
-		return descriptions;
+		return analysis;
+	}
+
+	@Override
+	public List<IAnalysisData> getAnalysisDataAll() {
+
+		return analysisDataList;
 	}
 
 	@Override
@@ -73,21 +77,9 @@ public class AnalysisCSDSaver implements IAnalysisCSDSaver {
 	}
 
 	@Override
-	public List<IChromatogramRecordingCSD> getChromatograms() {
+	public List<IChromatogramCSDData> getChromatograms() {
 
 		return chromatograms;
-	}
-
-	@Override
-	public String getName() {
-
-		return name;
-	}
-
-	@Override
-	public List<IExportConverterProcessingInfo> getProcessInfo() {
-
-		return converterProcessingInfos;
 	}
 
 	@Override
@@ -97,9 +89,9 @@ public class AnalysisCSDSaver implements IAnalysisCSDSaver {
 	}
 
 	@Override
-	public void removeAllDescriptions() {
+	public void removeAllAnalysisData() {
 
-		descriptions.clear();
+		analysisDataList.clear();
 	}
 
 	@Override
@@ -109,27 +101,26 @@ public class AnalysisCSDSaver implements IAnalysisCSDSaver {
 	}
 
 	@Override
-	public void removeDescription(IChromatogramDescription description) {
+	public void removeAnalysisData(IAnalysisData description) {
 
-		descriptions.remove(description);
+		analysisDataList.remove(description);
 	}
 
 	@Override
-	public void removeChromatogam(IChromatogramRecordingCSD chromatogram) {
+	public void removeChromatogam(IChromatogramCSDData chromatogram) {
 
 		chromatograms.remove(chromatogram);
 	}
 
 	@Override
-	public List<IExportConverterProcessingInfo> save(IProgressMonitor progressMonitor) {
+	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor) {
 
-		converterProcessingInfos.clear();
 		chromatogramExportConverterProcessingInfos.clear();
-		if(supplier == null || file == null || name == null) {
+		if(supplier == null || file == null || analysis == null) {
 			// TODO: exception or return null ??
 			return null;
 		}
-		String path = file.getAbsolutePath() + File.separator + name;
+		String path = file.getAbsolutePath() + File.separator + analysis.getName();
 		File nFile = new File(path);
 		if(!nFile.exists()) {
 			if(!nFile.mkdir()) {
@@ -138,42 +129,37 @@ public class AnalysisCSDSaver implements IAnalysisCSDSaver {
 			}
 		}
 		StringBuilder stringBuilder = new StringBuilder("");
-		for(IChromatogramDescription iChromatogramDescription : descriptions) {
+		stringBuilder.append(analysis.getDescription());
+		stringBuilder.append("\r\n");
+		for(IAnalysisData iChromatogramDescription : analysisDataList) {
 			if(iChromatogramDescription.getDescription() != null) {
 				stringBuilder.append(iChromatogramDescription.getDescription());
 				stringBuilder.append("\r\n");
 			}
 		}
-		for(IChromatogramRecordingCSD chromatogramRecordingCSD : chromatograms) {
-			IChromatogramCSD chromatogramCSD = chromatogramRecordingCSD.getChromatogramCSD();
+		for(IChromatogramCSDData chromatogramCSDData : chromatograms) {
+			IChromatogramCSD chromatogramCSD = chromatogramCSDData.getChromatogramCSD();
 			if(chromatogramCSD != null) {
 				String shortInfo;
-				if(chromatogramRecordingCSD.getDescription() != null) {
-					shortInfo = stringBuilder.toString() + chromatogramRecordingCSD.getDescription();
+				if(chromatogramCSDData.getDescription() != null) {
+					shortInfo = stringBuilder.toString() + chromatogramCSDData.getDescription();
 				} else {
 					shortInfo = stringBuilder.toString();
 				}
 				chromatogramCSD.setShortInfo(shortInfo);
 				chromatogramCSD.setFile(nFile);
-				File fileSave = new File(nFile + File.separator + getName() + "_" + chromatogramRecordingCSD.getName());
+				File fileSave = new File(nFile + File.separator + chromatogramCSDData.getName());
 				IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterCSD.convert(fileSave, chromatogramCSD, supplier.getId(), progressMonitor);
-				converterProcessingInfos.add(procesInfo);
 				chromatogramExportConverterProcessingInfos.add(procesInfo);
 			}
 		}
-		return converterProcessingInfos;
+		return chromatogramExportConverterProcessingInfos;
 	}
 
 	@Override
 	public void setFile(File file) {
 
 		this.file = file;
-	}
-
-	@Override
-	public void setName(String name) {
-
-		this.name = name;
 	}
 
 	@Override

@@ -36,7 +36,6 @@ public class AnalysesTable {
 	private IAnalyses analyses;
 	private boolean containsFilterName;
 	private String filterName;
-	private Table table;
 	private ObservableListContentProvider viewContentProvider;
 	private TableViewer viewer;
 	private ViewerFilter viewerfilterName;
@@ -48,7 +47,7 @@ public class AnalysesTable {
 		viewContentProvider = new ObservableListContentProvider();
 		viewer.setContentProvider(viewContentProvider);
 		createColumns(parent, viewer);
-		table = viewer.getTable();
+		Table table = viewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		viewerfilterName = new ViewerFilter() {
@@ -79,14 +78,14 @@ public class AnalysesTable {
 
 	private void createColumns(Composite parent, final TableViewer viewer) {
 
-		String[] titles = {IAnalysis.PROPERTY_NAME, "State", IAnalysis.PROPERTY_AUTO_STOP, IAnalysis.PROPERTY_DURATION, IAnalysis.PROPERTY_AUTO_CONTINUE, IAnalysis.PROPERTY_DIRECTORY};
-		int[] bounds = {100, 100, 100, 100, 100, 100};
+		String[] titles = {"Name", "State", "Auto stop", "Duration (min)", "Auto Continue", "Directory"};
+		int[] bounds = {150, 100, 100, 100, 100, 100};
 		// column for the name
-		TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0], 0);
+		TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0]);
 		IObservableMap attributeMapName = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_NAME);
 		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapName));
 		// column for the state
-		col = createTableViewerColumn(titles[1], bounds[1], 1);
+		col = createTableViewerColumn(titles[1], bounds[1]);
 		col.setLabelProvider(new CellLabelProvider() {
 
 			@Override
@@ -106,7 +105,7 @@ public class AnalysesTable {
 			}
 		});
 		// column for the auto stop
-		col = createTableViewerColumn(titles[2], bounds[2], 2);
+		col = createTableViewerColumn(titles[2], bounds[2]);
 		IObservableMap attributeMapAutoStop = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_AUTO_STOP);
 		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapAutoStop) {
 
@@ -119,7 +118,7 @@ public class AnalysesTable {
 			}
 		});
 		// column for the interval
-		col = createTableViewerColumn(titles[3], bounds[3], 3);
+		col = createTableViewerColumn(titles[3], bounds[3]);
 		IObservableMap attributeMapInterval = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_DURATION);
 		col.setLabelProvider(new ObservableMapCellLabelProvider(new IObservableMap[]{attributeMapAutoStop, attributeMapInterval}) {
 
@@ -136,7 +135,7 @@ public class AnalysesTable {
 			}
 		});
 		// column for the auto continue
-		col = createTableViewerColumn(titles[4], bounds[4], 4);
+		col = createTableViewerColumn(titles[4], bounds[4]);
 		IObservableMap attributeMapAutoContinue = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_AUTO_CONTINUE);
 		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapAutoContinue) {
 
@@ -150,7 +149,7 @@ public class AnalysesTable {
 		});/**/
 	}
 
-	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
+	private TableViewerColumn createTableViewerColumn(String title, int bound) {
 
 		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
 		final TableColumn column = viewerColumn.getColumn();
@@ -167,9 +166,9 @@ public class AnalysesTable {
 		if(analyses != null) {
 			int index = analyses.gettIndex(analysis);
 			if(index != -1) {
-				table.setTopIndex(index);
-				table.setSelection(index);
-				table.setFocus();
+				viewer.getTable().setTopIndex(index);
+				viewer.getTable().setSelection(index);
+				viewer.getTable().setFocus();
 				viewer.refresh();
 				return;
 			}

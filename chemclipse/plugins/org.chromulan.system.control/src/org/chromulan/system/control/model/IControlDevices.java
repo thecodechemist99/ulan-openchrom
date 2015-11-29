@@ -19,6 +19,8 @@ public interface IControlDevices {
 
 	boolean contains(String id);
 
+	IControlDevice getControlDevice(String id);
+
 	List<IControlDevice> getControlDevices();
 
 	void remove(String id);

@@ -11,13 +11,36 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
+import java.beans.PropertyChangeListener;
+
 import net.sourceforge.ulan.base.DeviceDescription;
 
 public interface IControlDevice {
 
+	final String PROPERTY_DEVICE_TYPE = "deviceType";
+	final String PROPERTY_NAME = "name";
+
+	void addPropertyChangeListener(PropertyChangeListener listener);
+
+	void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
 	DeviceDescription getDeviceDescription();
+
+	DeviceType getDeviceType();
 
 	String getID();
 
-	void setDeviceDescription(DeviceDescription description);
+	String getName();
+
+	boolean isConnected();
+
+	void removePropertyChangeListener(PropertyChangeListener listener);
+
+	void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+	void setConnected(boolean b);
+
+	void setDeviceType(DeviceType deviceType);
+
+	void setName(String name);
 }

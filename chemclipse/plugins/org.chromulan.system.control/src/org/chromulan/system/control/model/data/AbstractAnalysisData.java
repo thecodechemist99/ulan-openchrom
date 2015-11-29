@@ -9,12 +9,20 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.chromatogram;
+package org.chromulan.system.control.model.data;
 
-public abstract class AbstractChromatogramDescription implements IChromatogramDescription {
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class AbstractAnalysisData implements IAnalysisData {
 
 	private String description;
-	private String name;
+	private Map<String, Object> variables;
+
+	public AbstractAnalysisData() {
+
+		variables = new HashMap<String, Object>();
+	}
 
 	@Override
 	public String getDescription() {
@@ -23,9 +31,15 @@ public abstract class AbstractChromatogramDescription implements IChromatogramDe
 	}
 
 	@Override
-	public String getName() {
+	public Object getVariable(String name) {
 
-		return name;
+		return variables.get(name);
+	}
+
+	@Override
+	public Map<String, Object> getVariables() {
+
+		return variables;
 	}
 
 	@Override
@@ -35,8 +49,8 @@ public abstract class AbstractChromatogramDescription implements IChromatogramDe
 	}
 
 	@Override
-	public void setName(String name) {
+	public void setVariable(String name, Object value) {
 
-		this.name = name;
+		variables.put(name, value);
 	}
 }

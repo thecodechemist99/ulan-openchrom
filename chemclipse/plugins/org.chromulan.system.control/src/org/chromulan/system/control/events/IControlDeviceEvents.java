@@ -14,4 +14,5 @@ package org.chromulan.system.control.events;
 public interface IControlDeviceEvents {
 
 	String TOPIC_CONTROL_DEVICE_ULAN_CONNECT = "controlDevice/ulan/connect";
+	String TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT = "controlDevice/ulan/disconnect";
 }

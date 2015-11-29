@@ -27,6 +27,7 @@ import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.ULanConnection;
 import org.chromulan.system.control.ui.analysis.support.UlanScanNetRunnable;
+import org.chromulan.system.control.ui.devices.support.DevicesTable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -39,15 +40,13 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 
 import net.sourceforge.ulan.base.CompletionHandler;
 import net.sourceforge.ulan.base.DeviceDescription;
@@ -74,6 +73,7 @@ public class AvailableDevicesPart {
 	private ULanCommunicationInterface communication;
 	private ULanConnection connection;
 	private IControlDevices devices;
+	private DevicesTable deviceTable;
 	@Inject
 	private Display display;
 	@Inject
@@ -86,7 +86,6 @@ public class AvailableDevicesPart {
 	private MPart part;
 	@Inject
 	private EPartService partService;
-	private Table table;
 
 	public AvailableDevicesPart() {
 
@@ -97,7 +96,10 @@ public class AvailableDevicesPart {
 
 	private void closeConnection() {
 
-		devices.removeAllControlDevices();
+		for(IControlDevice device : devices.getControlDevices()) {
+			device.setConnected(false);
+			eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
+		}
 		rewriteTable();
 		if(ULanDrv.isLibraryLoaded()) {
 			try {
@@ -125,23 +127,34 @@ public class AvailableDevicesPart {
 				try {
 					DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
 					if(description != null) {
-						IControlDevice controlDevice = new ControlDevice(description);
-						if(!this.devices.contains(controlDevice.getID())) {
-							this.devices.add(controlDevice);
-							rewriteTable();
-						}
-						eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, controlDevice);
+						IControlDevice controlDevice = new ControlDevice(description, true);
+						connectDevice(controlDevice);
 					}
 				} catch(Exception e) {
-					// TODO: logger.warn(e);
 				}
 			}
+		}
+		eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE, this.devices);
+	}
+
+	private void connectDevice(IControlDevice device) {
+
+		if(this.devices.contains(device.getID())) {
+			this.devices.getControlDevice(device.getID()).setConnected(true);
+		} else {
+			this.devices.add(device);
+		}
+		eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, device);
+		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
+		if(stack != null && !stack.getChildren().isEmpty()) {
+			stack.setVisible(true);
 		}
 	}
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 
+		part.getContext().set(IControlDevices.class, devices);
 		Composite composite = new Composite(parent, SWT.None);
 		GridLayout gridLayout = new GridLayout(1, false);
 		composite.setLayout(gridLayout);
@@ -152,18 +165,12 @@ public class AvailableDevicesPart {
 		GridData gridData = new GridData(GridData.END, GridData.FILL, true, false);
 		labelConnection.setLayoutData(gridData);
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
-		table = new Table(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(gridData);
-		table.setHeaderVisible(true);
-		final TableColumn columnAdr = new TableColumn(table, SWT.NULL);
-		columnAdr.setText("Adr");
-		columnAdr.setWidth(40);
-		final TableColumn columnName = new TableColumn(table, SWT.NULL);
-		columnName.setText("Name of devices");
-		columnName.setWidth(150);
-		final TableColumn columnDescription = new TableColumn(table, SWT.None);
-		columnDescription.setText("Description");
-		columnDescription.setWidth(400);
+		Composite tableComposit = new Composite(composite, SWT.None);
+		tableComposit.setLayoutData(gridData);
+		tableComposit.setLayout(new FillLayout());
+		deviceTable = new DevicesTable(tableComposit, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+		deviceTable.setDevices(devices);
+		deviceTable.setEditableName(true);
 		buttonRefreshDevices = new Button(composite, SWT.PUSH);
 		buttonRefreshDevices.setText("Scan Net");
 		buttonRefreshDevices.addSelectionListener(new SelectionAdapter() {
@@ -213,19 +220,9 @@ public class AvailableDevicesPart {
 			UlanScanNetRunnable runnable = new UlanScanNetRunnable();
 			try {
 				dialog.run(true, false, runnable);
-				devices = runnable.getDevices();
+				IControlDevices devices = runnable.getDevices();
+				setDevices(devices);
 				rewriteTable();
-				part.getContext().set(IControlDevices.class, devices);
-				for(IControlDevice controlDevice : devices.getControlDevices()) {
-					if(partService.findPart(controlDevice.getID()) == null) {
-						eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, controlDevice);
-					}
-				}
-				eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE, devices);
-				MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
-				if(!stack.getChildren().isEmpty()) {
-					stack.setVisible(true);
-				}
 			} catch(InvocationTargetException e) {
 				// /logger.warn(e);
 			} catch(InterruptedException e) {
@@ -258,12 +255,20 @@ public class AvailableDevicesPart {
 
 	private void rewriteTable() {
 
-		table.removeAll();
+		deviceTable.getViewer().refresh();
+	}
+
+	private void setDevices(IControlDevices devices) {
+
 		for(IControlDevice device : devices.getControlDevices()) {
-			TableItem item = new TableItem(table, SWT.None);
-			item.setText(0, Long.toString(device.getDeviceDescription().getAdr()));
-			item.setText(1, device.getDeviceDescription().getModulType());
-			item.setText(2, device.getDeviceDescription().getDescription());
+			connectDevice(device);
 		}
+		for(IControlDevice device : this.devices.getControlDevices()) {
+			if(!devices.contains(device.getID())) {
+				device.setConnected(false);
+				eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
+			}
+		}
+		eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE, this.devices);
 	}
 }

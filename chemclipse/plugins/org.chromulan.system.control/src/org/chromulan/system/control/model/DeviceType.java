@@ -9,11 +9,21 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.chromatogram;
+package org.chromulan.system.control.model;
 
-import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
+public enum DeviceType {
+	AUTO_SAMLER("Auto Sampler"), COLLECTOR("Colector"), DETECTOR("Detector"), FRACTION_COLLECTOR("Fraction Collector"), PEAK_SELECTOR("Peak Selector"), PUMP("PUMP"), THERMOSTAT("Thermostat"), UNKNOWEN("Unknown");
 
-public interface IChromatogramRecordingWSD extends IChromatogramRecording {
+	private String type;
 
-	IChromatogramWSD getChromatogramWSD();
+	private DeviceType(String type) {
+
+		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+
+		return type;
+	}
 }

@@ -12,17 +12,15 @@
 package org.chromulan.system.control.model;
 
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.Date;
 
-import org.chromulan.system.control.model.chromatogram.IChromatogramDescription;
+import org.chromulan.system.control.model.data.IAnalysisData;
 
-public interface IAnalysis extends IChromatogramDescription {
+public interface IAnalysis extends IAnalysisData {
 
 	final String PROPERTY_AUTO_CONTINUE = "autoContinue";
 	final String PROPERTY_AUTO_STOP = "autoStop";
 	final String PROPERTY_DESCRIPTION = "description";
-	final String PROPERTY_DIRECTORY = "directory";
 	final String PROPERTY_DURATION = "duration";
 	final String PROPERTY_NAME = "name";
 
@@ -38,9 +36,10 @@ public interface IAnalysis extends IChromatogramDescription {
 
 	IDevicesProfile getDevicesProfile();
 
-	File getDirectory();
-
 	long getDuration();
+
+	@Override
+	String getName();
 
 	Date getStartDate();
 
@@ -60,9 +59,9 @@ public interface IAnalysis extends IChromatogramDescription {
 
 	void setDevicesProfile(IDevicesProfile devicesProfile);
 
-	void setDirectory(File directory);
-
 	void setDuration(long duration);
+
+	void setName(String name);
 
 	void startRecording();
 

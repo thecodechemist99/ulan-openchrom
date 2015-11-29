@@ -9,12 +9,21 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.chromatogram;
+package org.chromulan.system.control.model.data;
 
-public class ChromatogramDescription extends AbstractChromatogramDescription {
+import java.util.Map;
 
-	public ChromatogramDescription() {
+public interface IAnalysisData {
 
-		super();
-	}
+	String getDescription();
+
+	String getName();
+
+	Object getVariable(String name);
+
+	Map<String, Object> getVariables();
+
+	void setDescription(String description);
+
+	void setVariable(String name, Object value);
 }

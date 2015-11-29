@@ -14,7 +14,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.chromulan.system.control.events,
  org.chromulan.system.control.model,
- org.chromulan.system.control.model.chromatogram,
+ org.chromulan.system.control.model.data,
  org.chromulan.system.control.preferences
 Import-Package: org.eclipse.chemclipse.converter.core,
  org.eclipse.chemclipse.converter.processing,

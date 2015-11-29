@@ -9,17 +9,11 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.chromatogram;
+package org.chromulan.system.control.model.data;
 
-public interface IChromatogramDescription {
+import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 
-	final String DEFAULT_NAME = "chromatogram";
+public interface IChromatogramCSDData extends IChromatogramData {
 
-	String getDescription();
-
-	String getName();
-
-	void setDescription(String description);
-
-	void setName(String name);
+	IChromatogramCSD getChromatogramCSD();
 }

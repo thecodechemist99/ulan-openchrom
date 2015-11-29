@@ -9,19 +9,28 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model;
+package org.chromulan.system.control.model.data;
 
-import java.util.List;
+import org.chromulan.system.control.model.IControlDevice;
 
-import org.chromulan.system.control.model.data.IChromatogramCSDData;
+public class AbstractDeviceData extends AbstractAnalysisData implements IDeviceData {
 
-public interface IAnalysisCSDSaver extends IAnalysisSaver {
+	IControlDevice device;
 
-	void addChromatogam(IChromatogramCSDData chromatogram);
+	public AbstractDeviceData(IControlDevice device) {
 
-	List<IChromatogramCSDData> getChromatograms();
+		this.device = device;
+	}
 
-	void removeAllChromatograms();
+	@Override
+	public IControlDevice getControlDevice() {
 
-	void removeChromatogam(IChromatogramCSDData chromatogram);
+		return device;
+	}
+
+	@Override
+	public String getName() {
+
+		return device.getName();
+	}
 }

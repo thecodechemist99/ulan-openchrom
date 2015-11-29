@@ -9,12 +9,12 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.chromatogram;
+package org.chromulan.system.control.model.data;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 
-public interface IChromatogramRecording extends IChromatogramDescription {
+public interface IChromatogramData extends IAnalysisData {
 
 	void addScan(IScan scan);
 

@@ -48,7 +48,7 @@ public class UlanScanNetRunnable implements IRunnableWithProgress {
 					monitor.subTask("Scan address " + i);
 					DeviceDescription device = ULanCommunicationInterface.getDevice(i);
 					if(device != null && device.containsTag("oi")) {
-						controlDevices.add(new ControlDevice(device));
+						controlDevices.add(new ControlDevice(device, true));
 					}
 				}
 			} catch(Exception e) {

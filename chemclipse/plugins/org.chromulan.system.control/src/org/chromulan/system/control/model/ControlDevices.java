@@ -53,6 +53,17 @@ public class ControlDevices implements IControlDevices {
 	}
 
 	@Override
+	public IControlDevice getControlDevice(String id) {
+
+		for(IControlDevice device : controlDevices) {
+			if(device.getID().equals(id)) {
+				return device;
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public List<IControlDevice> getControlDevices() {
 
 		return controlDevices;

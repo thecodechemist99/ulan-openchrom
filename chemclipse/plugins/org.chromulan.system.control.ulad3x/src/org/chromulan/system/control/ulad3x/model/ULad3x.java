@@ -16,8 +16,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 
 import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.chromatogram.ChromatogramRecordingCSD;
-import org.chromulan.system.control.model.chromatogram.IChromatogramRecording;
+import org.chromulan.system.control.model.data.ChromatogramCSDData;
+import org.chromulan.system.control.model.data.IChromatogramData;
 import org.eclipse.chemclipse.csd.model.implementation.ScanCSD;
 
 import net.sourceforge.ulan.base.CompletionHandler;
@@ -36,7 +36,7 @@ public class ULad3x {
 	private DeviceDescription description;
 	private IULanDevice device;
 	private IFilt filtGetData;
-	private IChromatogramRecording chromatogramRecording;
+	private IChromatogramData chromatogramData;
 	private boolean isBeeingRecored;
 
 	public ULad3x(IControlDevice controlDevice) {
@@ -44,8 +44,7 @@ public class ULad3x {
 		super();
 		this.controlDevice = controlDevice;
 		device = new ULanDevice(controlDevice.getDeviceDescription());
-		chromatogramRecording = new ChromatogramRecordingCSD(DEFAULT_SCAN_DELAY, DEFAULT_SCAN_INTERVAL);
-		chromatogramRecording.setName(this.controlDevice.getID());
+		chromatogramData = new ChromatogramCSDData(controlDevice, DEFAULT_SCAN_DELAY, DEFAULT_SCAN_INTERVAL);
 		filtGetData = device.addFiltAdr(0x4f, null, new CompletionHandler<ULanMsg, Void>() {
 
 			@Override
@@ -54,7 +53,7 @@ public class ULad3x {
 				ByteBuffer buffer = arg0.getMsg();
 				if(isBeeingRecored) {
 					while(buffer.hasRemaining()) {
-						chromatogramRecording.addScanAutoSet(new ScanCSD(buffer.getFloat()));
+						chromatogramData.addScanAutoSet(new ScanCSD(buffer.getFloat()));
 					}
 				}
 			}
@@ -70,7 +69,6 @@ public class ULad3x {
 	public void connect() throws ClosedChannelException, IOException {
 
 		if(ULanCommunicationInterface.isOpen()) {
-			System.out.println("is active " + filtGetData.isFiltActive());
 			filtGetData.activateFilt();
 		}
 	}
@@ -80,24 +78,29 @@ public class ULad3x {
 		filtGetData.deactivateFilt();
 	}
 
+	public IControlDevice getControlDevice() {
+
+		return controlDevice;
+	}
+
 	public DeviceDescription getDeviceDescription() {
 
 		return description;
 	}
 
-	public IChromatogramRecording getChromatogramRecording() {
+	public IChromatogramData getChromatogramRecording() {
 
-		return chromatogramRecording;
+		return chromatogramData;
 	}
 
 	public int getScanDelay() {
 
-		return chromatogramRecording.getScanDelay();
+		return chromatogramData.getScanDelay();
 	}
 
 	public int getScanInterva() {
 
-		return chromatogramRecording.getScanInterval();
+		return chromatogramData.getScanInterval();
 	}
 
 	public boolean isBeeingRecored() {
@@ -117,29 +120,29 @@ public class ULad3x {
 
 	public void newRecord(int scanDelay) {
 
-		chromatogramRecording.newRecord(scanDelay, DEFAULT_SCAN_INTERVAL);
+		chromatogramData.newRecord(scanDelay, DEFAULT_SCAN_INTERVAL);
 	}
 
 	public void reset() {
 
-		chromatogramRecording.resetRecording();
+		chromatogramData.resetRecording();
 	}
 
 	public void resetRecording() {
 
-		chromatogramRecording.resetRecording();
+		chromatogramData.resetRecording();
 	}
 
 	public void setScanDelay(int milliseconds) {
 
-		chromatogramRecording.setScanDelay(milliseconds);
+		chromatogramData.setScanDelay(milliseconds);
 	}
 
 	public void start(boolean reset) {
 
 		isBeeingRecored = true;
 		if(reset) {
-			chromatogramRecording.resetRecording();
+			chromatogramData.resetRecording();
 		}
 	}
 

@@ -11,9 +11,12 @@
  *******************************************************************************/
 package org.chromulan.system.control.ulad3x.parts;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.events.IAnalysisEvents;
@@ -21,7 +24,7 @@ import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.IAnalysis;
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.model.chromatogram.IChromatogramRecordingCSD;
+import org.chromulan.system.control.model.data.IChromatogramCSDData;
 import org.chromulan.system.control.ui.events.IAnalysisUIEvents;
 import org.chromulan.system.control.ulad3x.model.ULad3x;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -49,6 +52,7 @@ public class ULad3xPart {
 	private IControlDevice controlDevice;
 	@Inject
 	private IEventBroker eventBroker;
+	private PropertyChangeListener listener;
 	@Inject
 	private MPart part;
 	private Table table;
@@ -57,6 +61,14 @@ public class ULad3xPart {
 
 	public ULad3xPart() {
 
+		listener = new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+
+				redrawTable();
+			}
+		};
 	}
 
 	@PostConstruct
@@ -64,6 +76,7 @@ public class ULad3xPart {
 
 		parent.setLayout(new GridLayout(3, false));
 		controlDevice = (IControlDevice)part.getObject();
+		controlDevice.addPropertyChangeListener(listener);
 		uLad3x = new ULad3x(controlDevice);
 		try {
 			uLad3x.connect();
@@ -146,10 +159,22 @@ public class ULad3xPart {
 		}
 	}
 
+	@PreDestroy
+	public void preDestroy() {
+
+		controlDevice.removePropertyChangeListener(listener);
+	}
+
 	private void redrawTable() {
 
 		table.removeAll();
 		TableItem tableItem = new TableItem(table, SWT.NONE);
+		tableItem.setText(0, "Name");
+		tableItem.setText(1, controlDevice.getName());
+		tableItem = new TableItem(table, SWT.NONE);
+		tableItem.setText(0, "Device type");
+		tableItem.setText(1, controlDevice.getDeviceType().toString());
+		tableItem = new TableItem(table, SWT.NONE);
 		tableItem.setText(0, "Device description");
 		tableItem.setText(1, controlDevice.getDeviceDescription().getDescription());
 		tableItem = new TableItem(table, SWT.NONE);
@@ -165,7 +190,7 @@ public class ULad3xPart {
 	public void removeAnalysis(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END) IAnalysis analisis) {
 
 		if(this.analysis == analisis) {
-			part.getContext().remove(IChromatogramRecordingCSD.class);
+			part.getContext().remove(IChromatogramCSDData.class);
 			enableButton(true);
 			this.analysis = null;
 			if(analisis.hasBeenRecorded()) {
@@ -202,9 +227,9 @@ public class ULad3xPart {
 		if(this.analysis != null && this.analysis == analysis) {
 			uLad3x.stop();
 			uLad3x.getChromatogramRecording().setDescription(textDescription.getText());
-			if(uLad3x.getChromatogramRecording() instanceof IChromatogramRecordingCSD) {
-				IChromatogramRecordingCSD chromatogramRecordingCSD = (IChromatogramRecordingCSD)uLad3x.getChromatogramRecording();
-				part.getContext().set(IChromatogramRecordingCSD.class, chromatogramRecordingCSD);
+			if(uLad3x.getChromatogramRecording() instanceof IChromatogramCSDData) {
+				IChromatogramCSDData chromatogramCSDData = (IChromatogramCSDData)uLad3x.getChromatogramRecording();
+				part.getContext().set(IChromatogramCSDData.class, chromatogramCSDData);
 			}
 		}
 	}
