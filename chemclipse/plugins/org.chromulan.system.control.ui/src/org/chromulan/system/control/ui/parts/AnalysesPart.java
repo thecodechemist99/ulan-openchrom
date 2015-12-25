@@ -257,7 +257,6 @@ public class AnalysesPart {
 
 	private boolean controlUsingDevices(IDevicesProfile profile) {
 
-		eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_REQIRED, analysis.getDevicesProfile().getControlDevices());
 		for(IControlDevice device : profile.getControlDevices().getControlDevices()) {
 			if(!device.isConnected()) {
 				return false;
@@ -643,6 +642,7 @@ public class AnalysesPart {
 				this.analysis = analysis;
 				analysis.addPropertyChangeListener(dataAnalysisChange);
 				setTable();
+				eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_REQIRED, analysis.getDevicesProfile().getControlDevices());
 			}
 			if(this.analysis == analysis) {
 				if(controlAnalysis(analysis)) {
@@ -668,7 +668,9 @@ public class AnalysesPart {
 	@Optional
 	public void setAnalysis(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE) IControlDevices devices) {
 
-		setAnalysis(analysis);
+		if(this.analysis != null && !this.isSetAnalysis && controlUsingDevices(analysis.getDevicesProfile())) {
+			setAnalysis(analysis);
+		}
 	}
 
 	private void setTable() {

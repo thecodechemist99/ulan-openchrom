@@ -15,7 +15,7 @@ import org.chromulan.system.control.model.IControlDevice;
 
 public class AbstractDeviceData extends AbstractAnalysisData implements IDeviceData {
 
-	IControlDevice device;
+	private IControlDevice device;
 
 	public AbstractDeviceData(IControlDevice device) {
 

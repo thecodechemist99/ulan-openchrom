@@ -17,57 +17,21 @@ import java.util.List;
 
 import org.chromulan.system.control.model.data.IAnalysisData;
 import org.chromulan.system.control.model.data.IChromatogramCSDData;
+import org.chromulan.system.control.model.data.IChromatogramData;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class AnalysisCSDSaver implements IAnalysisCSDSaver {
+public class AnalysisCSDSaver extends AbstractAnalysisSaver implements IAnalysisCSDSaver {
 
-	private IAnalysis analysis;
-	private List<IAnalysisData> analysisDataList;
-	private File file;
 	private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos;
-	private List<IChromatogramCSDData> chromatograms;
-	private ISupplier supplier;
 
 	public AnalysisCSDSaver(IAnalysis analysis) {
 
-		chromatograms = new LinkedList<IChromatogramCSDData>();
-		analysisDataList = new LinkedList<IAnalysisData>();
+		super(analysis);
 		chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
-		this.analysis = analysis;
-	}
-
-	@Override
-	public void addDescription(IAnalysisData description) {
-
-		analysisDataList.add(description);
-	}
-
-	@Override
-	public void addChromatogam(IChromatogramCSDData chromatogram) {
-
-		chromatograms.add(chromatogram);
-	}
-
-	@Override
-	public IAnalysis getAnalysis() {
-
-		return analysis;
-	}
-
-	@Override
-	public List<IAnalysisData> getAnalysisDataAll() {
-
-		return analysisDataList;
-	}
-
-	@Override
-	public File getFile() {
-
-		return file;
 	}
 
 	@Override
@@ -77,45 +41,12 @@ public class AnalysisCSDSaver implements IAnalysisCSDSaver {
 	}
 
 	@Override
-	public List<IChromatogramCSDData> getChromatograms() {
-
-		return chromatograms;
-	}
-
-	@Override
-	public ISupplier getSupplier() {
-
-		return supplier;
-	}
-
-	@Override
-	public void removeAllAnalysisData() {
-
-		analysisDataList.clear();
-	}
-
-	@Override
-	public void removeAllChromatograms() {
-
-		chromatograms.clear();
-	}
-
-	@Override
-	public void removeAnalysisData(IAnalysisData description) {
-
-		analysisDataList.remove(description);
-	}
-
-	@Override
-	public void removeChromatogam(IChromatogramCSDData chromatogram) {
-
-		chromatograms.remove(chromatogram);
-	}
-
-	@Override
 	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor) {
 
 		chromatogramExportConverterProcessingInfos.clear();
+		ISupplier supplier = getSupplier();
+		File file = getFile();
+		IAnalysis analysis = getAnalysis();
 		if(supplier == null || file == null || analysis == null) {
 			// TODO: exception or return null ??
 			return null;
@@ -131,40 +62,31 @@ public class AnalysisCSDSaver implements IAnalysisCSDSaver {
 		StringBuilder stringBuilder = new StringBuilder("");
 		stringBuilder.append(analysis.getDescription());
 		stringBuilder.append("\r\n");
-		for(IAnalysisData iChromatogramDescription : analysisDataList) {
+		for(IAnalysisData iChromatogramDescription : getAnalysisDataAll()) {
 			if(iChromatogramDescription.getDescription() != null) {
 				stringBuilder.append(iChromatogramDescription.getDescription());
 				stringBuilder.append("\r\n");
 			}
 		}
-		for(IChromatogramCSDData chromatogramCSDData : chromatograms) {
-			IChromatogramCSD chromatogramCSD = chromatogramCSDData.getChromatogramCSD();
-			if(chromatogramCSD != null) {
-				String shortInfo;
-				if(chromatogramCSDData.getDescription() != null) {
-					shortInfo = stringBuilder.toString() + chromatogramCSDData.getDescription();
-				} else {
-					shortInfo = stringBuilder.toString();
+		for(IChromatogramData chromatogramData : getChromatograms()) {
+			if(chromatogramData instanceof IChromatogramCSDData) {
+				IChromatogramCSDData chromatogramCSDData = (IChromatogramCSDData)chromatogramData;
+				IChromatogramCSD chromatogramCSD = chromatogramCSDData.getChromatogramCSD();
+				if(chromatogramCSD != null) {
+					String shortInfo;
+					if(chromatogramCSDData.getDescription() != null) {
+						shortInfo = stringBuilder.toString() + chromatogramCSDData.getDescription();
+					} else {
+						shortInfo = stringBuilder.toString();
+					}
+					chromatogramCSD.setShortInfo(shortInfo);
+					chromatogramCSD.setFile(nFile);
+					File fileSave = new File(nFile + File.separator + chromatogramCSDData.getName());
+					IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterCSD.convert(fileSave, chromatogramCSD, supplier.getId(), progressMonitor);
+					chromatogramExportConverterProcessingInfos.add(procesInfo);
 				}
-				chromatogramCSD.setShortInfo(shortInfo);
-				chromatogramCSD.setFile(nFile);
-				File fileSave = new File(nFile + File.separator + chromatogramCSDData.getName());
-				IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterCSD.convert(fileSave, chromatogramCSD, supplier.getId(), progressMonitor);
-				chromatogramExportConverterProcessingInfos.add(procesInfo);
 			}
 		}
 		return chromatogramExportConverterProcessingInfos;
-	}
-
-	@Override
-	public void setFile(File file) {
-
-		this.file = file;
-	}
-
-	@Override
-	public void setSuplier(ISupplier suplier) {
-
-		this.supplier = suplier;
 	}
 }

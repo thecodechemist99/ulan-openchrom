@@ -58,7 +58,7 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 		label.setText("Auto Stop");
 		buttonAutoStop = new Button(composite, SWT.CHECK);
 		label = new Label(composite, SWT.None);
-		label.setText("Duration");
+		label.setText("Duration (min)");
 		textDuration = new Text(composite, SWT.BORDER);
 		label = new Label(composite, SWT.None);
 		label.setText("Description");

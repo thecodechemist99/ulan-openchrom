@@ -67,7 +67,7 @@ public class WizardNewAnalysisMain extends WizardPage {
 		final Button buttonAutoStop = new Button(composite, SWT.CHECK);
 		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoStop), model.autoStop);
 		label = new Label(composite, SWT.None);
-		label.setText("Interval");
+		label.setText("Duration (min)");
 		final Text textInterval = new Text(composite, SWT.BORDER);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textInterval), model.duration, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorDuration()).setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
 		label = new Label(composite, SWT.None);

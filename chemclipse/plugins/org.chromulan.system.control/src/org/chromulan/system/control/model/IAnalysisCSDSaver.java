@@ -11,17 +11,5 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
-import java.util.List;
-
-import org.chromulan.system.control.model.data.IChromatogramCSDData;
-
 public interface IAnalysisCSDSaver extends IAnalysisSaver {
-
-	void addChromatogam(IChromatogramCSDData chromatogram);
-
-	List<IChromatogramCSDData> getChromatograms();
-
-	void removeAllChromatograms();
-
-	void removeChromatogam(IChromatogramCSDData chromatogram);
 }

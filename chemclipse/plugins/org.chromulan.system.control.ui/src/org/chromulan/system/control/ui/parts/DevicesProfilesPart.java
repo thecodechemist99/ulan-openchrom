@@ -158,24 +158,10 @@ public class DevicesProfilesPart {
 		return part.getContext().get(IControlDevices.class);
 	}
 
-	private boolean profileIsBeeingUsed(IDevicesProfile devicesProfile) {
-
-		for(IAnalysis iAnalysis : actualAnalyses) {
-			if(iAnalysis.getDevicesProfile() == devicesProfile) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private void removeProfile(int number) {
 
-		if(!profileIsBeeingUsed(profiles.get(number))) {
-			profiles.remove(number);
-			actualizateProfile();
-		} else {
-			// TODO:Alert
-		}
+		profiles.remove(number);
+		actualizateProfile();
 	}
 
 	@Inject

@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.List;
 
 import org.chromulan.system.control.model.data.IAnalysisData;
+import org.chromulan.system.control.model.data.IChromatogramData;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,6 +23,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IAnalysisSaver {
 
 	void addDescription(IAnalysisData analysisData);
+
+	void addChromatogam(IChromatogramData chromatogram);
 
 	IAnalysis getAnalysis();
 
@@ -31,11 +34,17 @@ public interface IAnalysisSaver {
 
 	List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessInfo();
 
+	List<IChromatogramData> getChromatograms();
+
 	ISupplier getSupplier();
 
 	void removeAllAnalysisData();
 
+	void removeAllChromatograms();
+
 	void removeAnalysisData(IAnalysisData analysisData);
+
+	void removeChromatogam(IChromatogramData chromatogram);
 
 	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor);
 
