@@ -18,7 +18,6 @@ public class AbstractDeviceData extends AbstractAnalysisData implements IDeviceD
 	private IControlDevice device;
 
 	public AbstractDeviceData(IControlDevice device) {
-
 		this.device = device;
 	}
 

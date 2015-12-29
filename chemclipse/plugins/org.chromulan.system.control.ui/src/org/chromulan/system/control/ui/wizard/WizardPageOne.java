@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Text;
 public class WizardPageOne extends WizardPage {
 
 	public WizardPageOne() {
-
 		super("New Anlysis");
 		setTitle("New Anlysis");
 	}

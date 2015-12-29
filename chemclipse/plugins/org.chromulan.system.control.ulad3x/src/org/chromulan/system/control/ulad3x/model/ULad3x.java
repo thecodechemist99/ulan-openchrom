@@ -40,7 +40,6 @@ public class ULad3x {
 	private boolean isBeeingRecored;
 
 	public ULad3x(IControlDevice controlDevice) {
-
 		super();
 		this.controlDevice = controlDevice;
 		device = new ULanDevice(controlDevice.getDeviceDescription());

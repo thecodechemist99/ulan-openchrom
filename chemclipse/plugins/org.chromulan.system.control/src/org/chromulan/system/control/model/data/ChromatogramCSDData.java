@@ -19,7 +19,6 @@ import org.eclipse.chemclipse.model.core.IChromatogram;
 public class ChromatogramCSDData extends AbstractChromatogramData implements IChromatogramCSDData {
 
 	public ChromatogramCSDData(IControlDevice device, int scanDelay, int scanInterval) {
-
 		super(device, scanDelay, scanInterval);
 	}
 

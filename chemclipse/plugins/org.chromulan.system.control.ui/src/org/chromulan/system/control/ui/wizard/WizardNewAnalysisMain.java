@@ -32,18 +32,15 @@ import org.eclipse.swt.widgets.Text;
 public class WizardNewAnalysisMain extends WizardPage {
 
 	public WizardNewAnalysisMain() {
-
 		super("New Analysis");
 		setTitle("Paramenter of Analysis");
 	}
 
 	public WizardNewAnalysisMain(String pageName) {
-
 		super(pageName);
 	}
 
 	public WizardNewAnalysisMain(String pageName, String title, ImageDescriptor titleImage) {
-
 		super(pageName, title, titleImage);
 	}
 

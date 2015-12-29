@@ -24,7 +24,6 @@ public class WizardNewAnalysis extends Wizard {
 	private WizardNewAnalysisMultiple page3;
 
 	public WizardNewAnalysis(List<IDevicesProfile> devicesProfil) {
-
 		super();
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Analysis wizard");

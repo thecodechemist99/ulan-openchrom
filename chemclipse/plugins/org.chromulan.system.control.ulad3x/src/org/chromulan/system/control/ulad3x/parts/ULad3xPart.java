@@ -60,7 +60,6 @@ public class ULad3xPart {
 	private ULad3x uLad3x;
 
 	public ULad3xPart() {
-
 		listener = new PropertyChangeListener() {
 
 			@Override

@@ -28,7 +28,6 @@ public abstract class AbstractAnalysisSaver implements IAnalysisSaver {
 	private ISupplier supplier;
 
 	public AbstractAnalysisSaver(IAnalysis analysis) {
-
 		chromatograms = new LinkedList<IChromatogramData>();
 		analysisDataList = new LinkedList<IAnalysisData>();
 		this.analysis = analysis;

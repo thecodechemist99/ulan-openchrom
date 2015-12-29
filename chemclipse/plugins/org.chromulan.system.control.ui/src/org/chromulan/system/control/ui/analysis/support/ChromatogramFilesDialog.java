@@ -46,7 +46,6 @@ public class ChromatogramFilesDialog extends Dialog {
 	private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos;
 
 	public ChromatogramFilesDialog(Shell parentShell, IAnalysisSaver analysisSaver) {
-
 		super(parentShell);
 		this.analysisSaver = analysisSaver;
 		chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();

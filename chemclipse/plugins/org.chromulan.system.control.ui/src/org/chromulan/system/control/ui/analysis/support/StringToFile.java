@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.conversion.Converter;
 public class StringToFile extends Converter {
 
 	public StringToFile() {
-
 		super(String.class, File.class);
 	}
 

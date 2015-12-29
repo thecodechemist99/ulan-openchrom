@@ -22,7 +22,6 @@ public abstract class AbstractAnalyses implements IAnalyses {
 	private String name;
 
 	public AbstractAnalyses() {
-
 		analyses = new LinkedList<IAnalysis>();
 		name = DEFAULT_NAME;
 		actualAnalysis = null;

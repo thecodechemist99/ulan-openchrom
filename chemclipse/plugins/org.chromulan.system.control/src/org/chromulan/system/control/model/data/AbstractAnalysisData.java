@@ -20,7 +20,6 @@ public abstract class AbstractAnalysisData implements IAnalysisData {
 	private Map<String, Object> variables;
 
 	public AbstractAnalysisData() {
-
 		variables = new HashMap<String, Object>();
 	}
 

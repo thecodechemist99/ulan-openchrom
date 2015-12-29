@@ -52,19 +52,16 @@ public class AnalysisCDSSavePreferencePage extends PreferencePage {
 	private IObservableValue supplier;
 
 	public AnalysisCDSSavePreferencePage(IAnalysisCSD analysis) {
-
 		super("Save");
 		setAnalysis(analysis);
 	}
 
 	public AnalysisCDSSavePreferencePage(String title, IAnalysisCSD analysis) {
-
 		super(title);
 		setAnalysis(analysis);
 	}
 
 	public AnalysisCDSSavePreferencePage(String title, ImageDescriptor image, IAnalysisCSD analysis) {
-
 		super(title, image);
 		setAnalysis(analysis);
 	}

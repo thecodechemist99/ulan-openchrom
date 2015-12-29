@@ -17,7 +17,6 @@ public enum DeviceType {
 	private String type;
 
 	private DeviceType(String type) {
-
 		this.type = type;
 	}
 

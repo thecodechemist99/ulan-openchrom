@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.conversion.Converter;
 public class FileToString extends Converter {
 
 	public FileToString() {
-
 		super(File.class, String.class);
 	}
 

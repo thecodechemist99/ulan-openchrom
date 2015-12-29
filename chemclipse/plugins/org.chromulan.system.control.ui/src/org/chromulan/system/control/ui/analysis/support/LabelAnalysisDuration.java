@@ -20,7 +20,6 @@ public class LabelAnalysisDuration {
 	private long time;
 
 	public LabelAnalysisDuration(Composite composite, int style) {
-
 		label = new Label(composite, style);
 		label.setText("00:00:00");
 	}

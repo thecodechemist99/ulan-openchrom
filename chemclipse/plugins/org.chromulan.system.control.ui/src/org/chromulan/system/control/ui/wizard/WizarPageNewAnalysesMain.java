@@ -51,12 +51,10 @@ public class WizarPageNewAnalysesMain extends WizardPage {
 	private IObservableValue supplier;
 
 	public WizarPageNewAnalysesMain(String pageName) {
-
 		super(pageName);
 	}
 
 	public WizarPageNewAnalysesMain(String pageName, String title, ImageDescriptor titleImage) {
-
 		super(pageName, title, titleImage);
 	}
 

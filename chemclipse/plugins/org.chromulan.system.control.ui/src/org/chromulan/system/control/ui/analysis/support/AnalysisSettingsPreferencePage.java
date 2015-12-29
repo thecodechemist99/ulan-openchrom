@@ -38,7 +38,6 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 	private Text textName;
 
 	public AnalysisSettingsPreferencePage(IAnalysis analysis) {
-
 		super("Main");
 		this.analysis = analysis;
 		this.dbc = new DataBindingContext();

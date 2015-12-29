@@ -20,7 +20,6 @@ public abstract class AbstractChromatogramData extends AbstractDeviceData implem
 	private IChromatogram chromatogram;
 
 	public AbstractChromatogramData(IControlDevice device, int scanDelay, int scanInterval) {
-
 		super(device);
 		chromatogram = createChromatogram(scanDelay, scanInterval);
 	}

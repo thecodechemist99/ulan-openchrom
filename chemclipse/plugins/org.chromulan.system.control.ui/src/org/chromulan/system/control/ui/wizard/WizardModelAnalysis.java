@@ -29,7 +29,6 @@ public class WizardModelAnalysis {
 	public IObservableValue numberAnalyses;
 
 	public WizardModelAnalysis() {
-
 		autoContinue = new WritableValue(true, Boolean.class);
 		autoStop = new WritableValue(true, Boolean.class);
 		folder = new WritableValue(null, File.class);

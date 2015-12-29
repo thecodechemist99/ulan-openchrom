@@ -25,7 +25,6 @@ public class ControlDevice implements IControlDevice {
 	protected PropertyChangeSupport propertyChangeSupport;
 
 	public ControlDevice(DeviceDescription description, boolean isConnected) {
-
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		this.description = description;
 		this.deviceType = DeviceType.UNKNOWEN;

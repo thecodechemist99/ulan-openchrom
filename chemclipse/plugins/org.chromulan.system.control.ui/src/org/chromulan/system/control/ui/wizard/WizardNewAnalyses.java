@@ -21,7 +21,6 @@ public class WizardNewAnalyses extends Wizard {
 	private WizarPageNewAnalysesMain base;
 
 	public WizardNewAnalyses() {
-
 		super();
 		base = new WizarPageNewAnalysesMain("Select Default Directory");
 	}

@@ -32,7 +32,6 @@ public abstract class AbstractAnalysis extends AbstractAnalysisData implements I
 	private boolean recored;
 
 	public AbstractAnalysis() {
-
 		name = "";
 		recording = false;
 		recored = false;

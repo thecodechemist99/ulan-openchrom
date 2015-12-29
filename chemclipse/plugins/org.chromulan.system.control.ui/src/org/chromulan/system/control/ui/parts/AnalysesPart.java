@@ -162,7 +162,6 @@ public class AnalysesPart {
 	private ActualyationTimeRecording timeRecording;
 
 	public AnalysesPart() {
-
 		analysis = null;
 		timeRecording = new ActualyationTimeRecording();
 		IULanCommunication com = new ULanCommunicationInterface();

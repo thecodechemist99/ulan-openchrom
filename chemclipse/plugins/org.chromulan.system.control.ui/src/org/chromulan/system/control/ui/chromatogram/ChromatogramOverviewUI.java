@@ -37,7 +37,6 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 	private double minYAdjustIntensity;
 
 	public ChromatogramOverviewUI(Composite parent, int style) {
-
 		super(parent, style, new AxisTitlesIntensityScale());
 		autoMinYAdjustIntensity = false;
 		minYAdjustIntensity = 0.01;

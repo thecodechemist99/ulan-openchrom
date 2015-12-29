@@ -38,7 +38,6 @@ public class DevicesTable {
 		private CellEditor editor;
 
 		public NameEditor(TableViewer viewer) {
-
 			super(viewer);
 			editor = new TextCellEditor(viewer.getTable());
 		}
@@ -74,7 +73,6 @@ public class DevicesTable {
 	private TableViewer viewer;
 
 	public DevicesTable(Composite parent, int style) {
-
 		this.viewer = new TableViewer(parent, style);
 		viewContentProvider = new ObservableListContentProvider();
 		viewer.setContentProvider(viewContentProvider);

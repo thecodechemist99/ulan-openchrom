@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Jan Holý.
+ * Copyright (c) 2015 Jan Holï¿½.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Jan Holý - initial API and implementation
+ * Jan Holï¿½ - initial API and implementation
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
@@ -29,7 +29,6 @@ public class AnalysisCSDSaver extends AbstractAnalysisSaver implements IAnalysis
 	private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos;
 
 	public AnalysisCSDSaver(IAnalysis analysis) {
-
 		super(analysis);
 		chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
 	}

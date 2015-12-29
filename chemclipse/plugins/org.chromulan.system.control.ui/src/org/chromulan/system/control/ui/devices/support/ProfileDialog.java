@@ -24,7 +24,6 @@ public class ProfileDialog extends Dialog {
 	private IDevicesProfile profile;
 
 	public ProfileDialog(Shell parentShell, IDevicesProfile profile) {
-
 		super(parentShell);
 		this.profile = profile;
 	}

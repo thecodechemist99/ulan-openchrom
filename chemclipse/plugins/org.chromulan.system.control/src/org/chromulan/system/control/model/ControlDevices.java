@@ -19,7 +19,6 @@ public class ControlDevices implements IControlDevices {
 	private List<IControlDevice> controlDevices;
 
 	public ControlDevices() {
-
 		controlDevices = new LinkedList<IControlDevice>();
 	}
 

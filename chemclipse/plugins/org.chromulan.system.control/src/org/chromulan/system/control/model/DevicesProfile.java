@@ -17,7 +17,6 @@ public class DevicesProfile implements IDevicesProfile {
 	private String name;
 
 	public DevicesProfile() {
-
 		controlDevices = new ControlDevices();
 	}
 

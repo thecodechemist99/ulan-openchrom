@@ -33,7 +33,6 @@ public class ChromatogramViewer {
 	private class RedrawChromatogram implements Runnable {
 
 		public RedrawChromatogram() {
-
 		}
 
 		@Override
@@ -68,7 +67,6 @@ public class ChromatogramViewer {
 	private RedrawChromatogram redrawChromatogram;
 
 	public ChromatogramViewer() {
-
 		diplayChromatogram = DISPLAY_INTERVAL_CHROMATOGRAM;
 		autoRedraw = true;
 		redrawChromatogram = new RedrawChromatogram();

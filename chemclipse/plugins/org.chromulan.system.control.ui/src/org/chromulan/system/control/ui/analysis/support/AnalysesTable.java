@@ -41,7 +41,6 @@ public class AnalysesTable {
 	private ViewerFilter viewerfilterName;
 
 	public AnalysesTable(Composite parent, int style) {
-
 		containsFilterName = false;
 		this.viewer = new TableViewer(parent, style);
 		viewContentProvider = new ObservableListContentProvider();

@@ -16,7 +16,6 @@ import org.chromulan.system.control.model.IControlDevice;
 public class DeviceData extends AbstractDeviceData {
 
 	public DeviceData(IControlDevice device) {
-
 		super(device);
 	}
 }
