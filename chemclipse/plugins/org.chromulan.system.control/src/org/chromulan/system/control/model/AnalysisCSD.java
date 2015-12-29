@@ -14,7 +14,6 @@ package org.chromulan.system.control.model;
 public class AnalysisCSD extends AbstractAnalysis implements IAnalysisCSD {
 
 	public AnalysisCSD() {
-
 		super();
 	}
 

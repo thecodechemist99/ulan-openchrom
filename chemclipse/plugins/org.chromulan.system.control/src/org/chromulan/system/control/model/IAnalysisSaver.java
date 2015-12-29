@@ -14,37 +14,28 @@ package org.chromulan.system.control.model;
 import java.io.File;
 import java.util.List;
 
-import org.chromulan.system.control.model.data.IAnalysisData;
-import org.chromulan.system.control.model.data.IChromatogramData;
+import org.chromulan.system.control.model.data.IDetectorData;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IAnalysisSaver {
 
-	void addDescription(IAnalysisData analysisData);
-
-	void addChromatogam(IChromatogramData chromatogram);
+	void addDetectorData(IDetectorData detectorData);
 
 	IAnalysis getAnalysis();
 
-	List<IAnalysisData> getAnalysisDataAll();
+	List<IDetectorData> getDetectorsData();
 
 	File getFile();
 
 	List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessInfo();
 
-	List<IChromatogramData> getChromatograms();
-
 	ISupplier getSupplier();
 
-	void removeAllAnalysisData();
+	void removeAllDetectorData();
 
-	void removeAllChromatograms();
-
-	void removeAnalysisData(IAnalysisData analysisData);
-
-	void removeChromatogam(IChromatogramData chromatogram);
+	void removeDetectorData(IDetectorData detectorData);
 
 	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor);
 

@@ -43,7 +43,6 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 	private IDevicesProfile profile;
 
 	public WizarsNewDevicesProfilePage(IControlDevices controlDevices) {
-
 		super("New Devices Profile");
 		profile = new DevicesProfile();
 		this.controlDevices = controlDevices;

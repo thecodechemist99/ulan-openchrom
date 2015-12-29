@@ -27,18 +27,15 @@ import org.eclipse.swt.widgets.Text;
 public class WizardNewAnalysisMultiple extends WizardPage {
 
 	public WizardNewAnalysisMultiple() {
-
 		super("New Analysis");
 		setTitle("");
 	}
 
 	public WizardNewAnalysisMultiple(String pageName) {
-
 		super(pageName);
 	}
 
 	public WizardNewAnalysisMultiple(String pageName, String title, ImageDescriptor titleImage) {
-
 		super(pageName, title, titleImage);
 	}
 

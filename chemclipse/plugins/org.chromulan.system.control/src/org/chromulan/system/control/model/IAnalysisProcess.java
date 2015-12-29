@@ -9,14 +9,23 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.data;
+package org.chromulan.system.control.model;
 
-import org.chromulan.system.control.model.IControlDevice;
+public interface IAnalysisProcess {
 
-public class DeviceData extends AbstractDeviceData {
+	IAnalysisSaver getAnalysisSaver();
 
-	public DeviceData(IControlDevice device) {
+	IDevicesProfile getDevicesProfile();
 
-		super(device);
-	}
+	boolean isCompleted();
+
+	boolean isRunning();
+
+	void setAnalysisSaver(IAnalysisSaver saver);
+
+	void setDevicesProfile(IDevicesProfile devicesProfile);
+
+	void startRecording();
+
+	void stopRecording();
 }

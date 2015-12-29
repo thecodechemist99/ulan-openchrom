@@ -9,18 +9,23 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.data;
+package org.chromulan.system.control.model;
 
-import org.chromulan.system.control.model.IControlDevice;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.csd.model.implementation.ChromatogramCSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.eclipse.chemclipse.model.core.IChromatogramOverview;
+import org.eclipse.chemclipse.swt.ui.converter.SeriesConverter;
+import org.eclipse.chemclipse.swt.ui.series.IMultipleSeries;
+import org.eclipse.chemclipse.swt.ui.support.Sign;
 
-public class ChromatogramCSDData extends AbstractChromatogramData implements IChromatogramCSDData {
+public class ChromatogramCSDAcquisition extends AbstractChromatogramAcquisition implements IChromatogramCSDAcquisition {
 
-	public ChromatogramCSDData(IControlDevice device, int scanDelay, int scanInterval) {
-
-		super(device, scanDelay, scanInterval);
+	public ChromatogramCSDAcquisition(int scanDelay, int scanInterval) {
+		super(scanDelay, scanInterval);
 	}
 
 	@Override
@@ -40,5 +45,18 @@ public class ChromatogramCSDData extends AbstractChromatogramData implements ICh
 			return (IChromatogramCSD)chromatogram;
 		}
 		return null;
+	}
+
+	@Override
+	public IMultipleSeries getSeries() {
+
+		IChromatogramCSD chromatogram = getChromatogramCSD();
+		List<IChromatogramOverview> list = new ArrayList<IChromatogramOverview>(1);
+		list.add(chromatogram);
+		IMultipleSeries series = null;
+		synchronized(this) {
+			series = SeriesConverter.convertChromatogramOverviews(list, Sign.POSITIVE, null, false);
+		}
+		return series;
 	}
 }

@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 
+import org.chromulan.system.control.model.ChromatogramCSDAcquisition;
+import org.chromulan.system.control.model.IChromatogramAcquisition;
 import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.data.ChromatogramCSDData;
-import org.chromulan.system.control.model.data.IChromatogramData;
 import org.eclipse.chemclipse.csd.model.implementation.ScanCSD;
 
 import net.sourceforge.ulan.base.CompletionHandler;
@@ -36,15 +36,14 @@ public class ULad3x {
 	private DeviceDescription description;
 	private IULanDevice device;
 	private IFilt filtGetData;
-	private IChromatogramData chromatogramData;
+	private IChromatogramAcquisition chromatogramAcquisition;
 	private boolean isBeeingRecored;
 
 	public ULad3x(IControlDevice controlDevice) {
-
 		super();
 		this.controlDevice = controlDevice;
 		device = new ULanDevice(controlDevice.getDeviceDescription());
-		chromatogramData = new ChromatogramCSDData(controlDevice, DEFAULT_SCAN_DELAY, DEFAULT_SCAN_INTERVAL);
+		chromatogramAcquisition = new ChromatogramCSDAcquisition(DEFAULT_SCAN_DELAY, DEFAULT_SCAN_INTERVAL);
 		filtGetData = device.addFiltAdr(0x4f, null, new CompletionHandler<ULanMsg, Void>() {
 
 			@Override
@@ -53,7 +52,7 @@ public class ULad3x {
 				ByteBuffer buffer = arg0.getMsg();
 				if(isBeeingRecored) {
 					while(buffer.hasRemaining()) {
-						chromatogramData.addScanAutoSet(new ScanCSD(buffer.getFloat()));
+						chromatogramAcquisition.addScanAutoSet(new ScanCSD(buffer.getFloat()));
 					}
 				}
 			}
@@ -88,19 +87,19 @@ public class ULad3x {
 		return description;
 	}
 
-	public IChromatogramData getChromatogramRecording() {
+	public IChromatogramAcquisition getChromatogramRecording() {
 
-		return chromatogramData;
+		return chromatogramAcquisition;
 	}
 
 	public int getScanDelay() {
 
-		return chromatogramData.getScanDelay();
+		return chromatogramAcquisition.getScanDelay();
 	}
 
 	public int getScanInterva() {
 
-		return chromatogramData.getScanInterval();
+		return chromatogramAcquisition.getScanInterval();
 	}
 
 	public boolean isBeeingRecored() {
@@ -120,29 +119,29 @@ public class ULad3x {
 
 	public void newRecord(int scanDelay) {
 
-		chromatogramData.newRecord(scanDelay, DEFAULT_SCAN_INTERVAL);
+		chromatogramAcquisition.newRecord(scanDelay, DEFAULT_SCAN_INTERVAL);
 	}
 
 	public void reset() {
 
-		chromatogramData.resetRecording();
+		chromatogramAcquisition.resetRecording();
 	}
 
 	public void resetRecording() {
 
-		chromatogramData.resetRecording();
+		chromatogramAcquisition.resetRecording();
 	}
 
 	public void setScanDelay(int milliseconds) {
 
-		chromatogramData.setScanDelay(milliseconds);
+		chromatogramAcquisition.setScanDelay(milliseconds);
 	}
 
 	public void start(boolean reset) {
 
 		isBeeingRecored = true;
 		if(reset) {
-			chromatogramData.resetRecording();
+			chromatogramAcquisition.resetRecording();
 		}
 	}
 

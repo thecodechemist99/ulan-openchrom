@@ -25,4 +25,7 @@ Import-Package: org.eclipse.chemclipse.converter.core,
  org.eclipse.chemclipse.model.core,
  org.eclipse.chemclipse.model.exceptions,
  org.eclipse.chemclipse.model.selection,
+ org.eclipse.chemclipse.swt.ui.converter,
+ org.eclipse.chemclipse.swt.ui.series,
+ org.eclipse.chemclipse.swt.ui.support,
  org.eclipse.chemclipse.wsd.model.core

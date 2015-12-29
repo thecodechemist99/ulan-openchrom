@@ -12,12 +12,11 @@
 package org.chromulan.system.control.model;
 
 public enum DeviceType {
-	AUTO_SAMLER("Auto Sampler"), COLLECTOR("Colector"), DETECTOR("Detector"), FRACTION_COLLECTOR("Fraction Collector"), PEAK_SELECTOR("Peak Selector"), PUMP("PUMP"), THERMOSTAT("Thermostat"), UNKNOWEN("Unknown");
+	AUTO_SAMLER("Auto Sampler"), COLLECTOR("Colector"), DETECTOR("Detector"), FRACTION_COLLECTOR("Fraction Collector"), PEAK_SELECTOR("Peak Selector"), PUMP("Pump"), THERMOSTAT("Thermostat"), UNKNOWEN("Unknown");
 
 	private String type;
 
 	private DeviceType(String type) {
-
 		this.type = type;
 	}
 

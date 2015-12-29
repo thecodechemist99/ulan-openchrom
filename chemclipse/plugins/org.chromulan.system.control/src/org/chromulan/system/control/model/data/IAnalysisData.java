@@ -11,19 +11,9 @@
  *******************************************************************************/
 package org.chromulan.system.control.model.data;
 
-import java.util.Map;
-
 public interface IAnalysisData {
 
 	String getDescription();
 
 	String getName();
-
-	Object getVariable(String name);
-
-	Map<String, Object> getVariables();
-
-	void setDescription(String description);
-
-	void setVariable(String name, Object value);
 }

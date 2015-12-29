@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.model.data.IChromatogramData;
+import org.chromulan.system.control.model.IChromatogramAcquisition;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -33,7 +33,6 @@ public class ChromatogramViewer {
 	private class RedrawChromatogram implements Runnable {
 
 		public RedrawChromatogram() {
-
 		}
 
 		@Override
@@ -59,7 +58,7 @@ public class ChromatogramViewer {
 	private Display display;
 	@Inject
 	private EHandlerService handlerService;
-	private IChromatogramData chromatogramData;
+	private IChromatogramAcquisition chromatogramAcquisition;
 	private ChromatogramOverviewUI chromatogramOverView;
 	@Inject
 	private MPart part;
@@ -68,7 +67,6 @@ public class ChromatogramViewer {
 	private RedrawChromatogram redrawChromatogram;
 
 	public ChromatogramViewer() {
-
 		diplayChromatogram = DISPLAY_INTERVAL_CHROMATOGRAM;
 		autoRedraw = true;
 		redrawChromatogram = new RedrawChromatogram();
@@ -124,10 +122,10 @@ public class ChromatogramViewer {
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 
-		chromatogramData = (IChromatogramData)part.getObject();
+		chromatogramAcquisition = (IChromatogramAcquisition)part.getObject();
 		redrawChromatogram(autoRedraw);
 		chromatogramOverView = new ChromatogramOverviewUI(parent, SWT.NONE);
-		chromatogramOverView.setChromatogram(chromatogramData);
+		chromatogramOverView.setChromatogram(chromatogramAcquisition);
 		addHandler();
 	}
 

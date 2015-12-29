@@ -9,11 +9,11 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.data;
+package org.chromulan.system.control.model;
 
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 
-public interface IChromatogramCSDData extends IChromatogramData {
+public interface IChromatogramCSDAcquisition extends IChromatogramAcquisition {
 
 	IChromatogramCSD getChromatogramCSD();
 }

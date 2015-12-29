@@ -14,6 +14,5 @@ package org.chromulan.system.control.model;
 public class ULanConnection {
 
 	public ULanConnection() {
-
 	}
 }

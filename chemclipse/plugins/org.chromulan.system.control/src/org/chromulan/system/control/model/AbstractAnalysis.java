@@ -15,9 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Date;
 
-import org.chromulan.system.control.model.data.AbstractAnalysisData;
-
-public abstract class AbstractAnalysis extends AbstractAnalysisData implements IAnalysis {
+public abstract class AbstractAnalysis implements IAnalysis {
 
 	private IAnalysisSaver analysisSaver;
 	private boolean autoContinue;
@@ -32,7 +30,6 @@ public abstract class AbstractAnalysis extends AbstractAnalysisData implements I
 	private boolean recored;
 
 	public AbstractAnalysis() {
-
 		name = "";
 		recording = false;
 		recored = false;
@@ -102,13 +99,13 @@ public abstract class AbstractAnalysis extends AbstractAnalysisData implements I
 	}
 
 	@Override
-	public boolean hasBeenRecorded() {
+	public boolean isCompleted() {
 
 		return recored;
 	}
 
 	@Override
-	public boolean isBeingRecorded() {
+	public boolean isRunning() {
 
 		return recording;
 	}

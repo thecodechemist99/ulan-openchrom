@@ -16,7 +16,6 @@ import org.eclipse.core.databinding.conversion.Converter;
 public class MinutesToMilliseconds extends Converter {
 
 	public MinutesToMilliseconds() {
-
 		super(String.class, Long.class);
 	}
 

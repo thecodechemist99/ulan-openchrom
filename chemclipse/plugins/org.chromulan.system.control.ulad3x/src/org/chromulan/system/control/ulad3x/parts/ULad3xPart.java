@@ -14,6 +14,7 @@ package org.chromulan.system.control.ulad3x.parts;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -24,9 +25,10 @@ import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.IAnalysis;
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.model.data.IChromatogramCSDData;
+import org.chromulan.system.control.model.data.IDetectorData;
 import org.chromulan.system.control.ui.events.IAnalysisUIEvents;
 import org.chromulan.system.control.ulad3x.model.ULad3x;
+import org.chromulan.system.control.ulad3x.model.ULad3xData;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -60,7 +62,6 @@ public class ULad3xPart {
 	private ULad3x uLad3x;
 
 	public ULad3xPart() {
-
 		listener = new PropertyChangeListener() {
 
 			@Override
@@ -107,6 +108,7 @@ public class ULad3xPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
+				uLad3x.getChromatogramRecording().setName(controlDevice.getName());
 				eventBroker.post(IAnalysisUIEvents.TOPIC_ANALYSIS_CHROMULAN_UI_CHROMATOGRAM_DISPLAY, uLad3x.getChromatogramRecording());
 			}
 		});
@@ -190,10 +192,10 @@ public class ULad3xPart {
 	public void removeAnalysis(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END) IAnalysis analisis) {
 
 		if(this.analysis == analisis) {
-			part.getContext().remove(IChromatogramCSDData.class);
+			part.getTransientData().remove(IDetectorData.DETECTORS_DATA);
 			enableButton(true);
 			this.analysis = null;
-			if(analisis.hasBeenRecorded()) {
+			if(analisis.isCompleted()) {
 				uLad3x.newRecord();
 				uLad3x.start(false);
 			}
@@ -226,11 +228,10 @@ public class ULad3xPart {
 
 		if(this.analysis != null && this.analysis == analysis) {
 			uLad3x.stop();
-			uLad3x.getChromatogramRecording().setDescription(textDescription.getText());
-			if(uLad3x.getChromatogramRecording() instanceof IChromatogramCSDData) {
-				IChromatogramCSDData chromatogramCSDData = (IChromatogramCSDData)uLad3x.getChromatogramRecording();
-				part.getContext().set(IChromatogramCSDData.class, chromatogramCSDData);
-			}
+			ULad3xData data = new ULad3xData(controlDevice);
+			data.setDescription(textDescription.getText());
+			data.setChromatogram(uLad3x.getChromatogramRecording().getChromatogram());
+			part.getTransientData().put(IDetectorData.DETECTORS_DATA, new LinkedList<IDetectorData>().add(data));
 		}
 	}
 }

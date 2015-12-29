@@ -13,7 +13,7 @@ package org.chromulan.system.control.ui.devices.support;
 
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.IControlDevices;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -38,7 +38,6 @@ public class DevicesTable {
 		private CellEditor editor;
 
 		public NameEditor(TableViewer viewer) {
-
 			super(viewer);
 			editor = new TextCellEditor(viewer.getTable());
 		}
@@ -74,7 +73,6 @@ public class DevicesTable {
 	private TableViewer viewer;
 
 	public DevicesTable(Composite parent, int style) {
-
 		this.viewer = new TableViewer(parent, style);
 		viewContentProvider = new ObservableListContentProvider();
 		viewer.setContentProvider(viewContentProvider);
@@ -109,7 +107,7 @@ public class DevicesTable {
 			}
 		});
 		column = createTableViewerColumn(titles[1], bounds[1]);
-		IObservableMap attributeMapName = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IControlDevice.class, IControlDevice.PROPERTY_NAME);
+		IObservableMap attributeMapName = BeanProperties.value(IControlDevice.class, IControlDevice.PROPERTY_NAME).observeDetail(viewContentProvider.getKnownElements());
 		column.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapName));
 		column.setEditingSupport(new NameEditor(viewer));
 		column = createTableViewerColumn(titles[2], bounds[2]);
@@ -123,7 +121,7 @@ public class DevicesTable {
 			}
 		});
 		column = createTableViewerColumn(titles[3], bounds[3]);
-		IObservableMap attributeMapType = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IControlDevice.class, IControlDevice.PROPERTY_DEVICE_TYPE);
+		IObservableMap attributeMapType = BeanProperties.value(IControlDevice.class, IControlDevice.PROPERTY_DEVICE_TYPE).observeDetail(viewContentProvider.getKnownElements());
 		column.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapType));
 	}
 

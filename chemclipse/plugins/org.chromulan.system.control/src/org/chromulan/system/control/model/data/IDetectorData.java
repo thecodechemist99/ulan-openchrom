@@ -11,26 +11,11 @@
  *******************************************************************************/
 package org.chromulan.system.control.model.data;
 
-import org.chromulan.system.control.model.IControlDevice;
+import org.eclipse.chemclipse.model.core.IChromatogram;
 
-public class AbstractDeviceData extends AbstractAnalysisData implements IDeviceData {
+public interface IDetectorData extends IDeviceData {
 
-	private IControlDevice device;
+	String DETECTORS_DATA = "detectorsData";
 
-	public AbstractDeviceData(IControlDevice device) {
-
-		this.device = device;
-	}
-
-	@Override
-	public IControlDevice getControlDevice() {
-
-		return device;
-	}
-
-	@Override
-	public String getName() {
-
-		return device.getName();
-	}
+	IChromatogram getChromatogram();
 }

@@ -52,19 +52,16 @@ public class AnalysisCDSSavePreferencePage extends PreferencePage {
 	private IObservableValue supplier;
 
 	public AnalysisCDSSavePreferencePage(IAnalysisCSD analysis) {
-
 		super("Save");
 		setAnalysis(analysis);
 	}
 
 	public AnalysisCDSSavePreferencePage(String title, IAnalysisCSD analysis) {
-
 		super(title);
 		setAnalysis(analysis);
 	}
 
 	public AnalysisCDSSavePreferencePage(String title, ImageDescriptor image, IAnalysisCSD analysis) {
-
 		super(title, image);
 		setAnalysis(analysis);
 	}
@@ -131,7 +128,7 @@ public class AnalysisCDSSavePreferencePage extends PreferencePage {
 	@Override
 	public boolean performOk() {
 
-		if(analysis.hasBeenRecorded()) {
+		if(analysis.isCompleted()) {
 			performDefaults();
 			disableEdition();
 			return false;
@@ -153,7 +150,7 @@ public class AnalysisCDSSavePreferencePage extends PreferencePage {
 
 	private void setErrors() {
 
-		if(analysis.hasBeenRecorded()) {
+		if(analysis.isCompleted()) {
 			setErrorMessage("Can not change analysis because Anaysis has been recorded");
 			disableEdition();
 		}

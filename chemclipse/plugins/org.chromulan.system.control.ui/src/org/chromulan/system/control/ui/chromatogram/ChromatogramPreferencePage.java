@@ -39,19 +39,16 @@ public class ChromatogramPreferencePage extends PreferencePage {
 	private IObservableValue minYAdjustIntensity;
 
 	public ChromatogramPreferencePage(ChromatogramOverviewUI chromatogramOverviewUI) {
-
 		super("Main");
 		this.chromatogramOverviewUI = chromatogramOverviewUI;
 	}
 
 	public ChromatogramPreferencePage(String title, ChromatogramOverviewUI chromatogramOverviewUI) {
-
 		super(title);
 		this.chromatogramOverviewUI = chromatogramOverviewUI;
 	}
 
 	public ChromatogramPreferencePage(String title, ImageDescriptor image, ChromatogramOverviewUI chromatogramOverviewUI) {
-
 		super(title, image);
 		this.chromatogramOverviewUI = chromatogramOverviewUI;
 	}

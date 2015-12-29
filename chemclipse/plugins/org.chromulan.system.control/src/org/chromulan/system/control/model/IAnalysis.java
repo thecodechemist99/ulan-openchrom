@@ -16,7 +16,7 @@ import java.util.Date;
 
 import org.chromulan.system.control.model.data.IAnalysisData;
 
-public interface IAnalysis extends IAnalysisData {
+public interface IAnalysis extends IAnalysisData, IAnalysisProcess {
 
 	final String PROPERTY_AUTO_CONTINUE = "autoContinue";
 	final String PROPERTY_AUTO_STOP = "autoStop";
@@ -28,13 +28,12 @@ public interface IAnalysis extends IAnalysisData {
 
 	void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
-	IAnalysisSaver getAnalysisSaver();
-
 	boolean getAutoContinue();
 
 	boolean getAutoStop();
 
-	IDevicesProfile getDevicesProfile();
+	@Override
+	String getDescription();
 
 	long getDuration();
 
@@ -43,27 +42,17 @@ public interface IAnalysis extends IAnalysisData {
 
 	Date getStartDate();
 
-	boolean hasBeenRecorded();
-
-	boolean isBeingRecorded();
-
 	void removePropertyChangeListener(PropertyChangeListener listener);
 
 	void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
-
-	void setAnalysisSaver(IAnalysisSaver saver);
 
 	void setAutoContinue(boolean b);
 
 	void setAutoStop(boolean b);
 
-	void setDevicesProfile(IDevicesProfile devicesProfile);
+	void setDescription(String description);
 
 	void setDuration(long duration);
 
 	void setName(String name);
-
-	void startRecording();
-
-	void stopRecording();
 }

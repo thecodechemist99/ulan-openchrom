@@ -9,26 +9,24 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.data;
+package org.chromulan.system.control.model;
 
-import org.chromulan.system.control.model.IControlDevice;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
 
-public abstract class AbstractChromatogramData extends AbstractDeviceData implements IChromatogramData {
+public abstract class AbstractChromatogramAcquisition implements IChromatogramAcquisition {
 
 	private IChromatogram chromatogram;
+	private String name;
 
-	public AbstractChromatogramData(IControlDevice device, int scanDelay, int scanInterval) {
-
-		super(device);
+	public AbstractChromatogramAcquisition(int scanDelay, int scanInterval) {
 		chromatogram = createChromatogram(scanDelay, scanInterval);
 	}
 
 	@Override
 	public void addScan(IScan scan) {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			chromatogram.addScan(scan);
 		}
 	}
@@ -36,7 +34,7 @@ public abstract class AbstractChromatogramData extends AbstractDeviceData implem
 	@Override
 	public void addScanAutoSet(IScan scan) {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			int number = chromatogram.getNumberOfScans();
 			scan.setParentChromatogram(chromatogram);
 			scan.setRetentionTime(chromatogram.getScanDelay() + chromatogram.getScanInterval() * (number));
@@ -50,7 +48,7 @@ public abstract class AbstractChromatogramData extends AbstractDeviceData implem
 	@Override
 	public IChromatogram getChromatogram() {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			return chromatogram;
 		}
 	}
@@ -58,15 +56,21 @@ public abstract class AbstractChromatogramData extends AbstractDeviceData implem
 	@Override
 	public double getMaxSignal() {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			return getChromatogram().getMaxSignal();
 		}
 	}
 
 	@Override
+	public String getName() {
+
+		return name;
+	}
+
+	@Override
 	public int getNumberOfScans() {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			return chromatogram.getNumberOfScans();
 		}
 	}
@@ -74,7 +78,7 @@ public abstract class AbstractChromatogramData extends AbstractDeviceData implem
 	@Override
 	public int getScanDelay() {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			return chromatogram.getScanDelay();
 		}
 	}
@@ -82,7 +86,7 @@ public abstract class AbstractChromatogramData extends AbstractDeviceData implem
 	@Override
 	public int getScanInterval() {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			return chromatogram.getScanInterval();
 		}
 	}
@@ -90,7 +94,7 @@ public abstract class AbstractChromatogramData extends AbstractDeviceData implem
 	@Override
 	public void newRecord(int scanDelay, int scanInterval) {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			this.chromatogram = createChromatogram(scanDelay, scanInterval);
 		}
 	}
@@ -103,15 +107,23 @@ public abstract class AbstractChromatogramData extends AbstractDeviceData implem
 	@Override
 	public void resetRecording() {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			reset();
+		}
+	}
+
+	@Override
+	public void setName(String name) {
+
+		synchronized(this) {
+			this.name = name;
 		}
 	}
 
 	@Override
 	public void setScanDelay(int milliseconds) {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			if(chromatogram.getScanDelay() != milliseconds) {
 				chromatogram.setScanDelay(milliseconds);
 				chromatogram.recalculateRetentionTimes();
@@ -122,7 +134,7 @@ public abstract class AbstractChromatogramData extends AbstractDeviceData implem
 	@Override
 	public void setScanInterval(int milliseconds) {
 
-		synchronized(chromatogram) {
+		synchronized(this) {
 			if(milliseconds != chromatogram.getScanInterval()) {
 				reset();
 				chromatogram.setScanInterval(milliseconds);

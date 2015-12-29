@@ -14,7 +14,7 @@ package org.chromulan.system.control.ui.analysis.support;
 import org.chromulan.system.control.model.IAnalyses;
 import org.chromulan.system.control.model.IAnalysis;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -41,7 +41,6 @@ public class AnalysesTable {
 	private ViewerFilter viewerfilterName;
 
 	public AnalysesTable(Composite parent, int style) {
-
 		containsFilterName = false;
 		this.viewer = new TableViewer(parent, style);
 		viewContentProvider = new ObservableListContentProvider();
@@ -82,7 +81,7 @@ public class AnalysesTable {
 		int[] bounds = {150, 100, 100, 100, 100, 100};
 		// column for the name
 		TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0]);
-		IObservableMap attributeMapName = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_NAME);
+		IObservableMap attributeMapName = BeanProperties.value(IAnalysis.class, IAnalysis.PROPERTY_NAME).observeDetail(viewContentProvider.getKnownElements());
 		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapName));
 		// column for the state
 		col = createTableViewerColumn(titles[1], bounds[1]);
@@ -95,7 +94,7 @@ public class AnalysesTable {
 				if(analyses.isActualAnalysis(analysis)) {
 					cell.setText("Actual");
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
-				} else if(analysis.hasBeenRecorded()) {
+				} else if(analysis.isCompleted()) {
 					cell.setText("Record");
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 				} else {
@@ -106,7 +105,7 @@ public class AnalysesTable {
 		});
 		// column for the auto stop
 		col = createTableViewerColumn(titles[2], bounds[2]);
-		IObservableMap attributeMapAutoStop = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_AUTO_STOP);
+		IObservableMap attributeMapAutoStop = BeanProperties.value(IAnalysis.class, IAnalysis.PROPERTY_AUTO_STOP).observeDetail(viewContentProvider.getKnownElements());
 		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapAutoStop) {
 
 			@Override
@@ -119,7 +118,7 @@ public class AnalysesTable {
 		});
 		// column for the interval
 		col = createTableViewerColumn(titles[3], bounds[3]);
-		IObservableMap attributeMapInterval = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_DURATION);
+		IObservableMap attributeMapInterval = BeanProperties.value(IAnalysis.class, IAnalysis.PROPERTY_DURATION).observeDetail(viewContentProvider.getKnownElements());
 		col.setLabelProvider(new ObservableMapCellLabelProvider(new IObservableMap[]{attributeMapAutoStop, attributeMapInterval}) {
 
 			@Override
@@ -136,7 +135,7 @@ public class AnalysesTable {
 		});
 		// column for the auto continue
 		col = createTableViewerColumn(titles[4], bounds[4]);
-		IObservableMap attributeMapAutoContinue = BeansObservables.observeMap(viewContentProvider.getKnownElements(), IAnalysis.class, IAnalysis.PROPERTY_AUTO_CONTINUE);
+		IObservableMap attributeMapAutoContinue = BeanProperties.value(IAnalysis.class, IAnalysis.PROPERTY_AUTO_CONTINUE).observeDetail(viewContentProvider.getKnownElements());
 		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapAutoContinue) {
 
 			@Override

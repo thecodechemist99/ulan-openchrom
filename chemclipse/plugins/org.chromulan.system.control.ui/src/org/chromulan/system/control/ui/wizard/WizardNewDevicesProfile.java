@@ -22,7 +22,6 @@ public class WizardNewDevicesProfile extends Wizard {
 	private WizardPage page1;
 
 	public WizardNewDevicesProfile(IControlDevices devices) {
-
 		super();
 		page1 = new WizarsNewDevicesProfilePage(devices);
 	}

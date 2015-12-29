@@ -38,7 +38,6 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 	private Text textName;
 
 	public AnalysisSettingsPreferencePage(IAnalysis analysis) {
-
 		super("Main");
 		this.analysis = analysis;
 		this.dbc = new DataBindingContext();
@@ -96,7 +95,7 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 	@Override
 	public boolean performOk() {
 
-		if(analysis.hasBeenRecorded()) {
+		if(analysis.isCompleted()) {
 			performDefaults();
 			setErrors();
 			return false;
@@ -108,7 +107,7 @@ public class AnalysisSettingsPreferencePage extends PreferencePage {
 
 	private void setErrors() {
 
-		if(analysis.hasBeenRecorded()) {
+		if(analysis.isCompleted()) {
 			setErrorMessage("Can not change analysis because Anaysis has been recorded");
 			disableEdition();
 		}

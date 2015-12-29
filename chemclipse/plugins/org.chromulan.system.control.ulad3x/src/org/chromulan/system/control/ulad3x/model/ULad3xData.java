@@ -9,19 +9,27 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.data;
+package org.chromulan.system.control.ulad3x.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.chromulan.system.control.model.IControlDevice;
+import org.chromulan.system.control.model.data.IDetectorData;
+import org.eclipse.chemclipse.model.core.IChromatogram;
 
-public abstract class AbstractAnalysisData implements IAnalysisData {
+public class ULad3xData implements IDetectorData {
 
+	private IControlDevice controlDevice;
 	private String description;
-	private Map<String, Object> variables;
+	private IChromatogram chromatogram;
 
-	public AbstractAnalysisData() {
+	public ULad3xData(IControlDevice controlDevice) {
+		super();
+		this.controlDevice = controlDevice;
+	}
 
-		variables = new HashMap<String, Object>();
+	@Override
+	public IControlDevice getControlDevice() {
+
+		return controlDevice;
 	}
 
 	@Override
@@ -31,26 +39,24 @@ public abstract class AbstractAnalysisData implements IAnalysisData {
 	}
 
 	@Override
-	public Object getVariable(String name) {
+	public IChromatogram getChromatogram() {
 
-		return variables.get(name);
+		return chromatogram;
 	}
 
 	@Override
-	public Map<String, Object> getVariables() {
+	public String getName() {
 
-		return variables;
+		return controlDevice.getName();
 	}
 
-	@Override
 	public void setDescription(String description) {
 
 		this.description = description;
 	}
 
-	@Override
-	public void setVariable(String name, Object value) {
+	public void setChromatogram(IChromatogram chromatogram) {
 
-		variables.put(name, value);
+		this.chromatogram = chromatogram;
 	}
 }

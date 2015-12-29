@@ -58,6 +58,7 @@ import net.sourceforge.ulan.base.ULanMsg;
 public class AvailableDevicesPart {
 
 	public final static String ID = "org.chromulan.system.control.ui.part.availableDevices";
+
 	static {
 		if(!ULanCommunicationInterface.isHandleInitialized()) {
 			try {
@@ -67,6 +68,7 @@ public class AvailableDevicesPart {
 			}
 		}
 	}
+
 	@Inject
 	private MApplication application;
 	private Button buttonRefreshDevices;
@@ -88,7 +90,6 @@ public class AvailableDevicesPart {
 	private EPartService partService;
 
 	public AvailableDevicesPart() {
-
 		communication = new ULanCommunicationInterface();
 		connection = new ULanConnection();
 		devices = new ControlDevices();

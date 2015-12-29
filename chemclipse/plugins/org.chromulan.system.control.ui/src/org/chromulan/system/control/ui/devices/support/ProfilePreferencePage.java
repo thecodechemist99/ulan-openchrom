@@ -26,7 +26,6 @@ public class ProfilePreferencePage extends PreferencePage {
 	private IDevicesProfile profile;
 
 	public ProfilePreferencePage(IDevicesProfile profile) {
-
 		super("devices profile");
 		this.profile = profile;
 		noDefaultAndApplyButton();

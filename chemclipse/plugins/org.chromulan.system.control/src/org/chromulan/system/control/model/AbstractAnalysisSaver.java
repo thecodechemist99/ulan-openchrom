@@ -15,35 +15,25 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.chromulan.system.control.model.data.IAnalysisData;
-import org.chromulan.system.control.model.data.IChromatogramData;
+import org.chromulan.system.control.model.data.IDetectorData;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 
 public abstract class AbstractAnalysisSaver implements IAnalysisSaver {
 
 	private IAnalysis analysis;
-	private List<IAnalysisData> analysisDataList;
+	private List<IDetectorData> detectorsData;
 	private File file;
-	private List<IChromatogramData> chromatograms;
 	private ISupplier supplier;
 
 	public AbstractAnalysisSaver(IAnalysis analysis) {
-
-		chromatograms = new LinkedList<IChromatogramData>();
-		analysisDataList = new LinkedList<IAnalysisData>();
+		detectorsData = new LinkedList<IDetectorData>();
 		this.analysis = analysis;
 	}
 
 	@Override
-	public void addDescription(IAnalysisData description) {
+	public void addDetectorData(IDetectorData detectorData) {
 
-		analysisDataList.add(description);
-	}
-
-	@Override
-	public void addChromatogam(IChromatogramData chromatogram) {
-
-		chromatograms.add(chromatogram);
+		detectorsData.add(detectorData);
 	}
 
 	@Override
@@ -53,9 +43,9 @@ public abstract class AbstractAnalysisSaver implements IAnalysisSaver {
 	}
 
 	@Override
-	public List<IAnalysisData> getAnalysisDataAll() {
+	public List<IDetectorData> getDetectorsData() {
 
-		return analysisDataList;
+		return detectorsData;
 	}
 
 	@Override
@@ -65,39 +55,21 @@ public abstract class AbstractAnalysisSaver implements IAnalysisSaver {
 	}
 
 	@Override
-	public List<IChromatogramData> getChromatograms() {
-
-		return chromatograms;
-	}
-
-	@Override
 	public ISupplier getSupplier() {
 
 		return supplier;
 	}
 
 	@Override
-	public void removeAllAnalysisData() {
+	public void removeAllDetectorData() {
 
-		analysisDataList.clear();
+		detectorsData.clear();
 	}
 
 	@Override
-	public void removeAllChromatograms() {
+	public void removeDetectorData(IDetectorData detectorData) {
 
-		chromatograms.clear();
-	}
-
-	@Override
-	public void removeAnalysisData(IAnalysisData description) {
-
-		analysisDataList.remove(description);
-	}
-
-	@Override
-	public void removeChromatogam(IChromatogramData chromatogram) {
-
-		chromatograms.remove(chromatogram);
+		detectorsData.remove(detectorData);
 	}
 
 	@Override

@@ -27,7 +27,6 @@ public class UlanScanNetRunnable implements IRunnableWithProgress {
 	private IControlDevices controlDevices;
 
 	public UlanScanNetRunnable() {
-
 		controlDevices = new ControlDevices();
 	}
 

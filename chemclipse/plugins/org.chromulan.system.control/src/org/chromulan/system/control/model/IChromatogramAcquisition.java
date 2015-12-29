@@ -9,12 +9,13 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.data;
+package org.chromulan.system.control.model;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
+import org.eclipse.chemclipse.swt.ui.series.IMultipleSeries;
 
-public interface IChromatogramData extends IAnalysisData {
+public interface IChromatogramAcquisition {
 
 	void addScan(IScan scan);
 
@@ -24,15 +25,21 @@ public interface IChromatogramData extends IAnalysisData {
 
 	double getMaxSignal();
 
+	String getName();
+
 	int getNumberOfScans();
 
 	int getScanDelay();
 
 	int getScanInterval();
 
+	IMultipleSeries getSeries();
+
 	void newRecord(int scanDelay, int scanInterval);
 
 	void resetRecording();
+
+	void setName(String name);
 
 	void setScanDelay(int milliseconds);
 

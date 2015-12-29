@@ -31,13 +31,12 @@ import org.chromulan.system.control.model.AnalysisCSDSaver;
 import org.chromulan.system.control.model.IAnalysesCSD;
 import org.chromulan.system.control.model.IAnalysis;
 import org.chromulan.system.control.model.IAnalysisCSD;
-import org.chromulan.system.control.model.IAnalysisCSDSaver;
 import org.chromulan.system.control.model.IAnalysisSaver;
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
 import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.model.data.IChromatogramCSDData;
+import org.chromulan.system.control.model.data.IDetectorData;
 import org.chromulan.system.control.ui.analysis.support.AnalysesTable;
 import org.chromulan.system.control.ui.analysis.support.AnalysisCDSSavePreferencePage;
 import org.chromulan.system.control.ui.analysis.support.AnalysisSettingsPreferencePage;
@@ -104,7 +103,7 @@ public class AnalysesPart {
 		public void run() {
 
 			IAnalysis analysis = AnalysesPart.this.analysis;
-			if(analysis == null || analysis.hasBeenRecorded()) {
+			if(analysis == null || analysis.isCompleted()) {
 				return;
 			}
 			if(analysis.getStartDate() != null) {
@@ -162,7 +161,6 @@ public class AnalysesPart {
 	private ActualyationTimeRecording timeRecording;
 
 	public AnalysesPart() {
-
 		analysis = null;
 		timeRecording = new ActualyationTimeRecording();
 		IULanCommunication com = new ULanCommunicationInterface();
@@ -213,7 +211,7 @@ public class AnalysesPart {
 		if(index != -1) {
 			if(index < analyses.getNumberAnalysis()) {
 				IAnalysisCSD analysis = (IAnalysisCSD)analyses.getAnalysis(index);
-				if(!analysis.hasBeenRecorded()) {
+				if(!analysis.isCompleted()) {
 					PreferenceManager manager = new PreferenceManager();
 					AnalysisSettingsPreferencePage settings = new AnalysisSettingsPreferencePage(analysis);
 					ProfilePreferencePage page = new ProfilePreferencePage(analysis.getDevicesProfile());
@@ -460,7 +458,7 @@ public class AnalysesPart {
 
 	private void createMeasurement() {
 
-		if(this.analysis != null && this.analysis.isBeingRecorded()) {
+		if(this.analysis != null && this.analysis.isRunning()) {
 			// TODO: alert
 			return;
 		}
@@ -486,7 +484,7 @@ public class AnalysesPart {
 
 	synchronized private void endAnalysis() {
 
-		if((analysis != null) && (isSetAnalysis) && (!analysis.isBeingRecorded())) {
+		if((analysis != null) && (isSetAnalysis) && (!analysis.isRunning())) {
 			analysis.removePropertyChangeListener(dataAnalysisChange);
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(false);
@@ -507,7 +505,7 @@ public class AnalysesPart {
 			partService.activate(part, false);
 		}
 		if(part.getContext().containsKey(DevicesProfilesPart.DEVICES_PROFILES_DATA)) {
-			return (List<IDevicesProfile>)part.getContext().get(DevicesProfilesPart.DEVICES_PROFILES_DATA);
+			return ((List<IDevicesProfile>)part.getContext().get(DevicesProfilesPart.DEVICES_PROFILES_DATA));
 		} else {
 			return null;
 		}
@@ -587,7 +585,7 @@ public class AnalysesPart {
 
 		int number = analyses.gettIndex(analysis);
 		if(analyses.isActualAnalysis(analysis)) {
-			if(!analysis.isBeingRecorded()) {
+			if(!analysis.isRunning()) {
 				if(isSetAnalysis) {
 					endAnalysis();
 				}
@@ -622,14 +620,15 @@ public class AnalysesPart {
 
 	private void saveAnalysis() {
 
-		IAnalysisCSDSaver saver = analysis.getAnalysisCSDSaver();
-		saver.removeAllChromatograms();
-		saver.removeAllAnalysisData();
+		IAnalysisSaver saver = analysis.getAnalysisSaver();
+		saver.removeAllDetectorData();
 		for(IControlDevice device : analysis.getDevicesProfile().getControlDevices().getControlDevices()) {
 			MPart part = partService.findPart(device.getID());
-			if(part != null && part.getContext() != null && part.getContext().containsKey(IChromatogramCSDData.class)) {
-				IChromatogramCSDData chromatogramRecording = part.getContext().get(IChromatogramCSDData.class);
-				saver.addChromatogam(chromatogramRecording);
+			if(part != null && part.getContext() != null && part.getTransientData().containsKey(IDetectorData.DETECTORS_DATA)) {
+				List<IDetectorData> detectorData = (List<IDetectorData>)part.getTransientData().get(IDetectorData.DETECTORS_DATA);
+				for(IDetectorData iDetectorData : detectorData) {
+					saver.addDetectorData(iDetectorData);
+				}
 			}
 		}
 		saver.save(new NullProgressMonitor());
@@ -704,7 +703,7 @@ public class AnalysesPart {
 
 	synchronized public void startRecording() {
 
-		if((analysis != null) && isSetAnalysis && !analysis.isBeingRecorded() && !analysis.hasBeenRecorded()) {
+		if((analysis != null) && isSetAnalysis && !analysis.isRunning() && !analysis.isCompleted()) {
 			analysis.startRecording();
 			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_START_RECORDING, analysis);
 			display.asyncExec(timeRecording);
@@ -717,7 +716,7 @@ public class AnalysesPart {
 
 	synchronized public void stopRecording() {
 
-		if((analysis != null) && isSetAnalysis && analysis.isBeingRecorded()) {
+		if((analysis != null) && isSetAnalysis && analysis.isRunning()) {
 			analysis.stopRecording();
 			eventBroker.send(IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_STOP_RECORDING, analysis);
 			display.timerExec(-1, timeRecording);

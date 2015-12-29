@@ -11,16 +11,15 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.chromatogram;
 
-import org.chromulan.system.control.model.data.IChromatogramData;
+import org.chromulan.system.control.model.IChromatogramAcquisition;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.swt.ui.components.AbstractLineSeriesUI;
-import org.eclipse.chemclipse.swt.ui.converter.SeriesConverter;
 import org.eclipse.chemclipse.swt.ui.preferences.PreferenceSupplier;
+import org.eclipse.chemclipse.swt.ui.series.IMultipleSeries;
 import org.eclipse.chemclipse.swt.ui.series.ISeries;
 import org.eclipse.chemclipse.swt.ui.support.AxisTitlesIntensityScale;
 import org.eclipse.chemclipse.swt.ui.support.ChartUtil;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
-import org.eclipse.chemclipse.swt.ui.support.Sign;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.swtchart.IAxis;
@@ -32,12 +31,11 @@ import org.swtchart.Range;
 public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	private boolean autoMinYAdjustIntensity;
-	private IChromatogramData chromatogramData;
+	private IChromatogramAcquisition chromatogramAcquisition;
 	private double interval;
 	private double minYAdjustIntensity;
 
 	public ChromatogramOverviewUI(Composite parent, int style) {
-
 		super(parent, style, new AxisTitlesIntensityScale());
 		autoMinYAdjustIntensity = false;
 		minYAdjustIntensity = 0.01;
@@ -82,7 +80,7 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	public void displayAllChromatogram() {
 
-		if(this.chromatogramData != null && this.chromatogramData.getNumberOfScans() != 0) {
+		if(this.chromatogramAcquisition != null && this.chromatogramAcquisition.getNumberOfScans() != 0) {
 			adjustRange();
 			redraw();
 		}
@@ -90,16 +88,16 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	public void displayInteval() {
 
-		if(this.chromatogramData != null && this.chromatogramData.getNumberOfScans() != 0) {
+		if(this.chromatogramAcquisition != null && this.chromatogramAcquisition.getNumberOfScans() != 0) {
 			setXAxisInterval();
 			adjustYRange();
 			redraw();
 		}
 	}
 
-	public IChromatogramData getChromatogram() {
+	public IChromatogramAcquisition getChromatogram() {
 
-		return chromatogramData;
+		return chromatogramAcquisition;
 	}
 
 	public double getInterval() {
@@ -133,7 +131,7 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	public void reloadData() {
 
-		if(this.chromatogramData != null && this.chromatogramData.getNumberOfScans() != 0) {
+		if(this.chromatogramAcquisition != null && this.chromatogramAcquisition.getNumberOfScans() != 0) {
 			deleteAllCurrentSeries();
 			setViewSeries();
 		}
@@ -144,9 +142,9 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 		this.autoMinYAdjustIntensity = autoMinYAdjustIntensity;
 	}
 
-	public void setChromatogram(IChromatogramData chromatogramData) {
+	public void setChromatogram(IChromatogramAcquisition chromatogramAcquisition) {
 
-		this.chromatogramData = chromatogramData;
+		this.chromatogramAcquisition = chromatogramAcquisition;
 	}
 
 	public void setInterval(double interval) {
@@ -169,21 +167,22 @@ public class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 		ISeries series;
 		ILineSeries lineSeries;
 		boolean showChromatogramArea = PreferenceSupplier.showChromatogramArea();
-		synchronized(chromatogramData.getChromatogram()) {
-			series = SeriesConverter.convertChromatogramOverview(chromatogramData.getChromatogram(), Sign.POSITIVE, false);
+		IMultipleSeries multipleSeries = chromatogramAcquisition.getSeries();
+		if(!multipleSeries.getMultipleSeries().isEmpty()) {
+			series = multipleSeries.getMultipleSeries().get(0);
+			setMaxSignal(series.getYMax());
+			addSeries(series);
+			lineSeries = (ILineSeries)getSeriesSet().createSeries(SeriesType.LINE, series.getId());
+			lineSeries.setXSeries(series.getXSeries());
+			lineSeries.setYSeries(series.getYSeries());
+			lineSeries.enableArea(showChromatogramArea);
+			lineSeries.setSymbolType(PlotSymbolType.NONE);
+			Color chromatogramColor = PreferenceSupplier.getChromatogramColor();
+			if(chromatogramColor == null) {
+				chromatogramColor = Colors.RED;
+			}
+			lineSeries.setLineColor(chromatogramColor);
 		}
-		setMaxSignal(series.getYMax());
-		addSeries(series);
-		lineSeries = (ILineSeries)getSeriesSet().createSeries(SeriesType.LINE, series.getId());
-		lineSeries.setXSeries(series.getXSeries());
-		lineSeries.setYSeries(series.getYSeries());
-		lineSeries.enableArea(showChromatogramArea);
-		lineSeries.setSymbolType(PlotSymbolType.NONE);
-		Color chromatogramColor = PreferenceSupplier.getChromatogramColor();
-		if(chromatogramColor == null) {
-			chromatogramColor = Colors.RED;
-		}
-		lineSeries.setLineColor(chromatogramColor);
 	}
 
 	public void setXAxisInterval() {

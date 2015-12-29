@@ -57,7 +57,6 @@ public class DevicesProfilesPart {
 	private Table tableProfiles;
 
 	public DevicesProfilesPart() {
-
 		profiles = new LinkedList<>();
 		actualAnalyses = new LinkedList<>();
 	}

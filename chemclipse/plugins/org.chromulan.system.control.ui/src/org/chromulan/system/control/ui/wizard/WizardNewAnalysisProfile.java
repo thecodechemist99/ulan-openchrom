@@ -34,20 +34,17 @@ public class WizardNewAnalysisProfile extends WizardPage {
 	private List<IDevicesProfile> devicesProfil;
 
 	public WizardNewAnalysisProfile(List<IDevicesProfile> devicesProfil) {
-
 		super("New Analysis ");
 		setTitle("Selecet Devices profile");
 		this.devicesProfil = devicesProfil;
 	}
 
 	public WizardNewAnalysisProfile(String pageName, List<IDevicesProfile> devicesProfil) {
-
 		super(pageName);
 		this.devicesProfil = devicesProfil;
 	}
 
 	public WizardNewAnalysisProfile(String pageName, String title, ImageDescriptor titleImage, List<IDevicesProfile> devicesProfil) {
-
 		super(pageName, title, titleImage);
 		this.devicesProfil = devicesProfil;
 	}
