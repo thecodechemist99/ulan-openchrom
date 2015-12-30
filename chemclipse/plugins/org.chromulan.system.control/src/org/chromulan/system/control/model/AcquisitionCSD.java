@@ -9,10 +9,21 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.events;
+package org.chromulan.system.control.model;
 
-public interface IULanConnectionEvents {
+public class AcquisitionCSD extends AbstractAcquisition implements IAcquisitionCSD {
 
-	String TOPIC_CONNECTION_ULAN_CLOSE = "connection/ulan/close";
-	String TOPIC_CONNECTION_ULAN_OPEN = "connection/ulan/open";
+	public AcquisitionCSD() {
+		super();
+	}
+
+	@Override
+	public IAcquisitionCSDSaver getAcquisitionCSDSaver() {
+
+		IAcquisitionSaver acquisitionSaver = getAcquisitionSaver();
+		if(acquisitionSaver instanceof IAcquisitionCSDSaver) {
+			return (IAcquisitionCSDSaver)acquisitionSaver;
+		}
+		return null;
+	}
 }

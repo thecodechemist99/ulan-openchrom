@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.chromulan.system.control.events;
 
-public interface IULanConnectionEvents {
+public interface IAcquisitionEvents {
 
-	String TOPIC_CONNECTION_ULAN_CLOSE = "connection/ulan/close";
-	String TOPIC_CONNECTION_ULAN_OPEN = "connection/ulan/open";
+	String TOPIC_ACQUISITION_CHROMULAN_END = "acquisition/chromulan/end";
+	String TOPIC_ACQUISITION_CHROMULAN_SET = "acquisition/chromulan/set";
+	String TOPIC_ACQUISITION_CHROMULAN_START_RECORDING = "acquisition/chromulan/startrecording";
+	String TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING = "acquisition/chromulan/stoprecording";
 }

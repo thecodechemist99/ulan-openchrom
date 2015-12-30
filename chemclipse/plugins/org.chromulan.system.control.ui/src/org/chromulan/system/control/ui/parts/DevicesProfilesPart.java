@@ -17,8 +17,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.events.IAnalysisEvents;
-import org.chromulan.system.control.model.IAnalysis;
+import org.chromulan.system.control.events.IAcquisitionEvents;
+import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
 import org.chromulan.system.control.ui.devices.support.ProfileDialog;
@@ -46,7 +46,7 @@ public class DevicesProfilesPart {
 
 	final public static String DEVICES_PROFILES_DATA = "DeviceProfiles";
 	final public static String ID = "org.chromulan.system.control.ui.part.devicesProfiles";
-	private List<IAnalysis> actualAnalyses;
+	private List<IAcquisition> actualAcquisition;
 	@Inject
 	private Display display;
 	@Inject
@@ -58,7 +58,7 @@ public class DevicesProfilesPart {
 
 	public DevicesProfilesPart() {
 		profiles = new LinkedList<>();
-		actualAnalyses = new LinkedList<>();
+		actualAcquisition = new LinkedList<>();
 	}
 
 	private void actualizateProfile() {
@@ -89,10 +89,10 @@ public class DevicesProfilesPart {
 
 	@Inject
 	@Optional
-	public void addUsingProfile(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_SET) IAnalysis analysis) {
+	public void addUsingProfile(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition acquisition) {
 
-		if(analysis != null && !actualAnalyses.contains(analysis)) {
-			actualAnalyses.add(analysis);
+		if(acquisition != null && !actualAcquisition.contains(acquisition)) {
+			actualAcquisition.add(acquisition);
 		}
 	}
 
@@ -165,10 +165,10 @@ public class DevicesProfilesPart {
 
 	@Inject
 	@Optional
-	public void removeUsingProfile(@UIEventTopic(value = IAnalysisEvents.TOPIC_ANALYSIS_CHROMULAN_END) IAnalysis analysis) {
+	public void removeUsingProfile(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition acquisition) {
 
-		if(analysis != null) {
-			actualAnalyses.remove(analysis);
+		if(acquisition != null) {
+			actualAcquisition.remove(acquisition);
 		}
 	}
 }

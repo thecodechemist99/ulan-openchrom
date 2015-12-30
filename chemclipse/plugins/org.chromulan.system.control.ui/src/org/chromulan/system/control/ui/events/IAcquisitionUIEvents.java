@@ -9,10 +9,9 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.events;
+package org.chromulan.system.control.ui.events;
 
-public interface IULanConnectionEvents {
+public interface IAcquisitionUIEvents {
 
-	String TOPIC_CONNECTION_ULAN_CLOSE = "connection/ulan/close";
-	String TOPIC_CONNECTION_ULAN_OPEN = "connection/ulan/open";
+	final String TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY = "acquisition/chromulan/ui/chromatogram/display";
 }

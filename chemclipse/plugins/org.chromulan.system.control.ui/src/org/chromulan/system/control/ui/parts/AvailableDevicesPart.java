@@ -26,7 +26,7 @@ import org.chromulan.system.control.model.ControlDevices;
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.ui.analysis.support.UlanScanNetRunnable;
+import org.chromulan.system.control.ui.acquisition.support.UlanScanNetRunnable;
 import org.chromulan.system.control.ui.devices.support.DevicesTable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -113,7 +113,7 @@ public class AvailableDevicesPart {
 				labelConnection.setText("Connection is closed");
 				labelConnection.setBackground(display.getSystemColor(SWT.COLOR_RED));
 				labelConnection.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-				eventBroker.post(IULanConnectionEvents.TOPIC_COMMUCATION_ULAN_CLOSE, connection);
+				eventBroker.post(IULanConnectionEvents.TOPIC_CONNECTION_ULAN_CLOSE, connection);
 			}
 		}
 	}
@@ -245,7 +245,7 @@ public class AvailableDevicesPart {
 					labelConnection.redraw();
 					labelConnection.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
 					labelConnection.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-					eventBroker.send(IULanConnectionEvents.TOPIC_COMMUCATION_ULAN_OPEN, connection);
+					eventBroker.send(IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN, connection);
 					labelConnection.getParent().layout();
 				}
 			} catch(IOException e) {

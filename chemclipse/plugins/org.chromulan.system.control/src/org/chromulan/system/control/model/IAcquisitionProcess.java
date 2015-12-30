@@ -9,10 +9,23 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.events;
+package org.chromulan.system.control.model;
 
-public interface IULanConnectionEvents {
+public interface IAcquisitionProcess {
 
-	String TOPIC_CONNECTION_ULAN_CLOSE = "connection/ulan/close";
-	String TOPIC_CONNECTION_ULAN_OPEN = "connection/ulan/open";
+	IAcquisitionSaver getAcquisitionSaver();
+
+	IDevicesProfile getDevicesProfile();
+
+	boolean isCompleted();
+
+	boolean isRunning();
+
+	void setAcquisitionSaver(IAcquisitionSaver saver);
+
+	void setDevicesProfile(IDevicesProfile devicesProfile);
+
+	void startRecording();
+
+	void stopRecording();
 }

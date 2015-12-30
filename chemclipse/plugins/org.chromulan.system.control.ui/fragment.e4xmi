@@ -14,9 +14,9 @@
             <children xsi:type="basic:PartSashContainer" xmi:id="_EB_IUG7BEeW6RKiMBdftrA" elementId="org.chromulan.system.control.ui.partsashcontainer.4" horizontal="true">
               <children xsi:type="basic:PartSashContainer" xmi:id="_HjPBgG7BEeW6RKiMBdftrA" elementId="org.chromulan.system.control.ui.partsashcontainer.5">
                 <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.0" containerData="2500">
-                  <children xsi:type="basic:Part" xmi:id="_JUqo0GzSEeWhB_dhmOjHpg" elementId="org.chromulan.system.control.ui.part.analyses" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AnalysesPart" label="Analyses">
+                  <children xsi:type="basic:Part" xmi:id="_JUqo0GzSEeWhB_dhmOjHpg" elementId="org.chromulan.system.control.ui.part.acquisitions" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AcquisitionsPart" label="Acquisitions">
                     <toolbar xmi:id="_3KbGkHixEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.toolbar.2">
-                      <children xsi:type="menu:ToolControl" xmi:id="_mHxJIHj5EeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.toolcontrol.0" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AnalysesSearchToolItem"/>
+                      <children xsi:type="menu:ToolControl" xmi:id="_mHxJIHj5EeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.toolcontrol.0" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AcquisitionsSearchToolItem"/>
                     </toolbar>
                   </children>
                 </children>
@@ -45,7 +45,7 @@
     <elements xsi:type="commands:Command" xmi:id="_4HfJkHiiEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.chromatogram.displayLastData" commandName="Display last data" description="chromatogramdisplay" category="_IDBJcHZDEeWkxZUZTkqg1A"/>
     <elements xsi:type="commands:Command" xmi:id="_mWfs0HilEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.command.chromatogram.displayRefreshData" commandName="Display refresh data"/>
     <elements xsi:type="commands:Command" xmi:id="_NY044HimEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.command.chromatogram.displaySettings" commandName="Display settings"/>
-    <elements xsi:type="commands:Command" xmi:id="_3OKFIHizEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.command.analyses.search" commandName="Search">
+    <elements xsi:type="commands:Command" xmi:id="_3OKFIHizEeWB3ebT_GT_3Q" elementId="org.chromulan.system.control.ui.command.acquisitions.search" commandName="Search">
       <parameters xmi:id="_5aLwMHlVEeWB3ebT_GT_3Q" elementId="name" name="Name"/>
     </elements>
   </fragments>

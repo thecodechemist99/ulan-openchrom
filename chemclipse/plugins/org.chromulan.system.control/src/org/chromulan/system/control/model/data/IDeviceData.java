@@ -13,7 +13,7 @@ package org.chromulan.system.control.model.data;
 
 import org.chromulan.system.control.model.IControlDevice;
 
-public interface IDeviceData extends IAnalysisData {
+public interface IDeviceData extends IAcquisitionData {
 
 	IControlDevice getControlDevice();
 }

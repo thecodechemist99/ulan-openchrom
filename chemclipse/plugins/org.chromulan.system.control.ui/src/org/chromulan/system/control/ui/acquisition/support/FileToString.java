@@ -9,10 +9,25 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.events;
+package org.chromulan.system.control.ui.acquisition.support;
 
-public interface IULanConnectionEvents {
+import java.io.File;
 
-	String TOPIC_CONNECTION_ULAN_CLOSE = "connection/ulan/close";
-	String TOPIC_CONNECTION_ULAN_OPEN = "connection/ulan/open";
+import org.eclipse.core.databinding.conversion.Converter;
+
+public class FileToString extends Converter {
+
+	public FileToString() {
+		super(File.class, String.class);
+	}
+
+	@Override
+	public Object convert(Object fromObject) {
+
+		if(fromObject instanceof File) {
+			File file = (File)fromObject;
+			return file.getAbsolutePath();
+		}
+		return null;
+	}
 }
