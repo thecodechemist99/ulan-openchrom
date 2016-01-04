@@ -165,7 +165,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
-	public void startRecording() {
+	public void start() {
 
 		if(!recording && !recored) {
 			this.date = new Date();
@@ -174,7 +174,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
-	public void stopRecording() {
+	public void stop() {
 
 		if(recording) {
 			recored = true;

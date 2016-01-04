@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class DevicesProfilesPart {
 
-	final public static String DEVICES_PROFILES_DATA = "DeviceProfiles";
+	final public static String DEVICES_PROFILES_DATA = "Profiles";
 	final public static String ID = "org.chromulan.system.control.ui.part.devicesProfiles";
 	private List<IAcquisition> actualAcquisition;
 	@Inject

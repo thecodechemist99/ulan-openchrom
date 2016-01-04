@@ -39,7 +39,7 @@ public class ProfileDialog extends Dialog {
 
 		Composite composite = new Composite(parent, SWT.None);
 		composite.setLayout(new FillLayout());
-		DevicesTable devicesTable = new DevicesTable(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+		DevicesTable devicesTable = new DevicesTable(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, false);
 		devicesTable.setDevices(profile.getControlDevices());
 		return super.createDialogArea(parent);
 	}

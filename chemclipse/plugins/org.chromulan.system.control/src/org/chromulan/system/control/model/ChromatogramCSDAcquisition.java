@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
-import org.eclipse.chemclipse.csd.model.implementation.ChromatogramCSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.swt.ui.converter.SeriesConverter;
@@ -24,17 +23,12 @@ import org.eclipse.chemclipse.swt.ui.support.Sign;
 
 public class ChromatogramCSDAcquisition extends AbstractChromatogramAcquisition implements IChromatogramCSDAcquisition {
 
-	public ChromatogramCSDAcquisition(int scanDelay, int scanInterval) {
-		super(scanDelay, scanInterval);
+	public ChromatogramCSDAcquisition() {
+		super();
 	}
 
-	@Override
-	protected IChromatogram createChromatogram(int scanDelay, int scanInterval) {
-
-		IChromatogramCSD chromatogram = new ChromatogramCSD();
-		chromatogram.setScanDelay(scanDelay);
-		chromatogram.setScanInterval(scanInterval);
-		return chromatogram;
+	public ChromatogramCSDAcquisition(IChromatogram chromatogram, int interval, int delay) {
+		super(chromatogram, interval, delay);
 	}
 
 	@Override

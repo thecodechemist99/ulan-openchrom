@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -231,7 +232,9 @@ public class ULad3xPart {
 			ULad3xData data = new ULad3xData(controlDevice);
 			data.setDescription(textDescription.getText());
 			data.setChromatogram(uLad3x.getChromatogramRecording().getChromatogram());
-			part.getTransientData().put(IDetectorData.DETECTORS_DATA, new LinkedList<IDetectorData>().add(data));
+			List<IDetectorData> list = new LinkedList<IDetectorData>();
+			list.add(data);
+			part.getTransientData().put(IDetectorData.DETECTORS_DATA, list);
 		}
 	}
 }

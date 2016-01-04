@@ -35,7 +35,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -86,8 +85,6 @@ public class AvailableDevicesPart {
 	private EModelService modelService;
 	@Inject
 	private MPart part;
-	@Inject
-	private EPartService partService;
 
 	public AvailableDevicesPart() {
 		communication = new ULanCommunicationInterface();
@@ -120,11 +117,10 @@ public class AvailableDevicesPart {
 
 	@Inject
 	@Optional
-	public void conectReqiredDevice(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_REQIRED) ControlDevices devices) {
+	public void conectReqiredDevice(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_CONTROL) ControlDevices devices) {
 
 		for(IControlDevice device : devices.getControlDevices()) {
-			MPart part = partService.findPart(device.getID());
-			if(part == null) {
+			if(!this.devices.contains(device.getID())) {
 				try {
 					DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
 					if(description != null) {
@@ -133,8 +129,24 @@ public class AvailableDevicesPart {
 					}
 				} catch(Exception e) {
 				}
+			} else {
+				try {
+					DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
+					IControlDevice controlDevice = this.devices.getControlDevice(device.getID());
+					if(controlDevice != null) {
+						if(description != null) {
+							controlDevice.setConnected(true);
+							eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, controlDevice);
+						} else {
+							controlDevice.setConnected(false);
+							eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, controlDevice);
+						}
+					}
+				} catch(Exception e) {
+				}
 			}
 		}
+		rewriteTable();
 		eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE, this.devices);
 	}
 
@@ -169,7 +181,7 @@ public class AvailableDevicesPart {
 		Composite tableComposit = new Composite(composite, SWT.None);
 		tableComposit.setLayoutData(gridData);
 		tableComposit.setLayout(new FillLayout());
-		deviceTable = new DevicesTable(tableComposit, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+		deviceTable = new DevicesTable(tableComposit, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, true);
 		deviceTable.setDevices(devices);
 		deviceTable.setEditableName(true);
 		buttonRefreshDevices = new Button(composite, SWT.PUSH);

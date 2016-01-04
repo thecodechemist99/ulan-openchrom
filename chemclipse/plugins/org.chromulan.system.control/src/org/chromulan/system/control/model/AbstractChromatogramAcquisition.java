@@ -19,8 +19,13 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 	private IChromatogram chromatogram;
 	private String name;
 
-	public AbstractChromatogramAcquisition(int scanDelay, int scanInterval) {
-		chromatogram = createChromatogram(scanDelay, scanInterval);
+	public AbstractChromatogramAcquisition() {
+	}
+	
+	public AbstractChromatogramAcquisition(IChromatogram chromatogram, int interval, int delay) {
+		this.chromatogram = chromatogram;
+		chromatogram.setScanInterval(interval);
+		chromatogram.setScanDelay(delay);
 	}
 
 	@Override
@@ -43,8 +48,6 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 		}
 	}
 
-	abstract protected IChromatogram createChromatogram(int scanDelay, int scanInterval);
-
 	@Override
 	public IChromatogram getChromatogram() {
 
@@ -63,8 +66,9 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 
 	@Override
 	public String getName() {
-
-		return name;
+		synchronized(this) {
+			return name;
+		}
 	}
 
 	@Override
@@ -92,10 +96,12 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 	}
 
 	@Override
-	public void newRecord(int scanDelay, int scanInterval) {
+	public void setChromatogram(IChromatogram chromatogram, int interval, int delay ) {
 
 		synchronized(this) {
-			this.chromatogram = createChromatogram(scanDelay, scanInterval);
+			this.chromatogram = chromatogram;
+			chromatogram.setScanInterval(interval);
+			chromatogram.setScanDelay(delay);
 		}
 	}
 
@@ -105,7 +111,7 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 	}
 
 	@Override
-	public void resetRecording() {
+	public void resetChromatogram() {
 
 		synchronized(this) {
 			reset();
@@ -132,12 +138,19 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 	}
 
 	@Override
-	public void setScanInterval(int milliseconds) {
+	public void setScanInterval(int milliseconds, boolean reset) {
 
 		synchronized(this) {
 			if(milliseconds != chromatogram.getScanInterval()) {
-				reset();
-				chromatogram.setScanInterval(milliseconds);
+				if(reset)
+				{
+					reset();
+					chromatogram.setScanInterval(milliseconds);
+				} else {
+					chromatogram.setScanInterval(milliseconds);
+					chromatogram.recalculateRetentionTimes();
+				}
+				
 			}
 		}
 	}

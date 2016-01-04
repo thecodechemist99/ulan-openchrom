@@ -25,7 +25,7 @@ public interface IAcquisitionProcess {
 
 	void setDevicesProfile(IDevicesProfile devicesProfile);
 
-	void startRecording();
+	void start();
 
-	void stopRecording();
+	void stop();
 }

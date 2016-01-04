@@ -95,7 +95,7 @@ public class AcquisitionsTable {
 					cell.setText("Actual");
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
 				} else if(acquisition.isCompleted()) {
-					cell.setText("Record");
+					cell.setText("Completed");
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 				} else {
 					cell.setText("Ready");

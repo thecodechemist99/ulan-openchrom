@@ -9,10 +9,13 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.events;
+package org.chromulan.system.control.model;
 
-public interface IControlDevicesEvents {
+import java.util.List;
 
-	String TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE = "controlDevices/ulan/available";
-	String TOPIC_CONTROL_DEVICES_ULAN_CONTROL = "controlDevices/ulan/control";
+import org.eclipse.chemclipse.model.core.IChromatogram;
+
+public interface IChromatogramMaker {
+
+	List<IChromatogram> getChromatograms();
 }

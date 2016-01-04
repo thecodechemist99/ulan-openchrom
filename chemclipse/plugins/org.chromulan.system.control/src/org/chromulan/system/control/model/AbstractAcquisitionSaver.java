@@ -12,46 +12,25 @@
 package org.chromulan.system.control.model;
 
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
 
-import org.chromulan.system.control.model.data.IDetectorData;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 
 public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 
-	private IAcquisition acquisition;
-	private List<IDetectorData> detectorsData;
 	private File file;
+	private IChromatogramMaker chromatogramMaker;
 	private ISupplier supplier;
-
-	public AbstractAcquisitionSaver(IAcquisition acquisition) {
-		detectorsData = new LinkedList<IDetectorData>();
-		this.acquisition = acquisition;
-	}
-
-	@Override
-	public void addDetectorData(IDetectorData detectorData) {
-
-		detectorsData.add(detectorData);
-	}
-
-	@Override
-	public IAcquisition getAcquisition() {
-
-		return acquisition;
-	}
-
-	@Override
-	public List<IDetectorData> getDetectorsData() {
-
-		return detectorsData;
-	}
 
 	@Override
 	public File getFile() {
 
 		return file;
+	}
+
+	@Override
+	public IChromatogramMaker getChromatogramMaker() {
+
+		return chromatogramMaker;
 	}
 
 	@Override
@@ -61,21 +40,15 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 	}
 
 	@Override
-	public void removeAllDetectorData() {
-
-		detectorsData.clear();
-	}
-
-	@Override
-	public void removeDetectorData(IDetectorData detectorData) {
-
-		detectorsData.remove(detectorData);
-	}
-
-	@Override
 	public void setFile(File file) {
 
 		this.file = file;
+	}
+
+	@Override
+	public void setChromatogramMaker(IChromatogramMaker chromatogramMaker) {
+
+		this.chromatogramMaker = chromatogramMaker;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ package org.chromulan.system.control.ui.chromatogram;
 
 import javax.inject.Inject;
 
-import org.chromulan.system.control.model.IChromatogramAcquisition;
+import org.chromulan.system.control.model.IChromatogramCSDAcquisition;
 import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -34,7 +34,7 @@ public class CreateChromatogram {
 
 	@Inject
 	@Optional
-	public void displayChromatogam(@UIEventTopic(value = IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IChromatogramAcquisition chromatogram) {
+	public void displayChromatogam(@UIEventTopic(value = IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IChromatogramCSDAcquisition chromatogram) {
 
 		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramRecording");
 		part.setLabel(chromatogram.getName());

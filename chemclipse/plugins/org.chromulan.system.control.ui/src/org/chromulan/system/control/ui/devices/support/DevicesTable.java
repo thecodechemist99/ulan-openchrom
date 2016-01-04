@@ -72,19 +72,21 @@ public class DevicesTable {
 	private ObservableListContentProvider viewContentProvider;
 	private TableViewer viewer;
 
-	public DevicesTable(Composite parent, int style) {
+	public DevicesTable(Composite parent, int style, boolean setFilter) {
 		this.viewer = new TableViewer(parent, style);
 		viewContentProvider = new ObservableListContentProvider();
 		viewer.setContentProvider(viewContentProvider);
-		viewer.addFilter(new ViewerFilter() {
+		if(setFilter) {
+			viewer.addFilter(new ViewerFilter() {
 
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				@Override
+				public boolean select(Viewer viewer, Object parentElement, Object element) {
 
-				IControlDevice device = (IControlDevice)element;
-				return device.isConnected();
-			}
-		});
+					IControlDevice device = (IControlDevice)element;
+					return device.isConnected();
+				}
+			});
+		}
 		createColumns(parent, viewer);
 		Table table = viewer.getTable();
 		table.setHeaderVisible(true);

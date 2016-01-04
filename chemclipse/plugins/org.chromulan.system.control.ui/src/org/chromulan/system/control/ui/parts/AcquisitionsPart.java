@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +29,7 @@ import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.AcquisitionCSD;
 import org.chromulan.system.control.model.AcquisitionCSDSaver;
 import org.chromulan.system.control.model.AcquisitionsCSD;
+import org.chromulan.system.control.model.ChromatogramCSDMaker;
 import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.model.IAcquisitionCSD;
 import org.chromulan.system.control.model.IAcquisitionSaver;
@@ -283,7 +285,7 @@ public class AcquisitionsPart {
 				acquisition.setDuration((Long)newAcquisitionWizard.getModel().duration.getValue());
 				acquisition.setDevicesProfile((IDevicesProfile)newAcquisitionWizard.getModel().devicesProfile.getValue());
 				acquisition.setDescription((String)newAcquisitionWizard.getModel().description.getValue());
-				IAcquisitionSaver saver = new AcquisitionCSDSaver(acquisition);
+				IAcquisitionSaver saver = new AcquisitionCSDSaver();
 				saver.setFile(file);
 				saver.setSuplier(supplier);
 				acquisition.setAcquisitionSaver(saver);
@@ -302,6 +304,7 @@ public class AcquisitionsPart {
 				// TODO: exception logger.warn(e1);
 			}
 		}
+		this.acquisitions = new AcquisitionsCSD();
 		Composite composite = new Composite(parent, SWT.None);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
@@ -309,6 +312,7 @@ public class AcquisitionsPart {
 		GridData gridData;
 		final Composite tableComposite = new Composite(composite, SWT.None);
 		acquisitionsTable = new AcquisitionsTable(tableComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		acquisitionsTable.setAcquisitions(acquisitions);
 		tableComposite.setLayout(new FillLayout());
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gridData.horizontalSpan = 2;
@@ -365,13 +369,13 @@ public class AcquisitionsPart {
 		buttonStartMeasurement = new Button(composite, SWT.PUSH);
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 		gridData.horizontalSpan = 2;
-		buttonStartMeasurement.setText("New Measurement");
+		buttonStartMeasurement.setText("Set Default Parameters");
 		buttonStartMeasurement.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				createMeasurement();
+				setDefaultParameters();
 			}
 		});
 		buttonStartMeasurement.setLayoutData(gridData);
@@ -456,25 +460,11 @@ public class AcquisitionsPart {
 		progressBarTimeRemain.setLayoutData(gridData);
 	}
 
-	private void createMeasurement() {
-
-		if(this.acquisition != null && this.acquisition.isRunning()) {
-			// TODO: alert
-			return;
-		}
-		if(this.acquisition != null) {
-			// TODO: alert
-			acquisition.removePropertyChangeListener(dataAcquisitionChange);
-			removeData();
-		}
-		if(this.acquisitions != null) {
-			this.acquisitions.removeAllAcquisitions();
-		}
+	private void setDefaultParameters() {
+		
 		WizardNewAcquisitions newAcquisitionWizard = new WizardNewAcquisitions();
 		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAcquisitionWizard);
 		if(wizardDialog.open() == Window.OK) {
-			this.acquisitions = new AcquisitionsCSD();
-			acquisitionsTable.setAcquisitions(acquisitions);
 			buttonActualAcquisition.setEnabled(true);
 			buttonAddAcquisition.setEnabled(true);
 			this.file = newAcquisitionWizard.getFile();
@@ -621,43 +611,47 @@ public class AcquisitionsPart {
 	private void saveAcquisition() {
 
 		IAcquisitionSaver saver = acquisition.getAcquisitionSaver();
-		saver.removeAllDetectorData();
+		ChromatogramCSDMaker maker = new ChromatogramCSDMaker(acquisition, saver.getFile());
 		for(IControlDevice device : acquisition.getDevicesProfile().getControlDevices().getControlDevices()) {
 			MPart part = partService.findPart(device.getID());
 			if(part != null && part.getContext() != null && part.getTransientData().containsKey(IDetectorData.DETECTORS_DATA)) {
-				List<IDetectorData> detectorData = (List<IDetectorData>)part.getTransientData().get(IDetectorData.DETECTORS_DATA);
-				for(IDetectorData iDetectorData : detectorData) {
-					saver.addDetectorData(iDetectorData);
+				Object detectorsData = part.getTransientData().get(IDetectorData.DETECTORS_DATA);
+				if(detectorsData instanceof List) {
+					List<?> detectorDataList = (List<?>)detectorsData;
+					for(Iterator<?> iterator = detectorDataList.iterator(); iterator.hasNext();) {
+						Object detectorDataObject = iterator.next();
+						if(detectorDataObject instanceof IDetectorData) {
+							IDetectorData detectorData = (IDetectorData)detectorDataObject;
+							maker.addDetectorData(detectorData);
+						}
+					}
 				}
 			}
 		}
+		saver.setChromatogramMaker(maker);
 		saver.save(new NullProgressMonitor());
 	}
 
 	synchronized private void setAcquisition(IAcquisitionCSD acquisition) {
 
-		if(acquisition != null && !isSetAcquisition) {
-			if(this.acquisition == null) {
-				this.acquisition = acquisition;
-				acquisition.addPropertyChangeListener(dataAcquisitionChange);
-				setTable();
-				eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_REQIRED, acquisition.getDevicesProfile().getControlDevices());
-			}
-			if(this.acquisition == acquisition) {
-				if(controlAcquisition(acquisition)) {
-					eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET, acquisition);
-					isSetAcquisition = true;
-					perspective.getContext().set(IAcquisition.class, acquisition);
-					buttonStart.setEnabled(true);
-					buttonStop.setEnabled(false);
-					buttonEnd.setEnabled(true);
-					buttonSave.setEnabled(false);
-				} else {
-					buttonStart.setEnabled(false);
-					buttonStop.setEnabled(false);
-					buttonEnd.setEnabled(false);
-					buttonSave.setEnabled(false);
-				}
+		if(acquisition != null && !isSetAcquisition && !acquisition.isCompleted()) {
+			eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_CONTROL, acquisition.getDevicesProfile().getControlDevices());
+			this.acquisition = acquisition;
+			acquisition.addPropertyChangeListener(dataAcquisitionChange);
+			setTable();
+			if(controlAcquisition(acquisition)) {
+				eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET, acquisition);
+				isSetAcquisition = true;
+				perspective.getContext().set(IAcquisition.class, acquisition);
+				buttonStart.setEnabled(true);
+				buttonStop.setEnabled(false);
+				buttonEnd.setEnabled(true);
+				buttonSave.setEnabled(false);
+			} else {
+				buttonStart.setEnabled(false);
+				buttonStop.setEnabled(false);
+				buttonEnd.setEnabled(true);
+				buttonSave.setEnabled(false);
 			}
 		}
 		redrawTable();
@@ -704,7 +698,7 @@ public class AcquisitionsPart {
 	synchronized public void startRecording() {
 
 		if((acquisition != null) && isSetAcquisition && !acquisition.isRunning() && !acquisition.isCompleted()) {
-			acquisition.startRecording();
+			acquisition.start();
 			eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING, acquisition);
 			display.asyncExec(timeRecording);
 			buttonStart.setEnabled(false);
@@ -717,7 +711,7 @@ public class AcquisitionsPart {
 	synchronized public void stopRecording() {
 
 		if((acquisition != null) && isSetAcquisition && acquisition.isRunning()) {
-			acquisition.stopRecording();
+			acquisition.stop();
 			eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING, acquisition);
 			display.timerExec(-1, timeRecording);
 			if(acquisition.getAutoContinue()) {

@@ -18,6 +18,7 @@ import java.nio.channels.ClosedChannelException;
 import org.chromulan.system.control.model.ChromatogramCSDAcquisition;
 import org.chromulan.system.control.model.IChromatogramAcquisition;
 import org.chromulan.system.control.model.IControlDevice;
+import org.eclipse.chemclipse.csd.model.implementation.ChromatogramCSD;
 import org.eclipse.chemclipse.csd.model.implementation.ScanCSD;
 
 import net.sourceforge.ulan.base.CompletionHandler;
@@ -43,7 +44,7 @@ public class ULad3x {
 		super();
 		this.controlDevice = controlDevice;
 		device = new ULanDevice(controlDevice.getDeviceDescription());
-		chromatogramAcquisition = new ChromatogramCSDAcquisition(DEFAULT_SCAN_DELAY, DEFAULT_SCAN_INTERVAL);
+		chromatogramAcquisition = new ChromatogramCSDAcquisition(new ChromatogramCSD(),DEFAULT_SCAN_DELAY, DEFAULT_SCAN_INTERVAL);
 		filtGetData = device.addFiltAdr(0x4f, null, new CompletionHandler<ULanMsg, Void>() {
 
 			@Override
@@ -119,17 +120,17 @@ public class ULad3x {
 
 	public void newRecord(int scanDelay) {
 
-		chromatogramAcquisition.newRecord(scanDelay, DEFAULT_SCAN_INTERVAL);
+		chromatogramAcquisition.setChromatogram(new ChromatogramCSD(),scanDelay,DEFAULT_SCAN_INTERVAL);
 	}
 
 	public void reset() {
 
-		chromatogramAcquisition.resetRecording();
+		chromatogramAcquisition.resetChromatogram();
 	}
 
 	public void resetRecording() {
 
-		chromatogramAcquisition.resetRecording();
+		chromatogramAcquisition.resetChromatogram();
 	}
 
 	public void setScanDelay(int milliseconds) {
@@ -141,7 +142,7 @@ public class ULad3x {
 
 		isBeeingRecored = true;
 		if(reset) {
-			chromatogramAcquisition.resetRecording();
+			chromatogramAcquisition.resetChromatogram();
 		}
 	}
 

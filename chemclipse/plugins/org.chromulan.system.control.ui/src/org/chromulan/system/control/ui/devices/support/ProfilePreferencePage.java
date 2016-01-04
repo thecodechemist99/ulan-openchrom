@@ -48,7 +48,7 @@ public class ProfilePreferencePage extends PreferencePage {
 		textName.setEnabled(false);
 		Composite compositeTable = new Composite(composite, SWT.None);
 		compositeTable.setLayout(new FillLayout());
-		DevicesTable table = new DevicesTable(compositeTable, SWT.HIDE_SELECTION | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+		DevicesTable table = new DevicesTable(compositeTable, SWT.HIDE_SELECTION | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, false);
 		table.setDevices(profile.getControlDevices());
 		return composite;
 	}

@@ -35,13 +35,13 @@ public interface IChromatogramAcquisition {
 
 	IMultipleSeries getSeries();
 
-	void newRecord(int scanDelay, int scanInterval);
+	void setChromatogram(IChromatogram chromatogram, int interval, int delay);
 
-	void resetRecording();
+	void resetChromatogram();
 
 	void setName(String name);
 
 	void setScanDelay(int milliseconds);
 
-	void setScanInterval(int milliseconds);
+	void setScanInterval(int milliseconds, boolean reset);
 }
