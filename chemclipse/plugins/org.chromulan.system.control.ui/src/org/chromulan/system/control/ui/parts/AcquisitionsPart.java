@@ -460,18 +460,6 @@ public class AcquisitionsPart {
 		progressBarTimeRemain.setLayoutData(gridData);
 	}
 
-	private void setDefaultParameters() {
-		
-		WizardNewAcquisitions newAcquisitionWizard = new WizardNewAcquisitions();
-		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAcquisitionWizard);
-		if(wizardDialog.open() == Window.OK) {
-			buttonActualAcquisition.setEnabled(true);
-			buttonAddAcquisition.setEnabled(true);
-			this.file = newAcquisitionWizard.getFile();
-			this.supplier = newAcquisitionWizard.getSupplier();
-		}
-	}
-
 	synchronized private void endAcquisition() {
 
 		if((acquisition != null) && (isSetAcquisition) && (!acquisition.isRunning())) {
@@ -628,8 +616,7 @@ public class AcquisitionsPart {
 				}
 			}
 		}
-		saver.setChromatogramMaker(maker);
-		saver.save(new NullProgressMonitor());
+		saver.save(new NullProgressMonitor(), maker);
 	}
 
 	synchronized private void setAcquisition(IAcquisitionCSD acquisition) {
@@ -663,6 +650,18 @@ public class AcquisitionsPart {
 
 		if(this.acquisition != null && !this.isSetAcquisition && controlUsingDevices(acquisition.getDevicesProfile())) {
 			setAcquisition(acquisition);
+		}
+	}
+
+	private void setDefaultParameters() {
+
+		WizardNewAcquisitions newAcquisitionWizard = new WizardNewAcquisitions();
+		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAcquisitionWizard);
+		if(wizardDialog.open() == Window.OK) {
+			buttonActualAcquisition.setEnabled(true);
+			buttonAddAcquisition.setEnabled(true);
+			this.file = newAcquisitionWizard.getFile();
+			this.supplier = newAcquisitionWizard.getSupplier();
 		}
 	}
 

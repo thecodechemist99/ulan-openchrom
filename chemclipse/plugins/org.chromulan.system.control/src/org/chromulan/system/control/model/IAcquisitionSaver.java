@@ -24,15 +24,11 @@ public interface IAcquisitionSaver {
 
 	List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessInfo();
 
-	IChromatogramMaker getChromatogramMaker();
-
 	ISupplier getSupplier();
 
-	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor);
+	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, IChromatogramMaker maker);
 
 	void setFile(File file);
-
-	void setChromatogramMaker(IChromatogramMaker chromatogramMaker);
 
 	void setSuplier(ISupplier suplier);
 }

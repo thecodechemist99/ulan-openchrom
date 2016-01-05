@@ -18,19 +18,12 @@ import org.eclipse.chemclipse.converter.core.ISupplier;
 public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 
 	private File file;
-	private IChromatogramMaker chromatogramMaker;
 	private ISupplier supplier;
 
 	@Override
 	public File getFile() {
 
 		return file;
-	}
-
-	@Override
-	public IChromatogramMaker getChromatogramMaker() {
-
-		return chromatogramMaker;
 	}
 
 	@Override
@@ -43,12 +36,6 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 	public void setFile(File file) {
 
 		this.file = file;
-	}
-
-	@Override
-	public void setChromatogramMaker(IChromatogramMaker chromatogramMaker) {
-
-		this.chromatogramMaker = chromatogramMaker;
 	}
 
 	@Override

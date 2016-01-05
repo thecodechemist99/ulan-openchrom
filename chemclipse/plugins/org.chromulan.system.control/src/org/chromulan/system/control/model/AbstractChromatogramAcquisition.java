@@ -21,7 +21,7 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 
 	public AbstractChromatogramAcquisition() {
 	}
-	
+
 	public AbstractChromatogramAcquisition(IChromatogram chromatogram, int interval, int delay) {
 		this.chromatogram = chromatogram;
 		chromatogram.setScanInterval(interval);
@@ -66,6 +66,7 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 
 	@Override
 	public String getName() {
+
 		synchronized(this) {
 			return name;
 		}
@@ -95,16 +96,6 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 		}
 	}
 
-	@Override
-	public void setChromatogram(IChromatogram chromatogram, int interval, int delay ) {
-
-		synchronized(this) {
-			this.chromatogram = chromatogram;
-			chromatogram.setScanInterval(interval);
-			chromatogram.setScanDelay(delay);
-		}
-	}
-
 	private void reset() {
 
 		chromatogram.removeScans(1, chromatogram.getNumberOfScans());
@@ -115,6 +106,16 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 
 		synchronized(this) {
 			reset();
+		}
+	}
+
+	@Override
+	public void setChromatogram(IChromatogram chromatogram, int interval, int delay) {
+
+		synchronized(this) {
+			this.chromatogram = chromatogram;
+			chromatogram.setScanInterval(interval);
+			chromatogram.setScanDelay(delay);
 		}
 	}
 
@@ -142,15 +143,13 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 
 		synchronized(this) {
 			if(milliseconds != chromatogram.getScanInterval()) {
-				if(reset)
-				{
+				if(reset) {
 					reset();
 					chromatogram.setScanInterval(milliseconds);
 				} else {
 					chromatogram.setScanInterval(milliseconds);
 					chromatogram.recalculateRetentionTimes();
 				}
-				
 			}
 		}
 	}
