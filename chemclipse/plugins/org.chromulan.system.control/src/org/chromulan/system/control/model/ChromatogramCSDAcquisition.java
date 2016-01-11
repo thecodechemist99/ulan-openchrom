@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
+import org.eclipse.chemclipse.csd.model.implementation.ChromatogramCSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.swt.ui.converter.SeriesConverter;
@@ -27,8 +28,14 @@ public class ChromatogramCSDAcquisition extends AbstractChromatogramAcquisition 
 		super();
 	}
 
-	public ChromatogramCSDAcquisition(IChromatogram chromatogram, int interval, int delay) {
-		super(chromatogram, interval, delay);
+	public ChromatogramCSDAcquisition(int interval, int delay) {
+		super(interval, delay);
+	}
+
+	@Override
+	protected IChromatogram createChromatogram() {
+
+		return new ChromatogramCSD();
 	}
 
 	@Override

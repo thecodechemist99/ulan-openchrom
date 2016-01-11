@@ -45,7 +45,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 
 public class ULad3xPart {
 
@@ -59,7 +58,6 @@ public class ULad3xPart {
 	@Inject
 	private MPart part;
 	private Table table;
-	private Text textDescription;
 	private ULad3x uLad3x;
 
 	public ULad3xPart() {
@@ -99,9 +97,6 @@ public class ULad3xPart {
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, false, 3, 0);
 		name.setText("Description");
 		name.setLayoutData(gridData);
-		textDescription = new Text(parent, SWT.V_SCROLL | SWT.MULTI | SWT.BORDER);
-		gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 0);
-		textDescription.setLayoutData(gridData);
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("Signal Monitor");
 		button.addSelectionListener(new SelectionAdapter() {
@@ -139,7 +134,8 @@ public class ULad3xPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				uLad3x.reset();
+				uLad3x.newAcquisition();
+				;
 			}
 		});
 		redrawTable();
@@ -197,7 +193,7 @@ public class ULad3xPart {
 			enableButton(true);
 			this.acquisition = null;
 			if(analisis.isCompleted()) {
-				uLad3x.newRecord();
+				uLad3x.newAcquisition();
 				uLad3x.start(false);
 			}
 		}
@@ -230,7 +226,7 @@ public class ULad3xPart {
 		if(this.acquisition != null && this.acquisition == acquisition) {
 			uLad3x.stop();
 			ULad3xData data = new ULad3xData(controlDevice);
-			data.setDescription(textDescription.getText());
+			data.setDescription("");
 			data.setChromatogram(uLad3x.getChromatogramRecording().getChromatogram());
 			List<IDetectorData> list = new LinkedList<IDetectorData>();
 			list.add(data);

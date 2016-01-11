@@ -118,7 +118,7 @@ public class DevicesProfilesPart {
 		});
 		tableProfiles.setLayoutData(gridData);
 		final Button buttonaddProfile = new Button(parent, SWT.PUSH);
-		buttonaddProfile.setText("add devices profile");
+		buttonaddProfile.setText("add");
 		buttonaddProfile.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -130,7 +130,7 @@ public class DevicesProfilesPart {
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 		buttonaddProfile.setLayoutData(gridData);
 		final Button buttonremoveProfile = new Button(parent, SWT.PUSH);
-		buttonremoveProfile.setText("remove devices profile");
+		buttonremoveProfile.setText("remove");
 		buttonremoveProfile.addSelectionListener(new SelectionAdapter() {
 
 			@Override

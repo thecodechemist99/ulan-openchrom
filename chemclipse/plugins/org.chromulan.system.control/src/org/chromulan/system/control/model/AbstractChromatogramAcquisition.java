@@ -22,8 +22,8 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 	public AbstractChromatogramAcquisition() {
 	}
 
-	public AbstractChromatogramAcquisition(IChromatogram chromatogram, int interval, int delay) {
-		this.chromatogram = chromatogram;
+	public AbstractChromatogramAcquisition(int interval, int delay) {
+		this.chromatogram = createChromatogram();
 		chromatogram.setScanInterval(interval);
 		chromatogram.setScanDelay(delay);
 	}
@@ -47,6 +47,8 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 			chromatogram.addScan(scan);
 		}
 	}
+
+	abstract protected IChromatogram createChromatogram();
 
 	@Override
 	public IChromatogram getChromatogram() {
@@ -96,27 +98,18 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 		}
 	}
 
-	private void reset() {
+	@Override
+	public void newAcquisition(int scanInterval, int scanDeley) {
 
-		chromatogram.removeScans(1, chromatogram.getNumberOfScans());
+		reset(scanInterval, scanDeley);
 	}
 
-	@Override
-	public void resetChromatogram() {
+	private void reset(int scanInterval, int scanDeley) {
 
-		synchronized(this) {
-			reset();
-		}
-	}
-
-	@Override
-	public void setChromatogram(IChromatogram chromatogram, int interval, int delay) {
-
-		synchronized(this) {
-			this.chromatogram = chromatogram;
-			chromatogram.setScanInterval(interval);
-			chromatogram.setScanDelay(delay);
-		}
+		IChromatogram chromatogramNew = getChromatogram();
+		chromatogramNew.setScanInterval(scanInterval);
+		chromatogramNew.setScanDelay(scanDeley);
+		this.chromatogram = chromatogramNew;
 	}
 
 	@Override
@@ -144,7 +137,7 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 		synchronized(this) {
 			if(milliseconds != chromatogram.getScanInterval()) {
 				if(reset) {
-					reset();
+					reset(milliseconds, this.chromatogram.getScanDelay());
 					chromatogram.setScanInterval(milliseconds);
 				} else {
 					chromatogram.setScanInterval(milliseconds);

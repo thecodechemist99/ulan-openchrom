@@ -19,7 +19,6 @@ import org.chromulan.system.control.model.IChromatogramAcquisition;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
@@ -62,8 +61,6 @@ public class ChromatogramViewer {
 	private ChromatogramOverviewUI chromatogramOverView;
 	@Inject
 	private MPart part;
-	@Inject
-	private EPartService partService;
 	private RedrawChromatogram redrawChromatogram;
 
 	public ChromatogramViewer() {
@@ -132,7 +129,6 @@ public class ChromatogramViewer {
 	@PreDestroy
 	public void destroyPart() {
 
-		partService.hidePart(part, true);
 		display.timerExec(-1, redrawChromatogram);
 	}
 

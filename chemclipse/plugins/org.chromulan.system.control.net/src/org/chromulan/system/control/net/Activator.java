@@ -22,7 +22,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 
 		Activator.context = bundleContext;
-		ULanDrv.loadLibrary(false);
+		ULanDrv.loadLibrary(true);
 	}
 
 	/*

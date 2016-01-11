@@ -35,9 +35,7 @@ public interface IChromatogramAcquisition {
 
 	IMultipleSeries getSeries();
 
-	void resetChromatogram();
-
-	void setChromatogram(IChromatogram chromatogram, int interval, int delay);
+	void newAcquisition(int scanInterval, int scanDeley);
 
 	void setName(String name);
 
