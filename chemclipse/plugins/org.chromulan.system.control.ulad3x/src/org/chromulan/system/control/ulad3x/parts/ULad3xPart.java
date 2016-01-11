@@ -135,7 +135,6 @@ public class ULad3xPart {
 			public void widgetSelected(SelectionEvent e) {
 
 				uLad3x.newAcquisition();
-				;
 			}
 		});
 		redrawTable();

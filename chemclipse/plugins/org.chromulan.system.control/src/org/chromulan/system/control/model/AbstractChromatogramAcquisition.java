@@ -19,9 +19,6 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 	private IChromatogram chromatogram;
 	private String name;
 
-	public AbstractChromatogramAcquisition() {
-	}
-
 	public AbstractChromatogramAcquisition(int interval, int delay) {
 		this.chromatogram = createChromatogram();
 		chromatogram.setScanInterval(interval);
@@ -101,12 +98,14 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 	@Override
 	public void newAcquisition(int scanInterval, int scanDeley) {
 
-		reset(scanInterval, scanDeley);
+		synchronized(this) {
+			reset(scanInterval, scanDeley);
+		}
 	}
 
 	private void reset(int scanInterval, int scanDeley) {
 
-		IChromatogram chromatogramNew = getChromatogram();
+		IChromatogram chromatogramNew = createChromatogram();
 		chromatogramNew.setScanInterval(scanInterval);
 		chromatogramNew.setScanDelay(scanDeley);
 		this.chromatogram = chromatogramNew;

@@ -24,10 +24,6 @@ import org.eclipse.chemclipse.swt.ui.support.Sign;
 
 public class ChromatogramCSDAcquisition extends AbstractChromatogramAcquisition implements IChromatogramCSDAcquisition {
 
-	public ChromatogramCSDAcquisition() {
-		super();
-	}
-
 	public ChromatogramCSDAcquisition(int interval, int delay) {
 		super(interval, delay);
 	}
