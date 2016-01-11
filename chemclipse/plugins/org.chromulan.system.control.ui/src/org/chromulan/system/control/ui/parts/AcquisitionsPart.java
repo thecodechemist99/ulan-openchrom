@@ -144,7 +144,7 @@ public class AcquisitionsPart {
 	@Inject
 	private IEventBroker eventBroker;
 	private File file;
-	private IFilt filtStartRecording;
+	private IFilt<Void> filtStartRecording;
 	@Inject
 	private EHandlerService handlerService;
 	private boolean isSetAcquisition;

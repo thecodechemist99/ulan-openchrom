@@ -79,7 +79,7 @@ public class AvailableDevicesPart {
 	private Display display;
 	@Inject
 	private IEventBroker eventBroker;
-	private IFilt filtCloseConnection;
+	private IFilt<Void> filtCloseConnection;
 	private Label labelConnection;
 	@Inject
 	private EModelService modelService;

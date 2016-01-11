@@ -177,10 +177,10 @@ public class ULad3xPart {
 		tableItem.setText(0, "Device description");
 		tableItem.setText(1, controlDevice.getDeviceDescription().getDescription());
 		tableItem = new TableItem(table, SWT.NONE);
-		tableItem.setText(0, "Scan Interval");
+		tableItem.setText(0, "Scan Interval (milliseconds)");
 		tableItem.setText(1, Integer.toString(uLad3x.getScanInterva()));
 		tableItem = new TableItem(table, SWT.NONE);
-		tableItem.setText(0, "Scan Delay");
+		tableItem.setText(0, "Scan Delay (milliseconds)");
 		tableItem.setText(1, Integer.toString(uLad3x.getScanDelay()));
 	}
 

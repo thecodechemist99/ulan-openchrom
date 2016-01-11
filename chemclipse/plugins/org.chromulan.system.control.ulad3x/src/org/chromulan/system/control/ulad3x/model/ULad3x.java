@@ -35,7 +35,7 @@ public class ULad3x {
 	public final int DEFAULT_SCAN_INTERVAL = 100;
 	private DeviceDescription description;
 	private IULanDevice device;
-	private IFilt filtGetData;
+	private IFilt<Void> filtGetData;
 	private IChromatogramAcquisition chromatogramAcquisition;
 	private Boolean isBeeingRecored;
 	private int scanDelay;
