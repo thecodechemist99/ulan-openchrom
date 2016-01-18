@@ -13,9 +13,27 @@ package org.chromulan.system.control.model;
 
 import java.util.List;
 
+import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public interface IChromatogramMaker {
 
-	List<IChromatogram> getChromatograms();
+	static String fileValidation(String file) {
+
+		String nfile = file.trim();
+		if(nfile.isEmpty()) {
+			return "Chromatogram";
+		}
+		nfile.replace('<', '_');
+		nfile.replace('>', '_');
+		nfile.replace(':', '_');
+		nfile.replace('/', '_');
+		nfile.replace('\\', '_');
+		nfile.replace('|', '_');
+		nfile.replace('?', '_');
+		nfile.replace('*', '_');
+		return nfile;
+	}
+
+	List<IChromatogram> getChromatograms(String path, ISupplier supplier);
 }

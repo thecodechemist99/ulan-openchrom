@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.chromulan.system.control.model.data.IDetectorData;
+import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
@@ -24,13 +25,11 @@ public class ChromatogramCSDMaker implements IChromatogramMaker {
 
 	private IAcquisition acquisition;
 	private List<IDetectorData> detectorsData;
-	private File file;
 
-	public ChromatogramCSDMaker(IAcquisition acquisition, File file) {
+	public ChromatogramCSDMaker(IAcquisition acquisition) {
 		super();
 		this.acquisition = acquisition;
 		this.detectorsData = new LinkedList<IDetectorData>();
-		this.file = file;
 	}
 
 	public void addDetectorData(IDetectorData detectorData) {
@@ -39,15 +38,15 @@ public class ChromatogramCSDMaker implements IChromatogramMaker {
 	}
 
 	@Override
-	public List<IChromatogram> getChromatograms() {
+	public List<IChromatogram> getChromatograms(String path, ISupplier supplier) {
 
 		List<IChromatogram> chromatograms = new ArrayList<>();
-		if(file == null || acquisition == null) {
+		if(path == null || acquisition == null) {
 			// TODO: exception or return null ??
 			return null;
 		}
-		String path = file.getAbsolutePath() + File.separator + acquisition.getName();
-		File nFile = new File(path);
+		String npath = path + File.separator + acquisition.getName();
+		File nFile = new File(npath);
 		if(!nFile.exists()) {
 			if(!nFile.mkdir()) {
 				// TODO:excetpiton or return null ??
@@ -68,7 +67,7 @@ public class ChromatogramCSDMaker implements IChromatogramMaker {
 					shortInfo = stringBuilder.toString();
 				}
 				chromatogramCSD.setShortInfo(shortInfo);
-				File fileSave = new File(nFile + File.separator + detectorData.getName());
+				File fileSave = new File(nFile + File.separator + IChromatogramMaker.fileValidation(detectorData.getName()) + supplier.getFileExtension());
 				chromatogramCSD.setFile(fileSave);
 				chromatograms.add(chromatogramCSD);
 			}

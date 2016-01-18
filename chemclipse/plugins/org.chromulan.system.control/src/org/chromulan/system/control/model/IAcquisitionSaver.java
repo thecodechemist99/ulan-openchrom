@@ -20,6 +20,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IAcquisitionSaver {
 
+	static File setOriginalFileName(File name, ISupplier supplier) {
+
+		return null;
+	}
+
 	File getFile();
 
 	List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessInfo();
