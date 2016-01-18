@@ -65,14 +65,15 @@ public class AcquisitionCSDSaver extends AbstractAcquisitionSaver implements IAc
 		String namefile = file.getName();
 		String allName = null;
 		String name = null;
+		fileExtension = fileExtension.toLowerCase();
 		if(namefile.length() > fileExtension.length()) {
-			String nameSuffix = namefile.substring(namefile.length() - fileExtension.length(), namefile.length() - 1);
-			if(!nameSuffix.equals(namefile)) {
+			String nameSuffix = namefile.substring(namefile.length() - fileExtension.length(), namefile.length()).toLowerCase();
+			if(!nameSuffix.equals(fileExtension)) {
 				allName = namefile + fileExtension;
 				name = namefile;
 			} else {
 				allName = namefile;
-				name = namefile.substring(0, namefile.length() - fileExtension.length() - 1);
+				name = namefile.substring(0, namefile.length() - fileExtension.length());
 			}
 		} else {
 			allName = namefile + fileExtension;
