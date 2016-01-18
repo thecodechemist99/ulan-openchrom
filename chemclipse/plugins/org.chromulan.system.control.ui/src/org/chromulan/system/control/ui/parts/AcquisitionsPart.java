@@ -599,7 +599,7 @@ public class AcquisitionsPart {
 	private void saveAcquisition() {
 
 		IAcquisitionSaver saver = acquisition.getAcquisitionSaver();
-		ChromatogramCSDMaker maker = new ChromatogramCSDMaker(acquisition, saver.getFile());
+		ChromatogramCSDMaker maker = new ChromatogramCSDMaker(acquisition);
 		for(IControlDevice device : acquisition.getDevicesProfile().getControlDevices().getControlDevices()) {
 			MPart part = partService.findPart(device.getID());
 			if(part != null && part.getContext() != null && part.getTransientData().containsKey(IDetectorData.DETECTORS_DATA)) {

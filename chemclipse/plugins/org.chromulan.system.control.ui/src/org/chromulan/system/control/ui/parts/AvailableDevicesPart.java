@@ -107,9 +107,7 @@ public class AvailableDevicesPart {
 			} catch(IOException e) {
 				// logger.warn(e);
 			} finally {
-				labelConnection.setText("Connection is closed");
-				labelConnection.setBackground(display.getSystemColor(SWT.COLOR_RED));
-				labelConnection.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+				setConnectionLabel();
 				eventBroker.post(IULanConnectionEvents.TOPIC_CONNECTION_ULAN_CLOSE, connection);
 			}
 		}
@@ -172,11 +170,9 @@ public class AvailableDevicesPart {
 		GridLayout gridLayout = new GridLayout(1, false);
 		composite.setLayout(gridLayout);
 		labelConnection = new Label(composite, SWT.LEFT | SWT.BORDER);
-		labelConnection.setText("Connection is closed");
-		labelConnection.setBackground(display.getSystemColor(SWT.COLOR_RED));
-		labelConnection.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
 		GridData gridData = new GridData(GridData.END, GridData.FILL, true, false);
 		labelConnection.setLayoutData(gridData);
+		setConnectionLabel();
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		Composite tableComposit = new Composite(composite, SWT.None);
 		tableComposit.setLayoutData(gridData);
@@ -253,12 +249,8 @@ public class AvailableDevicesPart {
 					if(!filtCloseConnection.isFiltActive()) {
 						filtCloseConnection.activateFilt();
 					}
-					labelConnection.setText("Connection is opened");
-					labelConnection.redraw();
-					labelConnection.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
-					labelConnection.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+					setConnectionLabel();
 					eventBroker.send(IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN, connection);
-					labelConnection.getParent().layout();
 				}
 			} catch(IOException e) {
 				// TODO:Exception
@@ -269,6 +261,22 @@ public class AvailableDevicesPart {
 	private void rewriteTable() {
 
 		deviceTable.getViewer().refresh();
+	}
+
+	private void setConnectionLabel() {
+
+		if(ULanCommunicationInterface.isOpen()) {
+			labelConnection.setText("Connection is opened");
+			labelConnection.redraw();
+			labelConnection.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
+			labelConnection.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+			labelConnection.getParent().layout();
+		} else {
+			labelConnection.setText("Connection is closed");
+			labelConnection.setBackground(display.getSystemColor(SWT.COLOR_RED));
+			labelConnection.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+			labelConnection.getParent().layout();
+		}
 	}
 
 	private void setDevices(IControlDevices devices) {
