@@ -38,7 +38,6 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 
 		synchronized(this) {
 			int number = chromatogram.getNumberOfScans();
-			scan.setParentChromatogram(chromatogram);
 			scan.setRetentionTime(chromatogram.getScanDelay() + chromatogram.getScanInterval() * (number));
 			scan.setScanNumber(number + 1);
 			chromatogram.addScan(scan);
