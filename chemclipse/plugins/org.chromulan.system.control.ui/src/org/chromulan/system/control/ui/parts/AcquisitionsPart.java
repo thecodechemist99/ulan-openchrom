@@ -648,7 +648,7 @@ public class AcquisitionsPart {
 	@Optional
 	public void setAcquisition(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE) IControlDevices devices) {
 
-		if(this.acquisition != null && !this.isSetAcquisition && controlUsingDevices(acquisition.getDevicesProfile())) {
+		if(this.acquisition != null && !this.isSetAcquisition && controlAcquisition(acquisition)) {
 			setAcquisition(acquisition);
 		}
 	}
