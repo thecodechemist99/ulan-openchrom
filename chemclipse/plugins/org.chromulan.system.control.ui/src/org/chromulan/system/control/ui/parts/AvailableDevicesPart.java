@@ -31,10 +31,7 @@ import org.chromulan.system.control.ui.devices.support.DevicesTable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -68,8 +65,6 @@ public class AvailableDevicesPart {
 		}
 	}
 
-	@Inject
-	private MApplication application;
 	private Button buttonRefreshDevices;
 	private ULanCommunicationInterface communication;
 	private ULanConnection connection;
@@ -81,8 +76,6 @@ public class AvailableDevicesPart {
 	private IEventBroker eventBroker;
 	private IFilt<Void> filtCloseConnection;
 	private Label labelConnection;
-	@Inject
-	private EModelService modelService;
 	@Inject
 	private MPart part;
 
@@ -156,10 +149,6 @@ public class AvailableDevicesPart {
 			this.devices.add(device);
 		}
 		eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, device);
-		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
-		if(stack != null && !stack.getChildren().isEmpty()) {
-			stack.setVisible(true);
-		}
 	}
 
 	@PostConstruct

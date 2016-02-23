@@ -9,10 +9,10 @@
           <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.0" containerData="2500" selectedElement="_JUqo0GzSEeWhB_dhmOjHpg">
             <children xsi:type="basic:Part" xmi:id="_JUqo0GzSEeWhB_dhmOjHpg" elementId="org.chromulan.system.control.ui.part.acquisitions" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AcquisitionsPart" label="Acquisitions"/>
             <children xsi:type="basic:CompositePart" xmi:id="_PFTlMLiWEeWGP7Beybk6cQ" elementId="org.chromulan.system.control.ui.compositepart.0" label="Devices">
-              <children xsi:type="basic:PartStack" xmi:id="_96cWgLsYEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.partstack.1">
+              <children xsi:type="basic:PartStack" xmi:id="_96cWgLsYEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.partstack.1" containerData="">
                 <children xsi:type="advanced:Placeholder" xmi:id="_T2cUwLsOEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.placeholder.1" ref="_6EKToEyaEeWRzKmWon3PLg"/>
               </children>
-              <children xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.devicesSetting" visible="false">
+              <children xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.devicesSetting" containerData="">
                 <tags>NoMove</tags>
               </children>
             </children>
