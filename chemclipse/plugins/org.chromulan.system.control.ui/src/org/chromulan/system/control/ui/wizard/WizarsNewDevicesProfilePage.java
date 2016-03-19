@@ -141,7 +141,21 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 				return "";
 			}
 		});
-		column = createTableViewerColumn("Description", 300, 2, checkTable);
+		column = createTableViewerColumn("Name", 100, 2, checkTable);
+		column.setLabelProvider(new ColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+
+				if(element instanceof IControlDevice) {
+					IControlDevice device = (IControlDevice)element;
+					return device.getName();
+				}
+				return "";
+			}
+		});
+		
+		column = createTableViewerColumn("Description", 300, 3, checkTable);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
@@ -150,6 +164,20 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 				if(element instanceof IControlDevice) {
 					IControlDevice device = (IControlDevice)element;
 					return device.getDeviceDescription().getDescription();
+				}
+				return "";
+			}
+		});
+		
+		column = createTableViewerColumn("Devices type", 100, 4, checkTable);
+		column.setLabelProvider(new ColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+
+				if(element instanceof IControlDevice) {
+					IControlDevice device = (IControlDevice)element;
+					return device.getDeviceType().toString();
 				}
 				return "";
 			}
