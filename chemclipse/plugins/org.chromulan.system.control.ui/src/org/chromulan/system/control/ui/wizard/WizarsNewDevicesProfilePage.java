@@ -154,7 +154,6 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 				return "";
 			}
 		});
-		
 		column = createTableViewerColumn("Description", 300, 3, checkTable);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
@@ -168,7 +167,6 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 				return "";
 			}
 		});
-		
 		column = createTableViewerColumn("Devices type", 100, 4, checkTable);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
