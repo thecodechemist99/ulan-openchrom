@@ -9,7 +9,7 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.lcd5000.pars;
+package org.chromulan.system.control.lcd5000.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

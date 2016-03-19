@@ -46,7 +46,7 @@ public class ConnectDevice {
 				part.setObject(device);
 				part.setElementId(device.getID());
 				part.setCloseable(false);
-				part.setContributionURI("bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.lcd5000.parts.Lcd5000Part");
+				part.setContributionURI("bundleclass://org.chromulan.system.control.lcd5000/org.chromulan.system.control.lcd5000.parts.Lcd5000Part");
 				MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
 				stack.getChildren().add(part);
 				partService.activate(part);

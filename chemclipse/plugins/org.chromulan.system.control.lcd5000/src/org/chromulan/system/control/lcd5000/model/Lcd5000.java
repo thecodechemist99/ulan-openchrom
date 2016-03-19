@@ -31,7 +31,7 @@ import net.sourceforge.ulan.base.ULanMsg;
 public class Lcd5000 {
 
 	private IControlDevice controlDevice;
-	public final int DEFAULT_SCAN_DELAY = 100;
+	public final int DEFAULT_SCAN_DELAY = 0;
 	public final int DEFAULT_SCAN_INTERVAL = 40;
 	private DeviceDescription description;
 	private IULanDevice device;
@@ -45,7 +45,7 @@ public class Lcd5000 {
 		super();
 		this.controlDevice = controlDevice;
 		device = new ULanDevice(controlDevice.getDeviceDescription());
-		chromatogramAcquisition = new ChromatogramCSDAcquisition(DEFAULT_SCAN_DELAY, DEFAULT_SCAN_INTERVAL);
+		chromatogramAcquisition = new ChromatogramCSDAcquisition(DEFAULT_SCAN_INTERVAL,DEFAULT_SCAN_DELAY);
 		filtGetData = device.addFiltAdr(0x4f, null, new CompletionHandler<ULanMsg, Void>() {
 
 			@Override
@@ -135,7 +135,7 @@ public class Lcd5000 {
 
 	public void newAcquisition() {
 
-		chromatogramAcquisition.newAcquisition(scanDelay, DEFAULT_SCAN_INTERVAL);
+		chromatogramAcquisition.newAcquisition(DEFAULT_SCAN_INTERVAL,DEFAULT_SCAN_DELAY);
 	}
 
 	public void setScanDelay(int milliseconds) {
@@ -148,7 +148,7 @@ public class Lcd5000 {
 
 		isBeeingRecored = true;
 		if(reset) {
-			chromatogramAcquisition.newAcquisition(scanDelay, DEFAULT_SCAN_INTERVAL);
+			chromatogramAcquisition.newAcquisition(DEFAULT_SCAN_INTERVAL,DEFAULT_SCAN_DELAY);
 		}
 	}
 
