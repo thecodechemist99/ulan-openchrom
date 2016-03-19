@@ -98,8 +98,8 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 
 				for(IControlDevice controlDevice : controlDevices.getControlDevices()) {
 					checkTable.setChecked(controlDevice, true);
-					if(!profile.getControlDevices().contains(controlDevice.getID())) {
-						profile.getControlDevices().add(controlDevice);
+					if(!profile.contains(controlDevice.getID())) {
+						profile.add(controlDevice);
 					}
 				}
 			}
@@ -113,8 +113,8 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 
 				for(IControlDevice controlDevice : controlDevices.getControlDevices()) {
 					checkTable.setChecked(controlDevice, false);
-					if(profile.getControlDevices().contains(controlDevice.getID())) {
-						profile.getControlDevices().remove(controlDevice.getID());
+					if(profile.contains(controlDevice.getID())) {
+						profile.remove(controlDevice.getID());
 					}
 				}
 			}
@@ -162,10 +162,10 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 
 				IControlDevice device = ((IControlDevice)event.getElement());
-				if(profile.getControlDevices().contains(device.getID())) {
-					profile.getControlDevices().remove(device.getID());
+				if(profile.contains(device.getID())) {
+					profile.remove(device.getID());
 				} else {
-					profile.getControlDevices().add(device);
+					profile.add(device);
 				}
 			}
 		});
