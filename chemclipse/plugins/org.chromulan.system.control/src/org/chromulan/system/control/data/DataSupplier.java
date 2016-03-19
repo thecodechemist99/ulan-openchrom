@@ -28,7 +28,6 @@ import org.chromulan.system.control.model.IDevicesProfiles;
 import org.chromulan.system.control.preferences.PreferenceSupplier;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 @Creatable
@@ -37,7 +36,6 @@ public class DataSupplier {
 
 	private IDataStore dataStore;
 	@Inject
-	@Optional
 	private IEventBroker eventBroker;
 	private final String FILE_NAME = "dataStore";
 
