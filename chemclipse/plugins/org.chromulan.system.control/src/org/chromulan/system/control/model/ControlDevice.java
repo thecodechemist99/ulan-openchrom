@@ -85,6 +85,7 @@ public class ControlDevice implements IControlDevice {
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
 		this.name = (String)in.readObject();
+		this.deviceType = DeviceType.valueOf((String)in.readObject());
 		long adr = in.readLong();
 		String description = (String)in.readObject();
 		this.description = new DeviceDescription(adr, description);
@@ -124,6 +125,7 @@ public class ControlDevice implements IControlDevice {
 	public void writeExternal(ObjectOutput out) throws IOException {
 
 		out.writeObject(name);
+		out.writeObject(deviceType.name());
 		out.writeLong(description.getAdr());
 		out.writeObject(description.getDescription());
 	}
