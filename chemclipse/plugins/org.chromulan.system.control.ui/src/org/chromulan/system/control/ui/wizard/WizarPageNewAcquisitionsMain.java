@@ -47,15 +47,19 @@ import org.eclipse.swt.widgets.Text;
 public class WizarPageNewAcquisitionsMain extends WizardPage {
 
 	private final String DEFAULT_SUPPLIER_ID = "org.eclipse.chemclipse.xxd.converter.supplier.chemclipse";
+	private String defFile;
+	private String defSupplier;
 	private IObservableValue file;
 	private IObservableValue supplier;
 
-	public WizarPageNewAcquisitionsMain(String pageName) {
-		super(pageName);
+	public WizarPageNewAcquisitionsMain(String pageName, String title, ImageDescriptor titleImage, String defFile, String defSupplier) {
+		super(pageName, title, titleImage);
+		this.defFile = defFile;
+		this.defSupplier = defSupplier;
 	}
 
-	public WizarPageNewAcquisitionsMain(String pageName, String title, ImageDescriptor titleImage) {
-		super(pageName, title, titleImage);
+	public WizarPageNewAcquisitionsMain(String pageName, String defFile, String defSupplier) {
+		this(pageName, null, null, defFile, defSupplier);
 	}
 
 	@Override
@@ -88,7 +92,11 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 		supplier = new WritableValue(defaultSupplier, ISupplier.class);
 		IViewerObservableValue observeCombo = ViewerProperties.singleSelection().observe(combo);
 		dbc.bindValue(observeCombo, supplier);
-		file = new WritableValue("", File.class);
+		if(defFile != null) {
+			file = new WritableValue(new File(defFile), File.class);
+		} else {
+			file = new WritableValue(null, File.class);
+		}
 		final DirectoryDialog dialog = new DirectoryDialog(parent.getShell());
 		label = new Label(composite, SWT.None);
 		label.setText("Directory: ");
@@ -121,6 +129,13 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 
 		if(suppliers == null || suppliers.isEmpty()) {
 			return null;
+		}
+		if(defSupplier != null) {
+			for(ISupplier supplier : suppliers) {
+				if(supplier.getId().equals(defSupplier)) {
+					return supplier;
+				}
+			}
 		}
 		for(ISupplier supplier : suppliers) {
 			if(supplier.getId().equals(DEFAULT_SUPPLIER_ID)) {

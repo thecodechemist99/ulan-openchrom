@@ -13,6 +13,9 @@ package org.chromulan.system.control.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import net.sourceforge.ulan.base.DeviceDescription;
 
@@ -24,10 +27,14 @@ public class ControlDevice implements IControlDevice {
 	private String name;
 	protected PropertyChangeSupport propertyChangeSupport;
 
-	public ControlDevice(DeviceDescription description, boolean isConnected) {
+	public ControlDevice() {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
-		this.description = description;
 		this.deviceType = DeviceType.UNKNOWEN;
+	}
+
+	public ControlDevice(DeviceDescription description, boolean isConnected) {
+		this();
+		this.description = description;
 		this.name = description.getModulType();
 		this.isConnected = isConnected;
 	}
@@ -75,6 +82,15 @@ public class ControlDevice implements IControlDevice {
 	}
 
 	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
+		this.name = (String)in.readObject();
+		long adr = in.readLong();
+		String description = (String)in.readObject();
+		this.description = new DeviceDescription(adr, description);
+	}
+
+	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 
 		propertyChangeSupport.removePropertyChangeListener(listener);
@@ -102,5 +118,13 @@ public class ControlDevice implements IControlDevice {
 	public void setName(String name) {
 
 		propertyChangeSupport.firePropertyChange(PROPERTY_NAME, this.name, this.name = name);
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+
+		out.writeObject(name);
+		out.writeLong(description.getAdr());
+		out.writeObject(description.getDescription());
 	}
 }

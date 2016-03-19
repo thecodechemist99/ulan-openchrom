@@ -15,6 +15,7 @@ import org.chromulan.system.control.model.DevicesProfile;
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
+import org.chromulan.system.control.model.IDevicesProfiles;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -42,7 +43,7 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 	private IControlDevices controlDevices;
 	private IDevicesProfile profile;
 
-	public WizarsNewDevicesProfilePage(IControlDevices controlDevices) {
+	public WizarsNewDevicesProfilePage(IControlDevices controlDevices, IDevicesProfiles profiles) {
 		super("New Devices Profile");
 		profile = new DevicesProfile();
 		this.controlDevices = controlDevices;

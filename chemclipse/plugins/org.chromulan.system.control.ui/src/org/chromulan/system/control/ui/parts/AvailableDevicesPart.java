@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.events.IControlDeviceEvents;
 import org.chromulan.system.control.events.IControlDevicesEvents;
 import org.chromulan.system.control.events.IULanConnectionEvents;
@@ -31,7 +32,6 @@ import org.chromulan.system.control.ui.devices.support.DevicesTable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -54,7 +54,6 @@ import net.sourceforge.ulan.base.ULanMsg;
 public class AvailableDevicesPart {
 
 	public final static String ID = "org.chromulan.system.control.ui.part.availableDevices";
-
 	static {
 		if(!ULanCommunicationInterface.isHandleInitialized()) {
 			try {
@@ -64,10 +63,11 @@ public class AvailableDevicesPart {
 			}
 		}
 	}
-
 	private Button buttonRefreshDevices;
 	private ULanCommunicationInterface communication;
 	private ULanConnection connection;
+	@Inject
+	private DataSupplier dataSupplier;
 	private IControlDevices devices;
 	private DevicesTable deviceTable;
 	@Inject
@@ -76,13 +76,10 @@ public class AvailableDevicesPart {
 	private IEventBroker eventBroker;
 	private IFilt<Void> filtCloseConnection;
 	private Label labelConnection;
-	@Inject
-	private MPart part;
 
 	public AvailableDevicesPart() {
 		communication = new ULanCommunicationInterface();
 		connection = new ULanConnection();
-		devices = new ControlDevices();
 	}
 
 	private void closeConnection() {
@@ -148,13 +145,13 @@ public class AvailableDevicesPart {
 		} else {
 			this.devices.add(device);
 		}
-		eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, device);
+		eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, this.devices.getControlDevice(device.getID()));
 	}
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 
-		part.getContext().set(IControlDevices.class, devices);
+		devices = dataSupplier.getControlDevices();
 		Composite composite = new Composite(parent, SWT.None);
 		GridLayout gridLayout = new GridLayout(1, false);
 		composite.setLayout(gridLayout);

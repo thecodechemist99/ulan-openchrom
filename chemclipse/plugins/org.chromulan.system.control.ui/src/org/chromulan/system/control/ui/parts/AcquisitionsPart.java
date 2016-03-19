@@ -23,6 +23,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.events.IControlDevicesEvents;
 import org.chromulan.system.control.events.IULanConnectionEvents;
@@ -39,6 +40,7 @@ import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
 import org.chromulan.system.control.model.ULanConnection;
 import org.chromulan.system.control.model.data.IDetectorData;
+import org.chromulan.system.control.preferences.PreferenceSupplier;
 import org.chromulan.system.control.ui.acquisition.support.AcquisitionCDSSavePreferencePage;
 import org.chromulan.system.control.ui.acquisition.support.AcquisitionSettingsPreferencePage;
 import org.chromulan.system.control.ui.acquisition.support.AcquisitionsTable;
@@ -47,8 +49,10 @@ import org.chromulan.system.control.ui.acquisition.support.LabelAcquisitionDurat
 import org.chromulan.system.control.ui.devices.support.ProfilePreferencePage;
 import org.chromulan.system.control.ui.wizard.WizardNewAcquisition;
 import org.chromulan.system.control.ui.wizard.WizardNewAcquisitions;
+import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
+import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport;
@@ -88,6 +92,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.osgi.service.prefs.BackingStoreException;
 
 import net.sourceforge.ulan.base.CompletionHandler;
 import net.sourceforge.ulan.base.IULanCommunication;
@@ -140,6 +145,8 @@ public class AcquisitionsPart {
 	private Button buttonStop;
 	private PropertyChangeListener dataAcquisitionChange;
 	@Inject
+	private DataSupplier dataSupplier;
+	@Inject
 	private Display display;
 	@Inject
 	private IEventBroker eventBroker;
@@ -157,6 +164,8 @@ public class AcquisitionsPart {
 	private EPartService partService;
 	@Inject
 	private MPerspective perspective;
+	private final String PREFERENCE_FILE = "file";
+	private final String PREFERENCE_SUPPLIER = "supplier";
 	private ProgressBar progressBarTimeRemain;
 	private ISupplier supplier;
 	private Table tableActualAcquisition;
@@ -257,7 +266,7 @@ public class AcquisitionsPart {
 
 	private boolean controlUsingDevices(IDevicesProfile profile) {
 
-		for(IControlDevice device : profile.getControlDevices().getControlDevices()) {
+		for(IControlDevice device : profile.getControlDevices()) {
 			if(!device.isConnected()) {
 				return false;
 			}
@@ -375,12 +384,13 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				setDefaultParameters();
+				setDefaultParametersWizard();
 			}
 		});
 		buttonStartMeasurement.setLayoutData(gridData);
 		initializationHandler();
 		initializationButtons();
+		setDefaultParameters(PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_FILE, null), PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER, null));
 	}
 
 	private void createActualAcquisitionControl(Composite composite) {
@@ -473,20 +483,15 @@ public class AcquisitionsPart {
 			acquisition = null;
 			perspective.getContext().remove(IAcquisition.class);
 		}
-		removeData();
+		acquisitionInterval.setTime(0);
+		tableActualAcquisition.removeAll();
+		lableNameAcquisition.setText("");
+		progressBarTimeRemain.setSelection(0);
 	}
 
 	private List<IDevicesProfile> getDevicesProfile() {
 
-		MPart part = partService.findPart(DevicesProfilesPart.ID);
-		if(part.getContext() == null) {
-			partService.activate(part, false);
-		}
-		if(part.getContext().containsKey(DevicesProfilesPart.DEVICES_PROFILES_DATA)) {
-			return ((List<IDevicesProfile>)part.getContext().get(DevicesProfilesPart.DEVICES_PROFILES_DATA));
-		} else {
-			return null;
-		}
+		return dataSupplier.getDevicesProfiles().getAll();
 	}
 
 	private String getNameAcquisition(String name, int numberOfAcquisition, int maxNumber) {
@@ -579,14 +584,6 @@ public class AcquisitionsPart {
 		redrawTable();
 	}
 
-	private void removeData() {
-
-		acquisitionInterval.setTime(0);
-		tableActualAcquisition.removeAll();
-		lableNameAcquisition.setText("");
-		progressBarTimeRemain.setSelection(0);
-	}
-
 	private void removeSelecetion() {
 
 		IStructuredSelection selection = (IStructuredSelection)acquisitionsTable.getViewer().getSelection();
@@ -600,7 +597,7 @@ public class AcquisitionsPart {
 
 		IAcquisitionSaver saver = acquisition.getAcquisitionSaver();
 		ChromatogramCSDMaker maker = new ChromatogramCSDMaker(acquisition);
-		for(IControlDevice device : acquisition.getDevicesProfile().getControlDevices().getControlDevices()) {
+		for(IControlDevice device : acquisition.getDevicesProfile().getControlDevices()) {
 			MPart part = partService.findPart(device.getID());
 			if(part != null && part.getContext() != null && part.getTransientData().containsKey(IDetectorData.DETECTORS_DATA)) {
 				Object detectorsData = part.getTransientData().get(IDetectorData.DETECTORS_DATA);
@@ -653,15 +650,41 @@ public class AcquisitionsPart {
 		}
 	}
 
-	private void setDefaultParameters() {
+	private void setDefaultParameters(String path, String supplier) {
 
-		WizardNewAcquisitions newAcquisitionWizard = new WizardNewAcquisitions();
+		if(path != null && supplier != null) {
+			ChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
+			List<ISupplier> suppliers = support.getExportSupplier();
+			for(ISupplier iSupplier : suppliers) {
+				if(iSupplier.getId().equals(supplier)) {
+					this.file = new File(path);
+					this.supplier = iSupplier;
+					PreferenceSupplier.INSTANCE().getPreferences().put(PREFERENCE_FILE, path);
+					PreferenceSupplier.INSTANCE().getPreferences().put(PREFERENCE_SUPPLIER, supplier);
+					try {
+						PreferenceSupplier.INSTANCE().getPreferences().flush();
+					} catch(BackingStoreException e) {
+						// TODO logger.warn(e);
+					}
+					buttonActualAcquisition.setEnabled(true);
+					buttonAddAcquisition.setEnabled(true);
+					return;
+				}
+			}
+		}
+	}
+
+	private void setDefaultParametersWizard() {
+
+		WizardNewAcquisitions newAcquisitionWizard = null;
+		if(file != null && supplier != null) {
+			newAcquisitionWizard = new WizardNewAcquisitions(file.getAbsolutePath(), supplier.getId());
+		} else {
+			newAcquisitionWizard = new WizardNewAcquisitions(null, null);
+		}
 		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAcquisitionWizard);
 		if(wizardDialog.open() == Window.OK) {
-			buttonActualAcquisition.setEnabled(true);
-			buttonAddAcquisition.setEnabled(true);
-			this.file = newAcquisitionWizard.getFile();
-			this.supplier = newAcquisitionWizard.getSupplier();
+			setDefaultParameters(newAcquisitionWizard.getFile().getAbsolutePath(), newAcquisitionWizard.getSupplier().getId());
 		}
 	}
 

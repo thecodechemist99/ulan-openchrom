@@ -17,16 +17,16 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
+import org.chromulan.system.control.model.IDevicesProfiles;
 import org.chromulan.system.control.ui.devices.support.ProfileDialog;
 import org.chromulan.system.control.ui.wizard.WizardNewDevicesProfile;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -44,31 +44,25 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class DevicesProfilesPart {
 
-	final public static String DEVICES_PROFILES_DATA = "Profiles";
 	final public static String ID = "org.chromulan.system.control.ui.part.devicesProfiles";
 	private List<IAcquisition> actualAcquisition;
 	@Inject
+	private DataSupplier dataSupplier;
+	@Inject
 	private Display display;
-	@Inject
-	private MPart part;
-	@Inject
-	private EPartService partService;
-	private List<IDevicesProfile> profiles;
+	private IDevicesProfiles profiles;
 	private Table tableProfiles;
 
 	public DevicesProfilesPart() {
-		profiles = new LinkedList<>();
 		actualAcquisition = new LinkedList<>();
 	}
 
-	private void actualizateProfile() {
+	@Inject
+	@Optional
+	public void addActualAcqusition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition acquisition) {
 
-		tableProfiles.removeAll();
-		part.getContext().set(DEVICES_PROFILES_DATA, profiles);
-		for(IDevicesProfile iDevicesProfile : profiles) {
-			TableItem item = new TableItem(tableProfiles, SWT.None);
-			item.setText(iDevicesProfile.getName());
-			item.setData(iDevicesProfile);
+		if(acquisition != null && !actualAcquisition.contains(acquisition)) {
+			actualAcquisition.add(acquisition);
 		}
 	}
 
@@ -76,29 +70,21 @@ public class DevicesProfilesPart {
 
 		IControlDevices devices = getControlDevice();
 		if(devices != null) {
-			WizardNewDevicesProfile wizard = new WizardNewDevicesProfile(devices);
+			WizardNewDevicesProfile wizard = new WizardNewDevicesProfile(devices, profiles);
 			WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), wizard);
 			if(wizardDialog.open() == Window.OK) {
 				profiles.add(wizard.getDevicesProfile());
-				actualizateProfile();
+				redrawTable();
 			}
 		} else {
 			// TODO:alert
 		}
 	}
 
-	@Inject
-	@Optional
-	public void addUsingProfile(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition acquisition) {
-
-		if(acquisition != null && !actualAcquisition.contains(acquisition)) {
-			actualAcquisition.add(acquisition);
-		}
-	}
-
 	@PostConstruct
 	public void createParte(Composite parent) {
 
+		this.profiles = dataSupplier.getDevicesProfiles();
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		parent.setLayout(gridLayout);
@@ -143,6 +129,7 @@ public class DevicesProfilesPart {
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 		buttonremoveProfile.setLayoutData(gridData);
+		redrawTable();
 	}
 
 	private void editProfile(IDevicesProfile devicesProfile) {
@@ -153,22 +140,31 @@ public class DevicesProfilesPart {
 
 	private IControlDevices getControlDevice() {
 
-		MPart part = partService.findPart(AvailableDevicesPart.ID);
-		return part.getContext().get(IControlDevices.class);
+		return dataSupplier.getControlDevices();
 	}
 
-	private void removeProfile(int number) {
+	private void redrawTable() {
 
-		profiles.remove(number);
-		actualizateProfile();
+		tableProfiles.removeAll();
+		for(IDevicesProfile iDevicesProfile : profiles.getAll()) {
+			TableItem item = new TableItem(tableProfiles, SWT.None);
+			item.setText(iDevicesProfile.getName());
+			item.setData(iDevicesProfile);
+		}
 	}
 
 	@Inject
 	@Optional
-	public void removeUsingProfile(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition acquisition) {
+	public void removeActualAcqusition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition acquisition) {
 
 		if(acquisition != null) {
 			actualAcquisition.remove(acquisition);
 		}
+	}
+
+	private void removeProfile(int number) {
+
+		profiles.getAll().remove(number);
+		redrawTable();
 	}
 }

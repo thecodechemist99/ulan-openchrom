@@ -13,6 +13,7 @@ package org.chromulan.system.control.ui.wizard;
 
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
+import org.chromulan.system.control.model.IDevicesProfiles;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 
@@ -21,9 +22,9 @@ public class WizardNewDevicesProfile extends Wizard {
 	private IDevicesProfile devicesProfile;
 	private WizardPage page1;
 
-	public WizardNewDevicesProfile(IControlDevices devices) {
+	public WizardNewDevicesProfile(IControlDevices devices, IDevicesProfiles profiles) {
 		super();
-		page1 = new WizarsNewDevicesProfilePage(devices);
+		page1 = new WizarsNewDevicesProfilePage(devices, profiles);
 	}
 
 	@Override

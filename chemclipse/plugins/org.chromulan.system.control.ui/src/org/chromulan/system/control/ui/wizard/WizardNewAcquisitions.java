@@ -20,9 +20,9 @@ public class WizardNewAcquisitions extends Wizard {
 
 	private WizarPageNewAcquisitionsMain base;
 
-	public WizardNewAcquisitions() {
+	public WizardNewAcquisitions(String defFile, String defSupplier) {
 		super();
-		base = new WizarPageNewAcquisitionsMain("Select Default Directory");
+		base = new WizarPageNewAcquisitionsMain("Select Default Directory", defFile, defSupplier);
 	}
 
 	@Override

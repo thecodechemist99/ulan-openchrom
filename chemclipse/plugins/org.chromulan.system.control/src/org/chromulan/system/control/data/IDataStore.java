@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Jan Holy.
+ * Copyright (c) 2016 Jan Holy.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,22 +9,16 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model;
+package org.chromulan.system.control.data;
 
 import java.io.Externalizable;
-import java.util.List;
 
-public interface IControlDevices extends Externalizable {
+import org.chromulan.system.control.model.IControlDevices;
+import org.chromulan.system.control.model.IDevicesProfiles;
 
-	boolean add(IControlDevice device);
+public interface IDataStore extends Externalizable {
 
-	boolean contains(String id);
+	IControlDevices getControlDevices();
 
-	IControlDevice getControlDevice(String id);
-
-	List<IControlDevice> getControlDevices();
-
-	boolean remove(String id);
-
-	void removeAllControlDevices();
+	IDevicesProfiles getDevicesProfiles();
 }

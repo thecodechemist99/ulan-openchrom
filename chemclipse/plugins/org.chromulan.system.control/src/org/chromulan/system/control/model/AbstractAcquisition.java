@@ -26,13 +26,13 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	private long duration;
 	private String name;
 	protected PropertyChangeSupport propertyChangeSupport;
+	private boolean record;
 	private boolean recording;
-	private boolean recored;
 
 	public AbstractAcquisition() {
 		name = "";
 		recording = false;
-		recored = false;
+		record = false;
 		autoStop = false;
 		autoContinue = false;
 		propertyChangeSupport = new PropertyChangeSupport(this);
@@ -101,7 +101,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	@Override
 	public boolean isCompleted() {
 
-		return recored;
+		return record;
 	}
 
 	@Override
@@ -149,7 +149,11 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	@Override
 	public void setDevicesProfile(IDevicesProfile devicesProfile) {
 
+		if(this.devicesProfile != null) {
+			this.devicesProfile.removeAcqusition(this);
+		}
 		this.devicesProfile = devicesProfile;
+		this.devicesProfile.addAcquisition(this);
 	}
 
 	@Override
@@ -167,7 +171,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	@Override
 	public void start() {
 
-		if(!recording && !recored) {
+		if(!recording && !record) {
 			this.date = new Date();
 			this.recording = true;
 		}
@@ -177,8 +181,9 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	public void stop() {
 
 		if(recording) {
-			recored = true;
+			record = true;
 			recording = false;
+			this.devicesProfile.removeAcqusition(this);
 		}
 	}
 }

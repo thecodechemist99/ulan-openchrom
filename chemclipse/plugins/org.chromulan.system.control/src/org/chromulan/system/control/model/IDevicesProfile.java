@@ -11,13 +11,21 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
-public interface IDevicesProfile {
+import java.util.List;
 
-	IControlDevices getControlDevices();
+public interface IDevicesProfile extends IControlDevices {
+
+	void addAcquisition(IAcquisition acquisition);
+
+	boolean containsAcqusition();
+
+	boolean containsAcqusition(IAcquisition acquisition);
+
+	List<IAcquisition> getAcquisitio();
 
 	String getName();
 
-	void setControlDevice(IControlDevices devices);
+	void removeAcqusition(IAcquisition acquisition);
 
 	void setName(String name);
 }

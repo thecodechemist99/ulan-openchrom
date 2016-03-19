@@ -12,10 +12,11 @@
 package org.chromulan.system.control.model;
 
 import java.beans.PropertyChangeListener;
+import java.io.Externalizable;
 
 import net.sourceforge.ulan.base.DeviceDescription;
 
-public interface IControlDevice {
+public interface IControlDevice extends Externalizable {
 
 	final String PROPERTY_DEVICE_TYPE = "deviceType";
 	final String PROPERTY_NAME = "name";

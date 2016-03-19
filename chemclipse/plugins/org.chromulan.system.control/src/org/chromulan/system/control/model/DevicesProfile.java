@@ -11,19 +11,55 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
-public class DevicesProfile implements IDevicesProfile {
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.LinkedList;
+import java.util.List;
 
-	private IControlDevices controlDevices;
+public class DevicesProfile extends ControlDevices implements IDevicesProfile {
+
+	private List<IAcquisition> acquisitions;
 	private String name;
 
 	public DevicesProfile() {
-		controlDevices = new ControlDevices();
+		super();
+		acquisitions = new LinkedList<>();
 	}
 
 	@Override
-	public IControlDevices getControlDevices() {
+	public boolean add(IControlDevice device) {
 
-		return controlDevices;
+		if(super.add(device)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void addAcquisition(IAcquisition acquisition) {
+
+		if(!containsAcqusition(acquisition)) {
+			acquisitions.add(acquisition);
+		}
+	}
+
+	@Override
+	public boolean containsAcqusition() {
+
+		return !acquisitions.isEmpty();
+	}
+
+	@Override
+	public boolean containsAcqusition(IAcquisition acquisition) {
+
+		return acquisitions.contains(acquisition);
+	}
+
+	@Override
+	public List<IAcquisition> getAcquisitio() {
+
+		return acquisitions;
 	}
 
 	@Override
@@ -33,14 +69,28 @@ public class DevicesProfile implements IDevicesProfile {
 	}
 
 	@Override
-	public void setControlDevice(IControlDevices devices) {
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
-		this.controlDevices = devices;
+		super.readExternal(in);
+		this.name = (String)in.readObject();
+	}
+
+	@Override
+	public void removeAcqusition(IAcquisition acquisition) {
+
+		acquisitions.remove(acquisition);
 	}
 
 	@Override
 	public void setName(String name) {
 
 		this.name = name;
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+
+		super.writeExternal(out);
+		out.writeObject(name);
 	}
 }
