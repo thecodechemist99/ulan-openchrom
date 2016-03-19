@@ -67,5 +67,6 @@
     <!--<module>../../plugins/org.chromulan.system.control.fragment.test</module>-->
     <module>../../sites/org.chromulan.system.control.updateSite</module>
     <module>../../plugins/org.chromulan.system.control.net</module>
+    <module>../../plugins/org.chromulan.system.control.lcd5000</module>
   </modules>
 </project>

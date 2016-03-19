@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_1zdl8Ou4EeW51dSe5O5keQ">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_RP0cMO1gEeW51dSe5O5keQ" featurename="addons" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="application:Addon" xmi:id="_UIzbgO1gEeW51dSe5O5keQ" elementId="org.chromulan.system.control.lcd5000.addon.0" contributionURI="bundleclass://org.chromulan.system.control.lcd5000/org.chromulan.system.control.lcd5000.addons.ConnectDevice"/>
+  </fragments>
+</fragment:ModelFragments>
