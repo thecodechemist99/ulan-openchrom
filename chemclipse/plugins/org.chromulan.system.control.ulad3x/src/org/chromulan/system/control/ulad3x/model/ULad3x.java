@@ -45,7 +45,7 @@ public class ULad3x {
 		super();
 		this.controlDevice = controlDevice;
 		device = new ULanDevice(controlDevice.getDeviceDescription());
-		chromatogramAcquisition = new ChromatogramCSDAcquisition(DEFAULT_SCAN_INTERVAL,DEFAULT_SCAN_DELAY);
+		chromatogramAcquisition = new ChromatogramCSDAcquisition(DEFAULT_SCAN_INTERVAL, DEFAULT_SCAN_DELAY);
 		filtGetData = device.addFiltAdr(0x4f, null, new CompletionHandler<ULanMsg, Void>() {
 
 			@Override
@@ -135,7 +135,7 @@ public class ULad3x {
 
 	public void newAcquisition() {
 
-		chromatogramAcquisition.newAcquisition(DEFAULT_SCAN_INTERVAL,scanDelay);
+		chromatogramAcquisition.newAcquisition(DEFAULT_SCAN_INTERVAL, scanDelay);
 	}
 
 	public void setScanDelay(int milliseconds) {
@@ -148,7 +148,7 @@ public class ULad3x {
 
 		isBeeingRecored = true;
 		if(reset) {
-			chromatogramAcquisition.newAcquisition(DEFAULT_SCAN_INTERVAL,scanDelay);
+			chromatogramAcquisition.newAcquisition(DEFAULT_SCAN_INTERVAL, scanDelay);
 		}
 	}
 

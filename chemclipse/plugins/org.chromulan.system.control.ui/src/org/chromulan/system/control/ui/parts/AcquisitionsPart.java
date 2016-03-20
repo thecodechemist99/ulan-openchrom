@@ -130,6 +130,8 @@ public class AcquisitionsPart {
 		}
 	}
 
+	public final static String ID_COMMAND_SEARCH = "org.chromulan.system.control.ui.command.acquisitions.search";
+	public final static String ID_PARAMETER_SEARCH_NAME = "name";
 	private IAcquisitionCSD acquisition;
 	private LabelAcquisitionDuration acquisitionInterval;
 	private IAcquisitionsCSD acquisitions;
@@ -527,10 +529,10 @@ public class AcquisitionsPart {
 
 	private void initializationHandler() {
 
-		handlerService.activateHandler(AcquisitionsSearchToolItem.ID_COMMAND_SEARCH, new Object() {
+		handlerService.activateHandler(AcquisitionsPart.ID_COMMAND_SEARCH, new Object() {
 
 			@Execute
-			public void execute(@Named(AcquisitionsSearchToolItem.ID_PARAMETER_SEARCH_NAME) final String nameSearch) {
+			public void execute(@Named(AcquisitionsPart.ID_PARAMETER_SEARCH_NAME) final String nameSearch) {
 
 				if(nameSearch == null || nameSearch.isEmpty()) {
 					acquisitionsTable.removeFilterName();

@@ -34,8 +34,6 @@ import org.eclipse.swt.widgets.Text;
 @SuppressWarnings("restriction")
 public class AcquisitionsSearchToolItem {
 
-	public final static String ID_COMMAND_SEARCH = "org.chromulan.system.control.ui.command.acquisitions.search";
-	public final static String ID_PARAMETER_SEARCH_NAME = "name";
 	@Inject
 	private ECommandService commandService;
 	@Inject
@@ -59,8 +57,8 @@ public class AcquisitionsSearchToolItem {
 				String search = text.getText();
 				if(search.isEmpty()) {
 					Map<String, Object> parameters = new HashMap<String, Object>();
-					parameters.put(ID_PARAMETER_SEARCH_NAME, search);
-					ParameterizedCommand com = commandService.createCommand(ID_COMMAND_SEARCH, parameters);
+					parameters.put(AcquisitionsPart.ID_PARAMETER_SEARCH_NAME, search);
+					ParameterizedCommand com = commandService.createCommand(AcquisitionsPart.ID_COMMAND_SEARCH, parameters);
 					if(handlerService.canExecute(com)) {
 						handlerService.executeHandler(com);
 					}
@@ -68,8 +66,8 @@ public class AcquisitionsSearchToolItem {
 				}
 				if(e.keyCode == SWT.LF || e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
 					Map<String, Object> parameters = new HashMap<String, Object>();
-					parameters.put(ID_PARAMETER_SEARCH_NAME, search);
-					ParameterizedCommand com = commandService.createCommand(ID_COMMAND_SEARCH, parameters);
+					parameters.put(AcquisitionsPart.ID_PARAMETER_SEARCH_NAME, search);
+					ParameterizedCommand com = commandService.createCommand(AcquisitionsPart.ID_COMMAND_SEARCH, parameters);
 					if(handlerService.canExecute(com)) {
 						handlerService.executeHandler(com);
 					}
@@ -84,8 +82,8 @@ public class AcquisitionsSearchToolItem {
 
 				text.setText("");
 				Map<String, Object> parameters = new HashMap<String, Object>();
-				parameters.put(ID_PARAMETER_SEARCH_NAME, "");
-				ParameterizedCommand com = commandService.createCommand(ID_COMMAND_SEARCH, parameters);
+				parameters.put(AcquisitionsPart.ID_PARAMETER_SEARCH_NAME, "");
+				ParameterizedCommand com = commandService.createCommand(AcquisitionsPart.ID_COMMAND_SEARCH, parameters);
 				if(handlerService.canExecute(com)) {
 					handlerService.executeHandler(com);
 				}

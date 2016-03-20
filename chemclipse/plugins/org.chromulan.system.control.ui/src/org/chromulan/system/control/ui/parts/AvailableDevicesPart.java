@@ -12,27 +12,19 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.parts;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.data.DataSupplier;
-import org.chromulan.system.control.events.IControlDeviceEvents;
-import org.chromulan.system.control.events.IControlDevicesEvents;
-import org.chromulan.system.control.events.IULanConnectionEvents;
-import org.chromulan.system.control.model.ControlDevice;
-import org.chromulan.system.control.model.ControlDevices;
-import org.chromulan.system.control.model.IControlDevice;
+import org.chromulan.system.control.devices.handlers.ScanNet;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.ui.acquisition.support.UlanScanNetRunnable;
 import org.chromulan.system.control.ui.devices.support.DevicesTable;
-import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,27 +36,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-import net.sourceforge.ulan.base.CompletionHandler;
-import net.sourceforge.ulan.base.DeviceDescription;
-import net.sourceforge.ulan.base.IULanCommunication.IFilt;
-import net.sourceforge.ulan.base.ULanCommunicationInterface;
-import net.sourceforge.ulan.base.ULanDrv;
-import net.sourceforge.ulan.base.ULanMsg;
-
+@SuppressWarnings("restriction")
 public class AvailableDevicesPart {
 
 	public final static String ID = "org.chromulan.system.control.ui.part.availableDevices";
-	static {
-		if(!ULanCommunicationInterface.isHandleInitialized()) {
-			try {
-				ULanCommunicationInterface.setHandle(new ULanDrv());
-			} catch(Exception e) {
-				// TODO: logger.warn(e);
-			}
-		}
-	}
 	private Button buttonRefreshDevices;
-	private ULanCommunicationInterface communication;
+	@Inject
+	private ECommandService commandService;
+	@Inject
 	private ULanConnection connection;
 	@Inject
 	private DataSupplier dataSupplier;
@@ -73,79 +52,10 @@ public class AvailableDevicesPart {
 	@Inject
 	private Display display;
 	@Inject
-	private IEventBroker eventBroker;
-	private IFilt<Void> filtCloseConnection;
+	private EHandlerService handlerService;
 	private Label labelConnection;
 
 	public AvailableDevicesPart() {
-		communication = new ULanCommunicationInterface();
-		connection = new ULanConnection();
-	}
-
-	private void closeConnection() {
-
-		for(IControlDevice device : devices.getControlDevices()) {
-			device.setConnected(false);
-			eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
-		}
-		rewriteTable();
-		if(ULanDrv.isLibraryLoaded()) {
-			try {
-				if(ULanCommunicationInterface.isOpen()) {
-					ULanCommunicationInterface.close();
-				}
-			} catch(IOException e) {
-				// logger.warn(e);
-			} finally {
-				setConnectionLabel();
-				eventBroker.post(IULanConnectionEvents.TOPIC_CONNECTION_ULAN_CLOSE, connection);
-			}
-		}
-	}
-
-	@Inject
-	@Optional
-	public void conectReqiredDevice(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_CONTROL) ControlDevices devices) {
-
-		for(IControlDevice device : devices.getControlDevices()) {
-			if(!this.devices.contains(device.getID())) {
-				try {
-					DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
-					if(description != null) {
-						IControlDevice controlDevice = new ControlDevice(description, true);
-						connectDevice(controlDevice);
-					}
-				} catch(Exception e) {
-				}
-			} else {
-				try {
-					DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
-					IControlDevice controlDevice = this.devices.getControlDevice(device.getID());
-					if(controlDevice != null) {
-						if(description != null) {
-							controlDevice.setConnected(true);
-							eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, controlDevice);
-						} else {
-							controlDevice.setConnected(false);
-							eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, controlDevice);
-						}
-					}
-				} catch(Exception e) {
-				}
-			}
-		}
-		rewriteTable();
-		eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE, this.devices);
-	}
-
-	private void connectDevice(IControlDevice device) {
-
-		if(this.devices.contains(device.getID())) {
-			this.devices.getControlDevice(device.getID()).setConnected(true);
-		} else {
-			this.devices.add(device);
-		}
-		eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, this.devices.getControlDevice(device.getID()));
 	}
 
 	@PostConstruct
@@ -178,70 +88,14 @@ public class AvailableDevicesPart {
 					@Override
 					public void run() {
 
-						openConection();
-						loadDevice();
+						scanNet();
 					}
 				});
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 		buttonRefreshDevices.setLayoutData(gridData);
-		filtCloseConnection = communication.addFilt(0, null, new CompletionHandler<ULanMsg, Void>() {
-
-			@Override
-			public void completed(ULanMsg arg0, Void arg1) {
-
-			}
-
-			@Override
-			public void failed(Exception arg0, Void arg1) {
-
-				display.asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-
-						closeConnection();
-					}
-				});
-			}
-		});
-	}
-
-	private void loadDevice() {
-
-		if(ULanCommunicationInterface.isOpen()) {
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
-			UlanScanNetRunnable runnable = new UlanScanNetRunnable();
-			try {
-				dialog.run(true, false, runnable);
-				IControlDevices devices = runnable.getDevices();
-				setDevices(devices);
-				rewriteTable();
-			} catch(InvocationTargetException e) {
-				// /logger.warn(e);
-			} catch(InterruptedException e) {
-				// logger.warn(e);
-			}
-		}
-	}
-
-	private void openConection() {
-
-		if(ULanDrv.isLibraryLoaded() && ULanCommunicationInterface.isHandleInitialized()) {
-			try {
-				if(!ULanCommunicationInterface.isOpen()) {
-					ULanCommunicationInterface.open();
-					if(!filtCloseConnection.isFiltActive()) {
-						filtCloseConnection.activateFilt();
-					}
-					setConnectionLabel();
-					eventBroker.send(IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN, connection);
-				}
-			} catch(IOException e) {
-				// TODO:Exception
-			}
-		}
+		rewriteTable();
 	}
 
 	private void rewriteTable() {
@@ -249,9 +103,17 @@ public class AvailableDevicesPart {
 		deviceTable.getViewer().refresh();
 	}
 
+	private void scanNet() {
+
+		ParameterizedCommand com = commandService.createCommand(ScanNet.HANDLER_ID, new HashMap<String, Object>());
+		if(handlerService.canExecute(com)) {
+			handlerService.executeHandler(com);
+		}
+	}
+
 	private void setConnectionLabel() {
 
-		if(ULanCommunicationInterface.isOpen()) {
+		if(connection.isOpen()) {
 			labelConnection.setText("Connection is opened");
 			labelConnection.redraw();
 			labelConnection.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
@@ -263,19 +125,5 @@ public class AvailableDevicesPart {
 			labelConnection.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
 			labelConnection.getParent().layout();
 		}
-	}
-
-	private void setDevices(IControlDevices devices) {
-
-		for(IControlDevice device : devices.getControlDevices()) {
-			connectDevice(device);
-		}
-		for(IControlDevice device : this.devices.getControlDevices()) {
-			if(!devices.contains(device.getID())) {
-				device.setConnected(false);
-				eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
-			}
-		}
-		eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE, this.devices);
 	}
 }

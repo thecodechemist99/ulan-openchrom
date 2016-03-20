@@ -11,8 +11,34 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
+import java.io.IOException;
+
+import javax.inject.Singleton;
+
+import org.eclipse.e4.core.di.annotations.Creatable;
+
+import net.sourceforge.ulan.base.ULanCommunicationInterface;
+import net.sourceforge.ulan.base.exceptions.HandleHasNotBeenInitializedException;
+
+@Creatable
+@Singleton
 public class ULanConnection {
 
 	public ULanConnection() {
+	}
+
+	public void close() throws HandleHasNotBeenInitializedException, IOException {
+
+		ULanCommunicationInterface.close();
+	}
+
+	public boolean isOpen() {
+
+		return ULanCommunicationInterface.isOpen();
+	}
+
+	public void open() throws HandleHasNotBeenInitializedException, IOException {
+
+		ULanCommunicationInterface.open();
 	}
 }

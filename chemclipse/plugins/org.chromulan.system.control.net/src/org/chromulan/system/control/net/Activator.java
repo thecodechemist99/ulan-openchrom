@@ -3,6 +3,7 @@ package org.chromulan.system.control.net;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import net.sourceforge.ulan.base.ULanCommunicationInterface;
 import net.sourceforge.ulan.base.ULanDrv;
 
 public class Activator implements BundleActivator {
@@ -23,6 +24,13 @@ public class Activator implements BundleActivator {
 
 		Activator.context = bundleContext;
 		ULanDrv.loadLibrary(true);
+		if(!ULanCommunicationInterface.isHandleInitialized()) {
+			try {
+				ULanCommunicationInterface.setHandle(new ULanDrv());
+			} catch(Exception e) {
+				// TODO: logger.warn(e);
+			}
+		}
 	}
 
 	/*

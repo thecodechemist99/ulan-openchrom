@@ -9,7 +9,7 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.ui.acquisition.support;
+package org.chromulan.system.control.devices.supports;
 
 import java.lang.reflect.InvocationTargetException;
 
