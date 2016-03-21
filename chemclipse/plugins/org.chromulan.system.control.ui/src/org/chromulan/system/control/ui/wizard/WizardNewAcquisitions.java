@@ -20,15 +20,20 @@ public class WizardNewAcquisitions extends Wizard {
 
 	private WizarPageNewAcquisitionsMain base;
 
-	public WizardNewAcquisitions(String defFile, String defSupplier) {
+	public WizardNewAcquisitions(String defFile, String defSupplier, boolean autoScan) {
 		super();
-		base = new WizarPageNewAcquisitionsMain("Select Default Directory", defFile, defSupplier);
+		base = new WizarPageNewAcquisitionsMain("Select Default Directory", defFile, defSupplier, autoScan);
 	}
 
 	@Override
 	public void addPages() {
 
 		addPage(base);
+	}
+
+	public boolean getAutoScan() {
+
+		return base.getAutoScan();
 	}
 
 	public File getFile() {

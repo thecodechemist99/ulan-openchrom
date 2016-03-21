@@ -11,5 +11,60 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.addons;
 
+import java.util.HashMap;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.chromulan.system.control.devices.handlers.ScanNet;
+import org.chromulan.system.control.preferences.PreferenceSupplier;
+import org.chromulan.system.control.ui.parts.AcquisitionsPart;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.EventTopic;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
+import org.osgi.service.event.Event;
+
 public class AutoScanNet {
+
+	@Inject
+	private ECommandService commandService;
+	@Inject
+	private EHandlerService handlerService;
+	private boolean startScan;
+
+	@PostConstruct
+	public void postConstruct() {
+
+		startScan = true;
+	}
+
+	private void startScan() {
+
+		if(startScan && PreferenceSupplier.INSTANCE().getPreferences().getBoolean(AcquisitionsPart.PREFERENCE_AUTOSCAN, true)) {
+			ParameterizedCommand com = commandService.createCommand(ScanNet.HANDLER_ID, new HashMap<String, Object>());
+			if(handlerService.canExecute(com)) {
+				handlerService.executeHandler(com);
+			}
+			startScan = false;
+		}
+	}
+
+	@Inject
+	@Optional
+	public void subscribeTopicSelectedElement(@EventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
+
+		Object newValue = event.getProperty(EventTags.NEW_VALUE);
+		// ensure that the selected element of a perspective stack is changed and that this is a perspective
+		if((newValue instanceof MPerspective)) {
+			MPerspective perspective = (MPerspective)newValue;
+			if(perspective.getElementId().startsWith("org.chromulan.system.control.ui.perspective.chromulan")) {
+				startScan();
+			}
+		}
+	}
 }

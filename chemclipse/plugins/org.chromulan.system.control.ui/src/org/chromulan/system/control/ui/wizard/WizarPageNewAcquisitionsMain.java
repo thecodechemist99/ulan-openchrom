@@ -46,20 +46,23 @@ import org.eclipse.swt.widgets.Text;
 
 public class WizarPageNewAcquisitionsMain extends WizardPage {
 
+	private IObservableValue autoScan;
 	private final String DEFAULT_SUPPLIER_ID = "org.eclipse.chemclipse.xxd.converter.supplier.chemclipse";
+	private boolean defAutoScan;
 	private String defFile;
 	private String defSupplier;
 	private IObservableValue file;
 	private IObservableValue supplier;
 
-	public WizarPageNewAcquisitionsMain(String pageName, String title, ImageDescriptor titleImage, String defFile, String defSupplier) {
+	public WizarPageNewAcquisitionsMain(String pageName, String title, ImageDescriptor titleImage, String defFile, String defSupplier, boolean autoScan) {
 		super(pageName, title, titleImage);
 		this.defFile = defFile;
 		this.defSupplier = defSupplier;
+		this.defAutoScan = autoScan;
 	}
 
-	public WizarPageNewAcquisitionsMain(String pageName, String defFile, String defSupplier) {
-		this(pageName, null, null, defFile, defSupplier);
+	public WizarPageNewAcquisitionsMain(String pageName, String defFile, String defSupplier, boolean autoScan) {
+		this(pageName, null, null, defFile, defSupplier, autoScan);
 	}
 
 	@Override
@@ -121,8 +124,18 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 				}
 			}
 		});
+		label = new Label(composite, SWT.None);
+		label.setText("Scan for devices at startup");
+		Button buttonAutoScan = new Button(composite, SWT.CHECK);
+		autoScan = new WritableValue(defAutoScan, Boolean.class);
+		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoScan), autoScan);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		setControl(composite);
+	}
+
+	public boolean getAutoScan() {
+
+		return (Boolean)autoScan.getValue();
 	}
 
 	private ISupplier getDefaultSupplier(List<ISupplier> suppliers) {

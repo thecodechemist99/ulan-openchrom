@@ -41,6 +41,7 @@
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ioKeYEtJEeWFBNjUJiIrKw" featurename="addons" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_nP10IEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.addon.diplayChromatogram" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.CreateChromatogram"/>
+    <elements xsi:type="application:Addon" xmi:id="_werVcO-QEeWUNPO0cihOyQ" elementId="org.chromulan.system.control.ui.addon.0" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.addons.AutoScanNet"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_z-d2AHZCEeWkxZUZTkqg1A" featurename="category" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="commands:Category" xmi:id="_IDBJcHZDEeWkxZUZTkqg1A" elementId="org.chromulan.system.control.ui.category.chromatogramoverview" name="ChromatogramDisplay"/>

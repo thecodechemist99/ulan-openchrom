@@ -132,6 +132,9 @@ public class AcquisitionsPart {
 
 	public final static String ID_COMMAND_SEARCH = "org.chromulan.system.control.ui.command.acquisitions.search";
 	public final static String ID_PARAMETER_SEARCH_NAME = "name";
+	public static final String PREFERENCE_AUTOSCAN = "autoScan";
+	public static final String PREFERENCE_FILE = "file";
+	public static final String PREFERENCE_SUPPLIER = "supplier";
 	private IAcquisitionCSD acquisition;
 	private LabelAcquisitionDuration acquisitionInterval;
 	private IAcquisitionsCSD acquisitions;
@@ -166,8 +169,6 @@ public class AcquisitionsPart {
 	private EPartService partService;
 	@Inject
 	private MPerspective perspective;
-	private final String PREFERENCE_FILE = "file";
-	private final String PREFERENCE_SUPPLIER = "supplier";
 	private ProgressBar progressBarTimeRemain;
 	private ISupplier supplier;
 	private Table tableActualAcquisition;
@@ -392,7 +393,7 @@ public class AcquisitionsPart {
 		buttonStartMeasurement.setLayoutData(gridData);
 		initializationHandler();
 		initializationButtons();
-		setDefaultParameters(PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_FILE, null), PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER, null));
+		setDefaultParameters(PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_FILE, null), PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER, null), PreferenceSupplier.INSTANCE().getPreferences().getBoolean(PREFERENCE_AUTOSCAN, true));
 	}
 
 	private void createActualAcquisitionControl(Composite composite) {
@@ -652,16 +653,19 @@ public class AcquisitionsPart {
 		redrawTable();
 	}
 
-	private void setDefaultParameters(String path, String supplier) {
+	private void setDefaultParameters(String path, String supplier, boolean autoScan) {
 
-		if(path != null && supplier != null) {
+		PreferenceSupplier.INSTANCE().getPreferences().putBoolean(PREFERENCE_AUTOSCAN, autoScan);
+		if(path != null) {
+			this.file = new File(path);
+			PreferenceSupplier.INSTANCE().getPreferences().put(PREFERENCE_FILE, path);
+		}
+		if(supplier != null) {
 			ChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
 			List<ISupplier> suppliers = support.getExportSupplier();
 			for(ISupplier iSupplier : suppliers) {
 				if(iSupplier.getId().equals(supplier)) {
-					this.file = new File(path);
 					this.supplier = iSupplier;
-					PreferenceSupplier.INSTANCE().getPreferences().put(PREFERENCE_FILE, path);
 					PreferenceSupplier.INSTANCE().getPreferences().put(PREFERENCE_SUPPLIER, supplier);
 					try {
 						PreferenceSupplier.INSTANCE().getPreferences().flush();
@@ -680,13 +684,13 @@ public class AcquisitionsPart {
 
 		WizardNewAcquisitions newAcquisitionWizard = null;
 		if(file != null && supplier != null) {
-			newAcquisitionWizard = new WizardNewAcquisitions(file.getAbsolutePath(), supplier.getId());
+			newAcquisitionWizard = new WizardNewAcquisitions(file.getAbsolutePath(), supplier.getId(), PreferenceSupplier.INSTANCE().getPreferences().getBoolean(PREFERENCE_AUTOSCAN, true));
 		} else {
-			newAcquisitionWizard = new WizardNewAcquisitions(null, null);
+			newAcquisitionWizard = new WizardNewAcquisitions(null, null, PreferenceSupplier.INSTANCE().getPreferences().getBoolean(PREFERENCE_AUTOSCAN, true));
 		}
 		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAcquisitionWizard);
 		if(wizardDialog.open() == Window.OK) {
-			setDefaultParameters(newAcquisitionWizard.getFile().getAbsolutePath(), newAcquisitionWizard.getSupplier().getId());
+			setDefaultParameters(newAcquisitionWizard.getFile().getAbsolutePath(), newAcquisitionWizard.getSupplier().getId(), newAcquisitionWizard.getAutoScan());
 		}
 	}
 
