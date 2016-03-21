@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Jan Holy.
+ * Copyright (c) 2016 PC.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,12 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Jan Holy - initial API and implementation
+ * PC - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.events;
+package org.chromulan.system.control.ui.addons;
 
-public interface IControlDevicesEvents {
-
-	//String TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE = "controlDevices/ulan/available";
-	String TOPIC_CONTROL_DEVICES_ULAN_CONTROL = "controlDevices/ulan/control";
+public class AutoScanNet {
 }

@@ -19,12 +19,16 @@ import javax.inject.Inject;
 
 import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.devices.handlers.ScanNet;
+import org.chromulan.system.control.events.IDataSupplierEvents;
+import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.ULanConnection;
 import org.chromulan.system.control.ui.devices.support.DevicesTable;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -125,5 +129,20 @@ public class AvailableDevicesPart {
 			labelConnection.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
 			labelConnection.getParent().layout();
 		}
+	}
+
+	@Inject
+	@Optional
+	public void updateDevices(@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES) DataSupplier dataSupplier) {
+
+		rewriteTable();
+	}
+
+	@Inject
+	@Optional
+	public void updateScanState(@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN) ULanConnection connection) {
+
+		setConnectionLabel();
+		rewriteTable();
 	}
 }

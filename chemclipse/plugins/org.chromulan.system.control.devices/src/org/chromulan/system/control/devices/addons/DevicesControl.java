@@ -55,6 +55,6 @@ public class DevicesControl {
 				}
 			}
 		}
-		eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE, dataSupplier.getControlDevices());
+		dataSupplier.updateControlDevices();
 	}
 }

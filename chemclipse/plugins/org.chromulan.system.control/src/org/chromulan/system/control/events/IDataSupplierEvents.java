@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.chromulan.system.control.events;
 
-public interface IDataStoreEvents {
+public interface IDataSupplierEvents {
 
-	String TOPIC_DATA_UPDATE = "data/update";
+	String TOPIC_DATA_UPDATE = "data/update/*";
+	String TOPIC_DATA_UPDATE_DEVICES = "data/update/devices";
+	String TOPIC_DATA_UPDATE_PROFILES = "data/update/profiles";
 }

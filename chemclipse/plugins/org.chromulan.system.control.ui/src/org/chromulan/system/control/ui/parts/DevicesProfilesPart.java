@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.events.IAcquisitionEvents;
+import org.chromulan.system.control.events.IDataSupplierEvents;
 import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
@@ -165,6 +166,13 @@ public class DevicesProfilesPart {
 	private void removeProfile(int number) {
 
 		profiles.getAll().remove(number);
+		redrawTable();
+	}
+
+	@Inject
+	@Optional
+	public void updateProfiles(@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_PROFILES) DataSupplier supplier) {
+
 		redrawTable();
 	}
 }

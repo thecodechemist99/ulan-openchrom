@@ -22,7 +22,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.chromulan.system.control.events.IDataStoreEvents;
+import org.chromulan.system.control.events.IDataSupplierEvents;
 import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfiles;
 import org.chromulan.system.control.preferences.PreferenceSupplier;
@@ -116,6 +116,16 @@ public class DataSupplier {
 
 	public void update() {
 
-		eventBroker.post(IDataStoreEvents.TOPIC_DATA_UPDATE, this);
+		eventBroker.post(IDataSupplierEvents.TOPIC_DATA_UPDATE, this);
+	}
+	
+	public void updateControlDevices() {
+
+		eventBroker.post(IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES, this);
+	}
+	
+	public void updateProfiles() {
+
+		eventBroker.post(IDataSupplierEvents.TOPIC_DATA_UPDATE_PROFILES, this);
 	}
 }

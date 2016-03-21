@@ -26,6 +26,7 @@ import javax.inject.Named;
 import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.events.IControlDevicesEvents;
+import org.chromulan.system.control.events.IDataSupplierEvents;
 import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.AcquisitionCSD;
 import org.chromulan.system.control.model.AcquisitionCSDSaver;
@@ -36,7 +37,6 @@ import org.chromulan.system.control.model.IAcquisitionCSD;
 import org.chromulan.system.control.model.IAcquisitionSaver;
 import org.chromulan.system.control.model.IAcquisitionsCSD;
 import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.IControlDevices;
 import org.chromulan.system.control.model.IDevicesProfile;
 import org.chromulan.system.control.model.ULanConnection;
 import org.chromulan.system.control.model.data.IDetectorData;
@@ -618,6 +618,15 @@ public class AcquisitionsPart {
 		saver.save(new NullProgressMonitor(), maker);
 	}
 
+	@Inject
+	@Optional
+	public void setAcquisition(@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES) DataSupplier supplier) {
+
+		if(this.acquisition != null && !this.isSetAcquisition && controlAcquisition(acquisition)) {
+			setAcquisition(acquisition);
+		}
+	}
+
 	synchronized private void setAcquisition(IAcquisitionCSD acquisition) {
 
 		if(acquisition != null && !isSetAcquisition && !acquisition.isCompleted()) {
@@ -641,15 +650,6 @@ public class AcquisitionsPart {
 			}
 		}
 		redrawTable();
-	}
-
-	@Inject
-	@Optional
-	public void setAcquisition(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE) IControlDevices devices) {
-
-		if(this.acquisition != null && !this.isSetAcquisition && controlAcquisition(acquisition)) {
-			setAcquisition(acquisition);
-		}
 	}
 
 	private void setDefaultParameters(String path, String supplier) {

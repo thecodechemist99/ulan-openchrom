@@ -27,14 +27,6 @@ public class DevicesProfile extends ControlDevices implements IDevicesProfile {
 		acquisitions = new LinkedList<>();
 	}
 
-	@Override
-	public boolean add(IControlDevice device) {
-
-		if(super.add(device)) {
-			return true;
-		}
-		return false;
-	}
 
 	@Override
 	public void addAcquisition(IAcquisition acquisition) {

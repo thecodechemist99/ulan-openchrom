@@ -56,8 +56,9 @@ public class CloseConnection {
 
 		for(IControlDevice device : devices.getControlDevices()) {
 			device.setConnected(false);
-			eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
+			eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
 		}
+		dataSupplier.updateControlDevices();
 		try {
 			connection.close();
 		} catch(HandleHasNotBeenInitializedException | IOException e) {

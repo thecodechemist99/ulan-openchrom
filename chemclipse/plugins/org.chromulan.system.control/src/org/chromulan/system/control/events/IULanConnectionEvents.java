@@ -13,6 +13,7 @@ package org.chromulan.system.control.events;
 
 public interface IULanConnectionEvents {
 
+	String TOPIC_CONNECTION_ULAN = "connection/ulan/*";
 	String TOPIC_CONNECTION_ULAN_CLOSE = "connection/ulan/close";
 	String TOPIC_CONNECTION_ULAN_OPEN = "connection/ulan/open";
 }

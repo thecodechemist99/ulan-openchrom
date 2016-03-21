@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.devices.supports.UlanScanNetRunnable;
 import org.chromulan.system.control.events.IControlDeviceEvents;
-import org.chromulan.system.control.events.IControlDevicesEvents;
 import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.IControlDevice;
 import org.chromulan.system.control.model.IControlDevices;
@@ -66,6 +65,6 @@ public class ScanNet {
 				eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
 			}
 		}
-		eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE, dataSupplier.getControlDevices());
+		dataSupplier.updateControlDevices();
 	}
 }
