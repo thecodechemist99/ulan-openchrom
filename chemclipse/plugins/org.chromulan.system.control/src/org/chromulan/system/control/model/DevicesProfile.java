@@ -27,7 +27,6 @@ public class DevicesProfile extends ControlDevices implements IDevicesProfile {
 		acquisitions = new LinkedList<>();
 	}
 
-
 	@Override
 	public void addAcquisition(IAcquisition acquisition) {
 

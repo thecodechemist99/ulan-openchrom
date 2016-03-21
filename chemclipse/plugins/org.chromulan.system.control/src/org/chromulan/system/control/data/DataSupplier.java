@@ -118,12 +118,12 @@ public class DataSupplier {
 
 		eventBroker.post(IDataSupplierEvents.TOPIC_DATA_UPDATE, this);
 	}
-	
+
 	public void updateControlDevices() {
 
 		eventBroker.post(IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES, this);
 	}
-	
+
 	public void updateProfiles() {
 
 		eventBroker.post(IDataSupplierEvents.TOPIC_DATA_UPDATE_PROFILES, this);
