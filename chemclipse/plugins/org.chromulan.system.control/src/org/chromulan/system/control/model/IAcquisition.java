@@ -16,7 +16,6 @@ import java.util.Date;
 
 public interface IAcquisition extends IAcquisitionProcess {
 
-	final String PROPERTY_AUTO_CONTINUE = "autoContinue";
 	final String PROPERTY_AUTO_STOP = "autoStop";
 	final String PROPERTY_DESCRIPTION = "description";
 	final String PROPERTY_DURATION = "duration";
@@ -25,8 +24,6 @@ public interface IAcquisition extends IAcquisitionProcess {
 	void addPropertyChangeListener(PropertyChangeListener listener);
 
 	void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
-
-	boolean getAutoContinue();
 
 	boolean getAutoStop();
 
@@ -41,8 +38,6 @@ public interface IAcquisition extends IAcquisitionProcess {
 	void removePropertyChangeListener(PropertyChangeListener listener);
 
 	void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
-
-	void setAutoContinue(boolean b);
 
 	void setAutoStop(boolean b);
 

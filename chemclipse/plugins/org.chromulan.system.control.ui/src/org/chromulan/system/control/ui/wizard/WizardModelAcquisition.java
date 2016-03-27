@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 
 public class WizardModelAcquisition {
 
-	public IObservableValue autoContinue;
 	public IObservableValue autoStop;
 	public IObservableValue description;
 	public IObservableValue devicesProfile;
@@ -29,7 +28,6 @@ public class WizardModelAcquisition {
 	public IObservableValue numberofAcquisitions;
 
 	public WizardModelAcquisition() {
-		autoContinue = new WritableValue(true, Boolean.class);
 		autoStop = new WritableValue(true, Boolean.class);
 		folder = new WritableValue(null, File.class);
 		duration = new WritableValue(600000L, Long.class);

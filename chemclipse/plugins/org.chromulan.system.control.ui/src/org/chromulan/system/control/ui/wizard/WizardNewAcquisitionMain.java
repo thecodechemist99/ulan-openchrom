@@ -56,10 +56,6 @@ public class WizardNewAcquisitionMain extends WizardPage {
 		WizardModelAcquisition model = ((WizardNewAcquisition)getWizard()).getModel();
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textName), model.name, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorName()), null);
 		label = new Label(composite, SWT.None);
-		label.setText("Auto Continue");
-		final Button buttonAutoContinue = new Button(composite, SWT.CHECK);
-		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoContinue), model.autoContinue);
-		label = new Label(composite, SWT.None);
 		label.setText("Auto Stop");
 		final Button buttonAutoStop = new Button(composite, SWT.CHECK);
 		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoStop), model.autoStop);

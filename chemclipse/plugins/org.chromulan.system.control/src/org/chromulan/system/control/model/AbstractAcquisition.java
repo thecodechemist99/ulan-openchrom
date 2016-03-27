@@ -18,7 +18,6 @@ import java.util.Date;
 public abstract class AbstractAcquisition implements IAcquisition {
 
 	private IAcquisitionSaver acquisitionSaver;
-	private boolean autoContinue;
 	private boolean autoStop;
 	private Date date;
 	private String description;
@@ -34,7 +33,6 @@ public abstract class AbstractAcquisition implements IAcquisition {
 		recording = false;
 		record = false;
 		autoStop = false;
-		autoContinue = false;
 		propertyChangeSupport = new PropertyChangeSupport(this);
 	}
 
@@ -54,12 +52,6 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	public IAcquisitionSaver getAcquisitionSaver() {
 
 		return acquisitionSaver;
-	}
-
-	@Override
-	public boolean getAutoContinue() {
-
-		return autoContinue;
 	}
 
 	@Override
@@ -126,12 +118,6 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	public void setAcquisitionSaver(IAcquisitionSaver saver) {
 
 		this.acquisitionSaver = saver;
-	}
-
-	@Override
-	public void setAutoContinue(boolean b) {
-
-		propertyChangeSupport.firePropertyChange(PROPERTY_AUTO_CONTINUE, this.autoContinue, this.autoContinue = b);
 	}
 
 	@Override

@@ -56,7 +56,6 @@ import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCS
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -74,6 +73,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -144,7 +144,6 @@ public class AcquisitionsPart {
 	private Button buttonActualAcquisition;
 	private Button buttonAddAcquisition;
 	private Button buttonEnd;
-	private Button buttonSave;
 	private Button buttonStart;
 	private Button buttonStartMeasurement;
 	private Button buttonStop;
@@ -292,7 +291,6 @@ public class AcquisitionsPart {
 				IAcquisitionCSD acquisition = new AcquisitionCSD();
 				String name = getNameAcquisition((String)newAcquisitionWizard.getModel().name.getValue(), i, numberAcquisition);
 				acquisition.setName(name);
-				acquisition.setAutoContinue((Boolean)newAcquisitionWizard.getModel().autoContinue.getValue());
 				acquisition.setAutoStop((Boolean)newAcquisitionWizard.getModel().autoStop.getValue());
 				acquisition.setDuration((Long)newAcquisitionWizard.getModel().duration.getValue());
 				acquisition.setDevicesProfile((IDevicesProfile)newAcquisitionWizard.getModel().devicesProfile.getValue());
@@ -441,18 +439,7 @@ public class AcquisitionsPart {
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, false, false);
 		buttonStop.setLayoutData(gridData);
-		buttonSave = new Button(composite, SWT.PUSH);
-		buttonSave.setText("Save");
-		buttonSave.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				saveAcquisition();
-			}
-		});
-		gridData = new GridData(GridData.BEGINNING, GridData.FILL, false, false);
-		buttonSave.setLayoutData(gridData);
+		gridData.horizontalSpan = 2;
 		acquisitionInterval = new LabelAcquisitionDuration(composite, SWT.RIGHT);
 		acquisitionInterval.setTime(0);
 		gridData = new GridData(GridData.CENTER, GridData.CENTER, true, false);
@@ -480,7 +467,6 @@ public class AcquisitionsPart {
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(false);
 			buttonEnd.setEnabled(false);
-			buttonSave.setEnabled(false);
 			eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END, acquisition);
 			isSetAcquisition = false;
 			acquisition = null;
@@ -522,7 +508,6 @@ public class AcquisitionsPart {
 		buttonStart.setEnabled(false);
 		buttonStop.setEnabled(false);
 		buttonEnd.setEnabled(false);
-		buttonSave.setEnabled(false);
 		progressBarTimeRemain.setEnabled(false);
 		buttonAddAcquisition.setEnabled(false);
 		buttonActualAcquisition.setEnabled(false);
@@ -616,7 +601,7 @@ public class AcquisitionsPart {
 				}
 			}
 		}
-		saver.save(new NullProgressMonitor(), maker);
+		saver.save(new ProgressMonitorPart(parent, null), maker);
 	}
 
 	@Inject
@@ -642,12 +627,10 @@ public class AcquisitionsPart {
 				buttonStart.setEnabled(true);
 				buttonStop.setEnabled(false);
 				buttonEnd.setEnabled(true);
-				buttonSave.setEnabled(false);
 			} else {
 				buttonStart.setEnabled(false);
 				buttonStop.setEnabled(false);
 				buttonEnd.setEnabled(true);
-				buttonSave.setEnabled(false);
 			}
 		}
 		redrawTable();
@@ -713,17 +696,10 @@ public class AcquisitionsPart {
 				progressBarTimeRemain.setEnabled(false);
 				tableItem.setText(1, "No");
 			}
-			tableItem = new TableItem(tableActualAcquisition, SWT.NONE);
-			tableItem.setText(0, "AutoContinue");
-			if(acquisition.getAutoContinue()) {
-				tableItem.setText(1, "Yes");
-			} else {
-				tableItem.setText(1, "No");
-			}
 		}
 	}
 
-	synchronized public void startRecording() {
+	private synchronized void startRecording() {
 
 		if((acquisition != null) && isSetAcquisition && !acquisition.isRunning() && !acquisition.isCompleted()) {
 			acquisition.start();
@@ -732,26 +708,18 @@ public class AcquisitionsPart {
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(true);
 			buttonEnd.setEnabled(false);
-			buttonSave.setEnabled(false);
 		}
 	}
 
-	synchronized public void stopRecording() {
+	private synchronized void stopRecording() {
 
 		if((acquisition != null) && isSetAcquisition && acquisition.isRunning()) {
 			acquisition.stop();
 			eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING, acquisition);
 			display.timerExec(-1, timeRecording);
-			if(acquisition.getAutoContinue()) {
-				saveAcquisition();
-				endAcquisition();
-				setAcquisition((IAcquisitionCSD)acquisitions.setNextAcquisitionActual());
-			} else {
-				buttonStart.setEnabled(false);
-				buttonStop.setEnabled(false);
-				buttonEnd.setEnabled(true);
-				buttonSave.setEnabled(true);
-			}
+			saveAcquisition();
+			endAcquisition();
+			setAcquisition((IAcquisitionCSD)acquisitions.setNextAcquisitionActual());
 		}
 	}
 }

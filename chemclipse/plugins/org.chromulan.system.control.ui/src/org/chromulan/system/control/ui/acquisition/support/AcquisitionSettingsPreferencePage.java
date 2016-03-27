@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Text;
 public class AcquisitionSettingsPreferencePage extends PreferencePage {
 
 	private IAcquisition acquisition;
-	private Button buttonAutoContinue;
 	private Button buttonAutoStop;
 	private DataBindingContext dbc;
 	private Text textDescription;
@@ -52,7 +51,6 @@ public class AcquisitionSettingsPreferencePage extends PreferencePage {
 		this.textName = new Text(composite, SWT.BORDER);
 		label = new Label(composite, SWT.None);
 		label.setText("Auto Continue");
-		buttonAutoContinue = new Button(composite, SWT.CHECK);
 		label = new Label(composite, SWT.None);
 		label.setText("Auto Stop");
 		buttonAutoStop = new Button(composite, SWT.CHECK);
@@ -67,7 +65,6 @@ public class AcquisitionSettingsPreferencePage extends PreferencePage {
 		textDescription.setLayoutData(gridData);
 		PreferencePageSupport.create(this, dbc);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textName), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_NAME).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterGetValidator(new ValidatorName()), null);
-		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoContinue), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_AUTO_CONTINUE).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
 		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoStop), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_AUTO_STOP).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textDuration), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_DURATION).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterConvertValidator(new ValidatorDuration()).setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
 		dbc.bindValue(WidgetProperties.enabled().observe(textDuration), WidgetProperties.selection().observe(buttonAutoStop));
@@ -80,7 +77,6 @@ public class AcquisitionSettingsPreferencePage extends PreferencePage {
 
 		textName.setEnabled(false);
 		textDuration.setEnabled(false);
-		buttonAutoContinue.setEnabled(false);
 		buttonAutoStop.setEnabled(false);
 		textDescription.setEnabled(false);
 	}

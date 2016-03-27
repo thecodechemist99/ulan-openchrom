@@ -134,18 +134,6 @@ public class AcquisitionsTable {
 			}
 		});
 		// column for the auto continue
-		col = createTableViewerColumn(titles[4], bounds[4]);
-		IObservableMap attributeMapAutoContinue = BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_AUTO_CONTINUE).observeDetail(viewContentProvider.getKnownElements());
-		col.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapAutoContinue) {
-
-			@Override
-			public void update(ViewerCell cell) {
-
-				Object element = cell.getElement();
-				boolean value = (boolean)attributeMaps[0].get(element);
-				cell.setText(value == true ? "Yes" : "No");
-			}
-		});/**/
 	}
 
 	private TableViewerColumn createTableViewerColumn(String title, int bound) {
