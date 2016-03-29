@@ -460,7 +460,7 @@ public class AcquisitionsPart {
 		progressBarTimeRemain.setLayoutData(gridData);
 	}
 
-	synchronized private void endAcquisition() {
+	private synchronized void endAcquisition() {
 
 		if((acquisition != null) && (isSetAcquisition) && (!acquisition.isRunning())) {
 			acquisition.removePropertyChangeListener(dataAcquisitionChange);
@@ -613,7 +613,7 @@ public class AcquisitionsPart {
 		}
 	}
 
-	synchronized private void setAcquisition(IAcquisitionCSD acquisition) {
+	private void setAcquisition(IAcquisitionCSD acquisition) {
 
 		if(acquisition != null && !isSetAcquisition && !acquisition.isCompleted()) {
 			eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_CONTROL, acquisition.getDevicesProfile().getControlDevices());
@@ -699,7 +699,7 @@ public class AcquisitionsPart {
 		}
 	}
 
-	private synchronized void startRecording() {
+	private void startRecording() {
 
 		if((acquisition != null) && isSetAcquisition && !acquisition.isRunning() && !acquisition.isCompleted()) {
 			acquisition.start();
@@ -711,7 +711,7 @@ public class AcquisitionsPart {
 		}
 	}
 
-	private synchronized void stopRecording() {
+	private void stopRecording() {
 
 		if((acquisition != null) && isSetAcquisition && acquisition.isRunning()) {
 			acquisition.stop();
