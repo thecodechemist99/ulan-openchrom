@@ -59,6 +59,9 @@ public class AutoScanNet {
 	@Optional
 	public void subscribeTopicSelectedElement(@EventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
 
+		if(event == null) {
+			return;
+		}
 		Object newValue = event.getProperty(EventTags.NEW_VALUE);
 		if(newValue instanceof MPart) {
 			MPart part = (MPart)newValue;

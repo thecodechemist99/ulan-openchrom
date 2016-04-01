@@ -36,6 +36,9 @@ public class CreateChromatogram {
 	@Optional
 	public void displayChromatogam(@UIEventTopic(value = IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IChromatogramCSDAcquisition chromatogram) {
 
+		if(chromatogram == null) {
+			return;
+		}
 		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramRecording");
 		part.setLabel(chromatogram.getName());
 		part.setObject(chromatogram);

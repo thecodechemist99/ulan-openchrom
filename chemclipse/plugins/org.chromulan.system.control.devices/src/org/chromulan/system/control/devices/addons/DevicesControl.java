@@ -39,6 +39,9 @@ public class DevicesControl {
 	@Optional
 	public void conectReqiredDevice(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_CONTROL) ControlDevices devices) {
 
+		if(devices == null) {
+			return;
+		}
 		for(IControlDevice device : devices.getControlDevices()) {
 			IControlDevice controlDevice = this.dataSupplier.getControlDevices().getControlDevice(device.getID());
 			if(controlDevice == null) {
