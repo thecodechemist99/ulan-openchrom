@@ -67,7 +67,7 @@ public class ChromatogramCSDMaker implements IChromatogramMaker {
 					shortInfo = stringBuilder.toString();
 				}
 				chromatogramCSD.setShortInfo(shortInfo);
-				File fileSave = new File(nFile + File.separator + IChromatogramMaker.fileValidation(detectorData.getName()) + supplier.getFileExtension());
+				File fileSave = new File(nFile + File.separator + acquisition.getName() + "-" + IChromatogramMaker.fileValidation(detectorData.getName()) + supplier.getFileExtension());
 				chromatogramCSD.setFile(fileSave);
 				chromatograms.add(chromatogramCSD);
 			}
