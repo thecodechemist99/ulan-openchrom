@@ -34,23 +34,30 @@ public class ConnectDevices {
 	private EModelService modelService;
 	@Inject
 	private EPartService partService;
+	private String[] supportedDevices = new String[]{"ulad31", "ulad32"};
 
 	@Inject
 	@Optional
 	public void connectDevice(@UIEventTopic(value = IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT) IControlDevice device) {
 
-		if(device.getDeviceDescription().getModulType().toLowerCase().equals("ulad31") || device.getDeviceDescription().getModulType().toLowerCase().equals("ulad32")) {
-			device.setDeviceType(DeviceType.DETECTOR);
-			if(modelService.find(device.getID(), application) == null) {
-				MPart part = MBasicFactory.INSTANCE.createPart();
-				part.setLabel(device.getID());
-				part.setObject(device);
-				part.setElementId(device.getID());
-				part.setCloseable(false);
-				part.setContributionURI("bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.ulad3x.parts.ULad3xPart");
-				MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
-				stack.getChildren().add(part);
-				partService.showPart(part, PartState.CREATE);
+		if(device == null) {
+			return;
+		}
+		for(String suportDevice : supportedDevices) {
+			if(device.getDeviceDescription().getModulType().toLowerCase().equals(suportDevice)) {
+				device.setDeviceType(DeviceType.DETECTOR);
+				if(modelService.find(device.getID(), application) == null) {
+					MPart part = MBasicFactory.INSTANCE.createPart();
+					part.setLabel(device.getID());
+					part.setObject(device);
+					part.setElementId(device.getID());
+					part.setCloseable(false);
+					part.setContributionURI("bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.ulad3x.parts.ULad3xPart");
+					MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
+					stack.getChildren().add(part);
+					partService.showPart(part, PartState.CREATE);
+				}
+				return;
 			}
 		}
 	}

@@ -34,23 +34,30 @@ public class ConnectDevice {
 	private EModelService modelService;
 	@Inject
 	private EPartService partService;
+	private String[] supportedDevices = new String[]{"lcd5000", "lcd5004"};
 
 	@Inject
 	@Optional
 	public void connectDevice(@UIEventTopic(value = IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT) IControlDevice device) {
 
-		if(device.getDeviceDescription().getModulType().toLowerCase().equals("lcd5000")) {
-			device.setDeviceType(DeviceType.DETECTOR);
-			if(modelService.find(device.getID(), application) == null) {
-				MPart part = MBasicFactory.INSTANCE.createPart();
-				part.setLabel(device.getID());
-				part.setObject(device);
-				part.setElementId(device.getID());
-				part.setCloseable(false);
-				part.setContributionURI("bundleclass://org.chromulan.system.control.lcd5000/org.chromulan.system.control.lcd5000.parts.Lcd5000Part");
-				MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
-				stack.getChildren().add(part);
-				partService.showPart(part, PartState.CREATE);
+		if(device == null) {
+			return;
+		}
+		for(String nameDevice : supportedDevices) {
+			if(device.getDeviceDescription().getModulType().toLowerCase().equals(nameDevice)) {
+				device.setDeviceType(DeviceType.DETECTOR);
+				if(modelService.find(device.getID(), application) == null) {
+					MPart part = MBasicFactory.INSTANCE.createPart();
+					part.setLabel(device.getID());
+					part.setObject(device);
+					part.setElementId(device.getID());
+					part.setCloseable(false);
+					part.setContributionURI("bundleclass://org.chromulan.system.control.lcd5000/org.chromulan.system.control.lcd5000.parts.Lcd5000Part");
+					MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
+					stack.getChildren().add(part);
+					partService.showPart(part, PartState.CREATE);
+				}
+				break;
 			}
 		}
 	}
