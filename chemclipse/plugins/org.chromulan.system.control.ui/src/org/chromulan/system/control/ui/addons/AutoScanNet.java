@@ -25,7 +25,6 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.osgi.service.event.Event;
@@ -63,11 +62,6 @@ public class AutoScanNet {
 			return;
 		}
 		Object newValue = event.getProperty(EventTags.NEW_VALUE);
-		if(newValue instanceof MPart) {
-			MPart part = (MPart)newValue;
-			System.out.println("Added " + part.getLabel() + " at position: " + event.getProperty(EventTags.POSITION) + " with id " + part.getElementId());
-		}
-		// ensure that the selected element of a perspective stack is changed and that this is a perspective
 		if((newValue instanceof MPerspective)) {
 			MPerspective perspective = (MPerspective)newValue;
 			if(perspective.getElementId().startsWith("org.chromulan.system.control.ui.perspective.chromulan")) {

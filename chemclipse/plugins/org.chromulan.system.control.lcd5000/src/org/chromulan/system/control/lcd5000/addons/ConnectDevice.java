@@ -56,6 +56,7 @@ public class ConnectDevice {
 					part.setObject(device);
 					part.setElementId(device.getID());
 					part.setCloseable(false);
+					part.setIconURI("platform:/plugin/org.chromulan.system.control.lcd5000/icons/16x16/devices.gif");
 					part.setContributionURI("bundleclass://org.chromulan.system.control.lcd5000/org.chromulan.system.control.lcd5000.parts.Lcd5000Part");
 					stack.getChildren().add(part);
 					partService.showPart(part, PartState.CREATE);

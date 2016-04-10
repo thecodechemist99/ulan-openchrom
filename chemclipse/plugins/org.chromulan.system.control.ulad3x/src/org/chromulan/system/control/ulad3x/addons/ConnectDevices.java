@@ -56,6 +56,7 @@ public class ConnectDevices {
 					part.setObject(device);
 					part.setElementId(device.getID());
 					part.setCloseable(false);
+					part.setIconURI("platform:/plugin/org.chromulan.system.control.ulad3x/icons/16x16/devices.gif");
 					part.setContributionURI("bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.ulad3x.parts.ULad3xPart");
 					stack.getChildren().add(part);
 					partService.showPart(part, PartState.CREATE);
