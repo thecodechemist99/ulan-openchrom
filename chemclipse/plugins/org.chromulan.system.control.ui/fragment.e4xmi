@@ -13,17 +13,16 @@
                 <children xsi:type="advanced:Placeholder" xmi:id="_T2cUwLsOEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.placeholder.1" ref="_6EKToEyaEeWRzKmWon3PLg"/>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.devicesSetting" containerData="">
-                <tags>NoMove</tags>
+                <tags>NoAutoCollapse</tags>
               </children>
             </children>
             <children xsi:type="advanced:Placeholder" xmi:id="_ejd4ILsOEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.placeholder.2" ref="_OtmA0I1JEeWfqJmgycqKzw"/>
           </children>
         </children>
         <children xsi:type="basic:PartSashContainer" xmi:id="_uHAxcLiQEeWGP7Beybk6cQ" elementId="org.chromulan.system.control.ui.partsashcontainer.7" containerData="70">
-          <children xsi:type="basic:PartSashContainer" xmi:id="_IGKvcG7BEeW6RKiMBdftrA" elementId="org.chromulan.system.control.ui.partsashcontainer.6" horizontal="true">
-            <children xsi:type="advanced:Placeholder" xmi:id="_fcNy4LtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.placeholder.0" ref="_uF4ncLtVEeSOd4rPaPqFeA"/>
-          </children>
+          <children xsi:type="advanced:Placeholder" xmi:id="_fcNy4LtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.placeholder.0" ref="_uF4ncLtVEeSOd4rPaPqFeA"/>
           <children xsi:type="basic:PartStack" xmi:id="_GycyYLtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.2">
+            <tags>NoAutoCollapse</tags>
             <children xsi:type="advanced:Placeholder" xmi:id="_p4OewLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.placeholder.3" ref="_s74ScLtVEeSOd4rPaPqFeA"/>
           </children>
         </children>
