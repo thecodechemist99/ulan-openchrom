@@ -12,7 +12,9 @@
               <children xsi:type="basic:PartStack" xmi:id="_96cWgLsYEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.partstack.1" containerData="">
                 <children xsi:type="advanced:Placeholder" xmi:id="_T2cUwLsOEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.placeholder.1" ref="_6EKToEyaEeWRzKmWon3PLg"/>
               </children>
-              <children xsi:type="advanced:Placeholder" xmi:id="_E4tAMPBuEeWUytk8OB_w9Q" elementId="org.chromulan.system.control.ui.placeholder.4" ref="_GZ8y0LtXEeSOd4rPaPqFeA"/>
+              <children xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.devicesSetting" containerData="">
+                <tags>NoMove</tags>
+              </children>
             </children>
             <children xsi:type="advanced:Placeholder" xmi:id="_ejd4ILsOEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.placeholder.2" ref="_OtmA0I1JEeWfqJmgycqKzw"/>
           </children>
@@ -58,8 +60,5 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_PniEULsOEeWd-qMKCNBDEQ" featurename="sharedElements" parentElementId="org.eclipse.chemclipse.rcp.app.ui.trimmedwindow.main">
     <elements xsi:type="basic:Part" xmi:id="_6EKToEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.part.availableDevices" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AvailableDevicesPart" label="Available Devices" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/devices.gif" closeable="true"/>
     <elements xsi:type="basic:Part" xmi:id="_OtmA0I1JEeWfqJmgycqKzw" elementId="org.chromulan.system.control.ui.part.devicesProfiles" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.DevicesProfilesPart" label="Devices Profiles"/>
-    <elements xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.devicesSetting" containerData="">
-      <tags>NoMove</tags>
-    </elements>
   </fragments>
 </fragment:ModelFragments>
