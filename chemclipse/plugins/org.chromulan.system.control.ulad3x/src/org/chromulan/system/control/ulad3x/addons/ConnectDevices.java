@@ -43,6 +43,10 @@ public class ConnectDevices {
 		if(device == null) {
 			return;
 		}
+		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
+		if(stack == null) {
+			return;
+		}
 		for(String suportDevice : supportedDevices) {
 			if(device.getDeviceDescription().getModulType().toLowerCase().equals(suportDevice)) {
 				device.setDeviceType(DeviceType.DETECTOR);
@@ -53,7 +57,6 @@ public class ConnectDevices {
 					part.setElementId(device.getID());
 					part.setCloseable(false);
 					part.setContributionURI("bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.ulad3x.parts.ULad3xPart");
-					MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
 					stack.getChildren().add(part);
 					partService.showPart(part, PartState.CREATE);
 				}

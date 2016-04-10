@@ -26,7 +26,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 public class CreateChromatogram {
 
 	@Inject
-	private MApplication aplication;
+	private MApplication application;
 	@Inject
 	private EModelService modelService;
 	@Inject
@@ -39,10 +39,13 @@ public class CreateChromatogram {
 		if(chromatogram == null) {
 			return;
 		}
+		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.2", application);
+		if(stack == null) {
+			return;
+		}
 		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramRecording");
 		part.setLabel(chromatogram.getName());
 		part.setObject(chromatogram);
-		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.2", aplication);
 		stack.getChildren().add(part);
 		partService.activate(part);
 	}
