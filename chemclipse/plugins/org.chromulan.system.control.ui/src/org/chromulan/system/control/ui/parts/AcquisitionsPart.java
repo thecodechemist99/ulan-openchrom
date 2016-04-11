@@ -56,6 +56,7 @@ import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCS
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -73,7 +74,6 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -227,7 +227,7 @@ public class AcquisitionsPart {
 					PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
 					dialog.open();
 				} else {
-					ChromatogramFilesDialog dialog = new ChromatogramFilesDialog(Display.getCurrent().getActiveShell(), acquisition.getAcquisitionSaver());
+					ChromatogramFilesDialog dialog = new ChromatogramFilesDialog(parent.getShell(), acquisition.getAcquisitionSaver());
 					if(dialog.open() == Window.OK) {
 						List<IChromatogramExportConverterProcessingInfo> chromatogramFiles = dialog.getChromatogramExportConverterProcessingInfos();
 						ChromatogramEditorSupport support = new ChromatogramEditorSupport();
@@ -601,7 +601,7 @@ public class AcquisitionsPart {
 				}
 			}
 		}
-		saver.save(new ProgressMonitorPart(parent, null), maker);
+		saver.save(new NullProgressMonitor(), maker);
 	}
 
 	@Inject
