@@ -572,6 +572,7 @@ public class AcquisitionsPart {
 		redrawTable();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void removeSelecetion() {
 
 		IStructuredSelection selection = (IStructuredSelection)acquisitionsTable.getViewer().getSelection();

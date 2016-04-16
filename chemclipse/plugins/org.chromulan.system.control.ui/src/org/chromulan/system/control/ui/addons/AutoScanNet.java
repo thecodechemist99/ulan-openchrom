@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.osgi.service.event.Event;
 
+@SuppressWarnings("restriction")
 public class AutoScanNet {
 
 	@Inject
