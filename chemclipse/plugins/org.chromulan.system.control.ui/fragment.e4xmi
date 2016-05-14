@@ -20,7 +20,7 @@
           </children>
         </children>
         <children xsi:type="basic:PartSashContainer" xmi:id="_uHAxcLiQEeWGP7Beybk6cQ" elementId="org.chromulan.system.control.ui.partsashcontainer.7" containerData="70">
-          <children xsi:type="advanced:Placeholder" xmi:id="_fcNy4LtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.placeholder.0" ref="_uF4ncLtVEeSOd4rPaPqFeA"/>
+          <children xsi:type="advanced:Placeholder" xmi:id="_fcNy4LtWEeSOd4rPaPqFeA" elementId="org.eclipse.ui.editorss" ref="_uF4ncLtVEeSOd4rPaPqFeA"/>
           <children xsi:type="basic:PartStack" xmi:id="_GycyYLtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.2">
             <tags>NoAutoCollapse</tags>
             <children xsi:type="advanced:Placeholder" xmi:id="_p4OewLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.placeholder.3" ref="_s74ScLtVEeSOd4rPaPqFeA"/>
