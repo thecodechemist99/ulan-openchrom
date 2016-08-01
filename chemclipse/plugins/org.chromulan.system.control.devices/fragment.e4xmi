@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_F_zI4O6yEeWVifVGtO1usQ">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_IHtQkO6yEeWVifVGtO1usQ" featurename="handlers" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_3h_woO6zEeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.handler.0" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.handlers.OpenConnection" command="_DU2ToO60EeWVifVGtO1usQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_RMrmIO60EeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.handler.1" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.handlers.CloseConnection" command="_HcvWEO60EeWVifVGtO1usQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_UJqUoO60EeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.handler.2" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.handlers.ScanNet" command="_LR0KMO60EeWVifVGtO1usQ"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_-VgEwO6zEeWVifVGtO1usQ" featurename="commands" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="_DU2ToO60EeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.command.openconnection" commandName="Open connection"/>
+    <elements xsi:type="commands:Command" xmi:id="_HcvWEO60EeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.command.closeconnection" commandName="Close connection"/>
+    <elements xsi:type="commands:Command" xmi:id="_LR0KMO60EeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.command.scannet" commandName="Scan net"/>
+  </fragments>
+</fragment:ModelFragments>
