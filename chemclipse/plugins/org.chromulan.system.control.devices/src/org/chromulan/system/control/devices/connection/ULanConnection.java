@@ -9,7 +9,7 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model;
+package org.chromulan.system.control.devices.connection;
 
 import java.io.IOException;
 

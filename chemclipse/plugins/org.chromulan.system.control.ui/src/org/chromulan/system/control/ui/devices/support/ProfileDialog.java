@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.devices.support;
 
-import org.chromulan.system.control.model.IDevicesProfile;
+import org.chromulan.system.control.device.IDevicesProfile;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -39,7 +39,7 @@ public class ProfileDialog extends Dialog {
 
 		Composite composite = new Composite(parent, SWT.None);
 		composite.setLayout(new FillLayout());
-		DevicesTable devicesTable = new DevicesTable(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, false);
+		DevicesTable devicesTable = new DevicesTable(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		devicesTable.setDevices(profile);
 		return super.createDialogArea(parent);
 	}

@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.wizard;
 
-import org.chromulan.system.control.model.IControlDevices;
-import org.chromulan.system.control.model.IDevicesProfile;
-import org.chromulan.system.control.model.IDevicesProfiles;
+import org.chromulan.system.control.device.IControlDevices;
+import org.chromulan.system.control.device.IDevicesProfile;
+import org.chromulan.system.control.device.IDevicesProfiles;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 

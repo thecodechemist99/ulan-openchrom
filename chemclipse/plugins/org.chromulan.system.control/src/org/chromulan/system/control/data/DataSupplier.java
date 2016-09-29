@@ -22,9 +22,9 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.chromulan.system.control.device.IControlDevices;
+import org.chromulan.system.control.device.IDevicesProfiles;
 import org.chromulan.system.control.events.IDataSupplierEvents;
-import org.chromulan.system.control.model.IControlDevices;
-import org.chromulan.system.control.model.IDevicesProfiles;
 import org.chromulan.system.control.preferences.PreferenceSupplier;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.di.annotations.Creatable;

@@ -15,8 +15,8 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.chromulan.system.control.events.IULanConnectionEvents;
-import org.chromulan.system.control.model.ULanConnection;
+import org.chromulan.system.control.devices.connection.ULanConnection;
+import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 

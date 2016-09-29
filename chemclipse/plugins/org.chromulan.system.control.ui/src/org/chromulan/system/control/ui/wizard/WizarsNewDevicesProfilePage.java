@@ -11,11 +11,11 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.wizard;
 
-import org.chromulan.system.control.model.DevicesProfile;
-import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.IControlDevices;
-import org.chromulan.system.control.model.IDevicesProfile;
-import org.chromulan.system.control.model.IDevicesProfiles;
+import org.chromulan.system.control.device.DevicesProfile;
+import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.device.IControlDevices;
+import org.chromulan.system.control.device.IDevicesProfile;
+import org.chromulan.system.control.device.IDevicesProfiles;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -98,8 +98,8 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 
 				for(IControlDevice controlDevice : controlDevices.getControlDevices()) {
 					checkTable.setChecked(controlDevice, true);
-					if(!profile.contains(controlDevice.getID())) {
-						profile.add(controlDevice);
+					if(!profile.getControlDevices().contains(controlDevice)) {
+						profile.getControlDevices().add(controlDevice);
 					}
 				}
 			}
@@ -113,9 +113,7 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 
 				for(IControlDevice controlDevice : controlDevices.getControlDevices()) {
 					checkTable.setChecked(controlDevice, false);
-					if(profile.contains(controlDevice.getID())) {
-						profile.remove(controlDevice.getID());
-					}
+					profile.getControlDevices().clear();
 				}
 			}
 		});
@@ -128,7 +126,7 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 
 	private void createTable(CheckboxTableViewer checkTable) {
 
-		TableViewerColumn column = createTableViewerColumn("Port", 80, 1, checkTable);
+		TableViewerColumn column = createTableViewerColumn("Device Description", 80, 1, checkTable);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
@@ -136,46 +134,7 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 
 				if(element instanceof IControlDevice) {
 					IControlDevice device = (IControlDevice)element;
-					return Long.toString(device.getDeviceDescription().getAdr());
-				}
-				return "";
-			}
-		});
-		column = createTableViewerColumn("Name", 100, 2, checkTable);
-		column.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(Object element) {
-
-				if(element instanceof IControlDevice) {
-					IControlDevice device = (IControlDevice)element;
-					return device.getName();
-				}
-				return "";
-			}
-		});
-		column = createTableViewerColumn("Description", 300, 3, checkTable);
-		column.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(Object element) {
-
-				if(element instanceof IControlDevice) {
-					IControlDevice device = (IControlDevice)element;
-					return device.getDeviceDescription().getDescription();
-				}
-				return "";
-			}
-		});
-		column = createTableViewerColumn("Devices type", 100, 4, checkTable);
-		column.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(Object element) {
-
-				if(element instanceof IControlDevice) {
-					IControlDevice device = (IControlDevice)element;
-					return device.getDeviceType().toString();
+					return device.toString();
 				}
 				return "";
 			}
@@ -188,10 +147,10 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 
 				IControlDevice device = ((IControlDevice)event.getElement());
-				if(profile.contains(device.getID())) {
-					profile.remove(device.getID());
+				if(profile.getControlDevices().contains(device)) {
+					profile.getControlDevices().remove(device);
 				} else {
-					profile.add(device);
+					profile.getControlDevices().add(device);
 				}
 			}
 		});

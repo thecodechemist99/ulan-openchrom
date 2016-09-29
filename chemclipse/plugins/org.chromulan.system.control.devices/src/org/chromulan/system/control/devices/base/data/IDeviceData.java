@@ -9,9 +9,9 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.data;
+package org.chromulan.system.control.devices.base.data;
 
-import org.chromulan.system.control.model.IControlDevice;
+import org.chromulan.system.control.device.IControlDevice;
 
 public interface IDeviceData extends IAcquisitionData {
 

@@ -9,11 +9,25 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.data;
+package org.chromulan.system.control.device;
 
-public interface IAcquisitionData {
+import java.util.List;
 
-	String getDescription();
+import org.chromulan.system.control.model.IAcquisition;
+
+public interface IDevicesProfile extends IControlDevices {
+
+	void addAcquisition(IAcquisition acquisition);
+
+	boolean containsAcqusition();
+
+	boolean containsAcqusition(IAcquisition acquisition);
+
+	List<IAcquisition> getAcquisitio();
 
 	String getName();
+
+	void removeAcqusition(IAcquisition acquisition);
+
+	void setName(String name);
 }

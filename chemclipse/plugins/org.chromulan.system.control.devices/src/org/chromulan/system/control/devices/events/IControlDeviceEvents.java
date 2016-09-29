@@ -9,23 +9,10 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model;
+package org.chromulan.system.control.devices.events;
 
-import java.util.List;
+public interface IControlDeviceEvents {
 
-public interface IDevicesProfile extends IControlDevices {
-
-	void addAcquisition(IAcquisition acquisition);
-
-	boolean containsAcqusition();
-
-	boolean containsAcqusition(IAcquisition acquisition);
-
-	List<IAcquisition> getAcquisitio();
-
-	String getName();
-
-	void removeAcqusition(IAcquisition acquisition);
-
-	void setName(String name);
+	String TOPIC_CONTROL_DEVICE_ULAN_CONNECT = "controlDevice/ulan/connect";
+	String TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT = "controlDevice/ulan/disconnect";
 }

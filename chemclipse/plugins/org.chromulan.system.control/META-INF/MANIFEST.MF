@@ -13,9 +13,9 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.chromulan.system.control.data,
+ org.chromulan.system.control.device,
  org.chromulan.system.control.events,
  org.chromulan.system.control.model,
- org.chromulan.system.control.model.data,
  org.chromulan.system.control.preferences
 Import-Package: org.eclipse.chemclipse.converter.core,
  org.eclipse.chemclipse.converter.processing,

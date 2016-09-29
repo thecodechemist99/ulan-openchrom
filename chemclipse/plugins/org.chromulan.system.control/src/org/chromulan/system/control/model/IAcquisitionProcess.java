@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
+import org.chromulan.system.control.device.IDevicesProfile;
+
 public interface IAcquisitionProcess {
 
 	IAcquisitionSaver getAcquisitionSaver();

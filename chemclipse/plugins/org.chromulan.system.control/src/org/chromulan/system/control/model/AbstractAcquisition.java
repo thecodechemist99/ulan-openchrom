@@ -15,6 +15,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Date;
 
+import org.chromulan.system.control.device.IDevicesProfile;
+
 public abstract class AbstractAcquisition implements IAcquisition {
 
 	private IAcquisitionSaver acquisitionSaver;

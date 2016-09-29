@@ -13,7 +13,7 @@ package org.chromulan.system.control.ui.wizard;
 
 import java.util.List;
 
-import org.chromulan.system.control.model.IDevicesProfile;
+import org.chromulan.system.control.device.IDevicesProfile;
 import org.eclipse.jface.wizard.Wizard;
 
 public class WizardNewAcquisition extends Wizard {

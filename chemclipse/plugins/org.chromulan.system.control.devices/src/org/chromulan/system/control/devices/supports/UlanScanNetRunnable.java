@@ -13,9 +13,8 @@ package org.chromulan.system.control.devices.supports;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.chromulan.system.control.model.ControlDevice;
-import org.chromulan.system.control.model.ControlDevices;
-import org.chromulan.system.control.model.IControlDevices;
+import org.chromulan.system.control.devices.base.UlanControlDevice;
+import org.chromulan.system.control.devices.base.UlanDevicesStore;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
@@ -24,22 +23,22 @@ import net.sourceforge.ulan.base.ULanCommunicationInterface;
 
 public class UlanScanNetRunnable implements IRunnableWithProgress {
 
-	private IControlDevices controlDevices;
+	private UlanDevicesStore devices;
 
 	public UlanScanNetRunnable() {
-		controlDevices = new ControlDevices();
+		devices = new UlanDevicesStore();
 	}
 
-	public IControlDevices getDevices() {
+	public UlanDevicesStore getDevices() {
 
-		return controlDevices;
+		return devices;
 	}
 
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 		monitor.beginTask("Scan net", 100);
-		controlDevices.removeAllControlDevices();
+		devices.removeAllDevices();
 		try {
 			try {
 				for(long i = 1; i <= 100 && !monitor.isCanceled(); i++) {
@@ -47,7 +46,7 @@ public class UlanScanNetRunnable implements IRunnableWithProgress {
 					monitor.subTask("Scan address " + i);
 					DeviceDescription device = ULanCommunicationInterface.getDevice(i);
 					if(device != null && (device.containsTag("oi") || device.getTag("uP").equals("51x"))) {
-						controlDevices.add(new ControlDevice(device, true));
+						devices.add(new UlanControlDevice(device, true));
 					}
 				}
 			} catch(Exception e) {

@@ -10,7 +10,7 @@
  * Jan Holy - initial API and implementation
  * Dr. Philip Wenig - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.ui.parts;
+package org.chromulan.system.control.devices.parts;
 
 import java.util.HashMap;
 
@@ -18,12 +18,12 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.data.DataSupplier;
+import org.chromulan.system.control.device.IControlDevices;
+import org.chromulan.system.control.devices.connection.ULanConnection;
+import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.devices.handlers.ScanNet;
+import org.chromulan.system.control.devices.ui.support.DevicesTable;
 import org.chromulan.system.control.events.IDataSupplierEvents;
-import org.chromulan.system.control.events.IULanConnectionEvents;
-import org.chromulan.system.control.model.IControlDevices;
-import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.ui.devices.support.DevicesTable;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;

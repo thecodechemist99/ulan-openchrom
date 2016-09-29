@@ -14,8 +14,6 @@ package org.chromulan.system.control.ui.parts;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -24,22 +22,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.chromulan.system.control.data.DataSupplier;
+import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.device.IDevicesProfile;
 import org.chromulan.system.control.events.IAcquisitionEvents;
-import org.chromulan.system.control.events.IControlDevicesEvents;
 import org.chromulan.system.control.events.IDataSupplierEvents;
-import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.AcquisitionCSD;
 import org.chromulan.system.control.model.AcquisitionCSDSaver;
 import org.chromulan.system.control.model.AcquisitionsCSD;
-import org.chromulan.system.control.model.ChromatogramCSDMaker;
 import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.model.IAcquisitionCSD;
 import org.chromulan.system.control.model.IAcquisitionSaver;
 import org.chromulan.system.control.model.IAcquisitionsCSD;
-import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.IDevicesProfile;
-import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.model.data.IDetectorData;
 import org.chromulan.system.control.preferences.PreferenceSupplier;
 import org.chromulan.system.control.ui.acquisition.support.AcquisitionCDSSavePreferencePage;
 import org.chromulan.system.control.ui.acquisition.support.AcquisitionSettingsPreferencePage;
@@ -56,7 +49,6 @@ import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCS
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -64,7 +56,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -93,13 +84,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.osgi.service.prefs.BackingStoreException;
-
-import net.sourceforge.ulan.base.CompletionHandler;
-import net.sourceforge.ulan.base.IULanCommunication;
-import net.sourceforge.ulan.base.IULanCommunication.IFilt;
-import net.sourceforge.ulan.base.ULanCommunicationInterface;
-import net.sourceforge.ulan.base.ULanHandle;
-import net.sourceforge.ulan.base.ULanMsg;
 
 @SuppressWarnings("restriction")
 public class AcquisitionsPart {
@@ -155,7 +139,6 @@ public class AcquisitionsPart {
 	@Inject
 	private IEventBroker eventBroker;
 	private File file;
-	private IFilt<Void> filtStartRecording;
 	@Inject
 	private EHandlerService handlerService;
 	private boolean isSetAcquisition;
@@ -176,27 +159,6 @@ public class AcquisitionsPart {
 	public AcquisitionsPart() {
 		acquisition = null;
 		timeRecording = new ActualyationTimeRecording();
-		IULanCommunication com = new ULanCommunicationInterface();
-		filtStartRecording = com.addFilt(ULanHandle.CMD_LCDMRK, null, new CompletionHandler<ULanMsg, Void>() {
-
-			@Override
-			public void completed(ULanMsg arg0, Void arg1) {
-
-				display.asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-
-						startRecording();
-					}
-				});
-			}
-
-			@Override
-			public void failed(Exception arg0, Void arg1) {
-
-			}
-		});
 		dataAcquisitionChange = new PropertyChangeListener() {
 
 			@Override
@@ -258,22 +220,13 @@ public class AcquisitionsPart {
 
 	private boolean controlAcquisition(IAcquisition acquisition) {
 
-		return controlUsingDevices(acquisition.getDevicesProfile()) && controlConnection();
-	}
-
-	private boolean controlConnection() {
-
-		return ULanCommunicationInterface.isOpen();
+		return controlUsingDevices(acquisition.getDevicesProfile());
 	}
 
 	private boolean controlUsingDevices(IDevicesProfile profile) {
 
 		for(IControlDevice device : profile.getControlDevices()) {
 			if(!device.isConnected()) {
-				return false;
-			}
-			MPart part = partService.findPart(device.getID());
-			if(part == null) {
 				return false;
 			}
 		}
@@ -307,13 +260,6 @@ public class AcquisitionsPart {
 	@PostConstruct
 	public void createAcquisitionsArea() {
 
-		if(ULanCommunicationInterface.isOpen()) {
-			try {
-				filtStartRecording.activateFilt();
-			} catch(IOException e1) {
-				// TODO: exception logger.warn(e1);
-			}
-		}
 		this.acquisitions = new AcquisitionsCSD();
 		Composite composite = new Composite(parent, SWT.None);
 		GridLayout gridLayout = new GridLayout();
@@ -529,21 +475,9 @@ public class AcquisitionsPart {
 		});
 	}
 
-	@Inject
-	@Optional
-	public void openCommunicationEvent(@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
-
-		try {
-			filtStartRecording.activateFilt();
-		} catch(IOException e) {
-			// TODO: exception
-		}
-	}
-
 	@PreDestroy
 	public void preDestroy() {
 
-		filtStartRecording.deactivateFilt();
 		display.timerExec(-1, timeRecording);
 	}
 
@@ -584,25 +518,27 @@ public class AcquisitionsPart {
 
 	private void saveAcquisition() {
 
-		IAcquisitionSaver saver = acquisition.getAcquisitionSaver();
-		ChromatogramCSDMaker maker = new ChromatogramCSDMaker(acquisition);
-		for(IControlDevice device : acquisition.getDevicesProfile().getControlDevices()) {
-			MPart part = partService.findPart(device.getID());
-			if(part != null && part.getContext() != null && part.getTransientData().containsKey(IDetectorData.DETECTORS_DATA)) {
-				Object detectorsData = part.getTransientData().get(IDetectorData.DETECTORS_DATA);
-				if(detectorsData instanceof List) {
-					List<?> detectorDataList = (List<?>)detectorsData;
-					for(Iterator<?> iterator = detectorDataList.iterator(); iterator.hasNext();) {
-						Object detectorDataObject = iterator.next();
-						if(detectorDataObject instanceof IDetectorData) {
-							IDetectorData detectorData = (IDetectorData)detectorDataObject;
-							maker.addDetectorData(detectorData);
-						}
-					}
-				}
-			}
-		}
-		saver.save(new NullProgressMonitor(), maker);
+		/*
+		 * IAcquisitionSaver saver = acquisition.getAcquisitionSaver();
+		 * ChromatogramCSDMaker maker = new ChromatogramCSDMaker(acquisition);
+		 * for(IControlDevice device : acquisition.getDevicesProfile().getControlDevices()) {
+		 * MPart part = partService.findPart(device.getID());
+		 * if(part != null && part.getContext() != null && part.getTransientData().containsKey(IDetectorData.DETECTORS_DATA)) {
+		 * Object detectorsData = part.getTransientData().get(IDetectorData.DETECTORS_DATA);
+		 * if(detectorsData instanceof List) {
+		 * List<?> detectorDataList = (List<?>)detectorsData;
+		 * for(Iterator<?> iterator = detectorDataList.iterator(); iterator.hasNext();) {
+		 * Object detectorDataObject = iterator.next();
+		 * if(detectorDataObject instanceof IDetectorData) {
+		 * IDetectorData detectorData = (IDetectorData)detectorDataObject;
+		 * maker.addDetectorData(detectorData);
+		 * }
+		 * }
+		 * }
+		 * }
+		 * }
+		 * saver.save(new NullProgressMonitor(), maker);
+		 */
 	}
 
 	@Inject
@@ -617,7 +553,7 @@ public class AcquisitionsPart {
 	private void setAcquisition(IAcquisitionCSD acquisition) {
 
 		if(acquisition != null && !isSetAcquisition && !acquisition.isCompleted()) {
-			eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_CONTROL, acquisition.getDevicesProfile().getControlDevices());
+			eventBroker.send(org.chromulan.system.control.events.IControlDevicesEvents.TOPIC_CONTROL_DEVICES_CONTROL, acquisition.getDevicesProfile().getControlDevices());
 			this.acquisition = acquisition;
 			acquisition.addPropertyChangeListener(dataAcquisitionChange);
 			setTable();

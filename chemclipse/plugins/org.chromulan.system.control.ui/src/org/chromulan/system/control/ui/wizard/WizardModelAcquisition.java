@@ -13,7 +13,7 @@ package org.chromulan.system.control.ui.wizard;
 
 import java.io.File;
 
-import org.chromulan.system.control.model.IDevicesProfile;
+import org.chromulan.system.control.device.IDevicesProfile;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 

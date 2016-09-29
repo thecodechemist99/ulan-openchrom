@@ -9,19 +9,19 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model;
+package org.chromulan.system.control.devices.base.data;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.chromulan.system.control.model.data.IDetectorData;
+import org.chromulan.system.control.model.IAcquisition;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
-public class ChromatogramCSDMaker implements IChromatogramMaker {
+public class ChromatogramCSDMaker {
 
 	private IAcquisition acquisition;
 	private List<IDetectorData> detectorsData;
@@ -37,7 +37,6 @@ public class ChromatogramCSDMaker implements IChromatogramMaker {
 		this.detectorsData.add(detectorData);
 	}
 
-	@Override
 	public List<IChromatogram> getChromatograms(String path, ISupplier supplier) {
 
 		List<IChromatogram> chromatograms = new ArrayList<>();

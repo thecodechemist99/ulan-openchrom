@@ -9,35 +9,36 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.data;
+package org.chromulan.system.control.device;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.chromulan.system.control.device.ControlDevices;
-import org.chromulan.system.control.device.DevicesProfiles;
-import org.chromulan.system.control.device.IControlDevices;
-import org.chromulan.system.control.device.IDevicesProfiles;
+public class DevicesProfiles implements IDevicesProfiles {
 
-public class DataStore implements IDataStore {
+	private List<IDevicesProfile> profiles;
 
-	private IControlDevices devices;
-	private IDevicesProfiles profiles;
-
-	public DataStore() {
-		devices = new ControlDevices();
-		profiles = new DevicesProfiles();
+	public DevicesProfiles() {
+		profiles = new LinkedList<>();
 	}
 
 	@Override
-	public IControlDevices getControlDevices() {
+	public void add(IDevicesProfile devicesProfile) {
 
-		return devices;
+		profiles.add(devicesProfile);
 	}
 
 	@Override
-	public IDevicesProfiles getDevicesProfiles() {
+	public boolean contains(IDevicesProfile devicesProfile) {
+
+		return profiles.contains(devicesProfile);
+	}
+
+	@Override
+	public List<IDevicesProfile> getAll() {
 
 		return profiles;
 	}
@@ -45,14 +46,18 @@ public class DataStore implements IDataStore {
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
-		this.devices = (IControlDevices)in.readObject();
-		this.profiles = (IDevicesProfiles)in.readObject();
+		profiles = (List<IDevicesProfile>)in.readObject();
+	}
+
+	@Override
+	public void remove(IDevicesProfile devicesProfile) {
+
+		profiles.remove(devicesProfile);
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 
-		out.writeObject(devices);
 		out.writeObject(profiles);
 	}
 }

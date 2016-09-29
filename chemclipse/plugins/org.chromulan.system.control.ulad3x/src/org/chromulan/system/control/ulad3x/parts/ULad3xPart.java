@@ -21,12 +21,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.chromulan.system.control.devices.base.IUlanControlDevice;
+import org.chromulan.system.control.devices.base.IUlanControlDevices;
+import org.chromulan.system.control.devices.base.data.IDetectorData;
+import org.chromulan.system.control.devices.connection.ULanConnection;
+import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.events.IAcquisitionEvents;
-import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.model.IAcquisition;
-import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.model.data.IDetectorData;
 import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
 import org.chromulan.system.control.ulad3x.model.ULad3x;
 import org.chromulan.system.control.ulad3x.model.ULad3xData;
@@ -51,7 +52,7 @@ public class ULad3xPart {
 	private IAcquisition acquisition;
 	private Button buttonReadData;
 	private Button buttonReset;
-	private IControlDevice controlDevice;
+	private IUlanControlDevice controlDevice;
 	@Inject
 	private IEventBroker eventBroker;
 	private PropertyChangeListener listener;
@@ -75,7 +76,7 @@ public class ULad3xPart {
 	public void createPartControl(Composite parent) {
 
 		parent.setLayout(new GridLayout(3, false));
-		controlDevice = (IControlDevice)part.getObject();
+		controlDevice = (IUlanControlDevice)part.getObject();
 		controlDevice.addPropertyChangeListener(listener);
 		uLad3x = new ULad3x(controlDevice);
 		try {
@@ -202,7 +203,7 @@ public class ULad3xPart {
 	@Optional
 	public void setAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition analisis) {
 
-		if(this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null && analisis.getDevicesProfile().contains(controlDevice.getID())) {
+		if(this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null && IUlanControlDevices.contains(analisis.getDevicesProfile(), controlDevice.getID())) {
 			this.acquisition = analisis;
 		}
 	}

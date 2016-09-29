@@ -15,9 +15,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 
+import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.devices.base.IUlanControlDevice;
 import org.chromulan.system.control.model.ChromatogramCSDAcquisition;
 import org.chromulan.system.control.model.IChromatogramAcquisition;
-import org.chromulan.system.control.model.IControlDevice;
 import org.eclipse.chemclipse.csd.model.implementation.ScanCSD;
 
 import net.sourceforge.ulan.base.CompletionHandler;
@@ -41,7 +42,7 @@ public class ULad3x {
 	private int scanDelay;
 	private int scanInterval;
 
-	public ULad3x(IControlDevice controlDevice) {
+	public ULad3x(IUlanControlDevice controlDevice) {
 		super();
 		this.controlDevice = controlDevice;
 		device = new ULanDevice(controlDevice.getDeviceDescription());
@@ -70,7 +71,7 @@ public class ULad3x {
 		scanInterval = DEFAULT_SCAN_INTERVAL;
 	}
 
-	public ULad3x(IControlDevice controlDevice, int scanDelay, int scanInterval) {
+	public ULad3x(IUlanControlDevice controlDevice, int scanDelay, int scanInterval) {
 		this(controlDevice);
 		this.scanDelay = scanDelay;
 		this.scanInterval = scanInterval;

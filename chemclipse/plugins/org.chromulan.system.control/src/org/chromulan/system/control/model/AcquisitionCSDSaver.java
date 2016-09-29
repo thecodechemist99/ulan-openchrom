@@ -38,15 +38,15 @@ public class AcquisitionCSDSaver extends AbstractAcquisitionSaver implements IAc
 	}
 
 	@Override
-	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, IChromatogramMaker maker) {
+	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<IChromatogram> chromatograms) {
 
 		this.chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
 		ISupplier supplier = getSupplier();
-		if(maker == null) {
+		if(chromatograms == null) {
 			throw new NullPointerException();
 		}
 		HashMap<String, Integer> names = new HashMap<>();
-		for(IChromatogram chromatogram : maker.getChromatograms(getFile().getAbsolutePath(), supplier)) {
+		for(IChromatogram chromatogram : chromatograms) {
 			if(chromatogram instanceof IChromatogramCSD) {
 				IChromatogramCSD chromatogramCSD = (IChromatogramCSD)chromatogram;
 				File file = chromatogramCSD.getFile();

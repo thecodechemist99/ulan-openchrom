@@ -13,8 +13,8 @@ package org.chromulan.system.control.data;
 
 import java.io.Externalizable;
 
-import org.chromulan.system.control.model.IControlDevices;
-import org.chromulan.system.control.model.IDevicesProfiles;
+import org.chromulan.system.control.device.IControlDevices;
+import org.chromulan.system.control.device.IDevicesProfiles;
 
 public interface IDataStore extends Externalizable {
 

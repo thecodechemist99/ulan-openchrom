@@ -18,12 +18,12 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.data.DataSupplier;
+import org.chromulan.system.control.device.IControlDevices;
+import org.chromulan.system.control.device.IDevicesProfile;
+import org.chromulan.system.control.device.IDevicesProfiles;
 import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.events.IDataSupplierEvents;
 import org.chromulan.system.control.model.IAcquisition;
-import org.chromulan.system.control.model.IControlDevices;
-import org.chromulan.system.control.model.IDevicesProfile;
-import org.chromulan.system.control.model.IDevicesProfiles;
 import org.chromulan.system.control.ui.devices.support.ProfileDialog;
 import org.chromulan.system.control.ui.wizard.WizardNewDevicesProfile;
 import org.eclipse.e4.core.di.annotations.Optional;

@@ -9,7 +9,7 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.ui.addons;
+package org.chromulan.system.control.devices.addons;
 
 import java.util.HashMap;
 
@@ -17,8 +17,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.devices.handlers.ScanNet;
-import org.chromulan.system.control.preferences.PreferenceSupplier;
-import org.chromulan.system.control.ui.parts.AcquisitionsPart;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
@@ -46,7 +44,7 @@ public class AutoScanNet {
 
 	private void startScan() {
 
-		if(startScan && PreferenceSupplier.INSTANCE().getPreferences().getBoolean(AcquisitionsPart.PREFERENCE_AUTOSCAN, true)) {
+		if(startScan) {
 			ParameterizedCommand com = commandService.createCommand(ScanNet.HANDLER_ID, new HashMap<String, Object>());
 			if(handlerService.canExecute(com)) {
 				handlerService.executeHandler(com);

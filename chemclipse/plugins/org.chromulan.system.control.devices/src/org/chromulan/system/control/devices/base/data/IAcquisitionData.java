@@ -9,11 +9,11 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.events;
+package org.chromulan.system.control.devices.base.data;
 
-public interface IULanConnectionEvents {
+public interface IAcquisitionData {
 
-	String TOPIC_CONNECTION_ULAN = "connection/ulan/*";
-	String TOPIC_CONNECTION_ULAN_CLOSE = "connection/ulan/close";
-	String TOPIC_CONNECTION_ULAN_OPEN = "connection/ulan/open";
+	String getDescription();
+
+	String getName();
 }

@@ -9,13 +9,15 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model;
+package org.chromulan.system.control.device;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.chromulan.system.control.model.IAcquisition;
 
 public class DevicesProfile extends ControlDevices implements IDevicesProfile {
 

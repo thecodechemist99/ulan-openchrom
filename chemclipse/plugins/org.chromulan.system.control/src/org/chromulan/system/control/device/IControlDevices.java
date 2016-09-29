@@ -9,13 +9,14 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.model.data;
+package org.chromulan.system.control.device;
 
-import org.eclipse.chemclipse.model.core.IChromatogram;
+import java.io.Externalizable;
+import java.util.List;
 
-public interface IDetectorData extends IDeviceData {
+public interface IControlDevices extends Externalizable {
 
-	String DETECTORS_DATA = "detectorsData";
+	List<IControlDevice> getControlDevices();
 
-	IChromatogram getChromatogram();
+	void removeAllControlDevices();
 }
