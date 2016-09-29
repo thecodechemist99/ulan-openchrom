@@ -147,9 +147,9 @@ public class UlanControlDevice implements IUlanControlDevice {
 	}
 
 	@Override
-	public String toString() {
+	public String getDescription() {
 
-		return getName() + " " + getDeviceType() + " " + getDeviceDescription().getAdr() + " " + getDeviceDescription().getDescription();
+		return getDeviceType() + " " + getDeviceDescription().getAdr() + " " + getDeviceDescription().getDescription();
 	}
 
 	@Override

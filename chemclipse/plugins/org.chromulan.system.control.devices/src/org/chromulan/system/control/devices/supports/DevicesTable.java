@@ -9,9 +9,8 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.devices.ui.support;
+package org.chromulan.system.control.devices.supports;
 
-import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.devices.base.IUlanControlDevice;
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -77,17 +76,6 @@ public class DevicesTable {
 		this.viewer = new TableViewer(parent, style);
 		viewContentProvider = new ObservableListContentProvider();
 		viewer.setContentProvider(viewContentProvider);
-		if(setFilter) {
-			viewer.addFilter(new ViewerFilter() {
-
-				@Override
-				public boolean select(Viewer viewer, Object parentElement, Object element) {
-
-					IControlDevice device = (IControlDevice)element;
-					return device.isConnected();
-				}
-			});
-		}
 		viewer.addFilter(new ViewerFilter() {
 
 			@Override
@@ -99,6 +87,20 @@ public class DevicesTable {
 				return false;
 			}
 		});
+		
+		
+		if(setFilter) {
+			viewer.addFilter(new ViewerFilter() {
+
+				@Override
+				public boolean select(Viewer viewer, Object parentElement, Object element) {
+
+					IUlanControlDevice device = (IUlanControlDevice)element;
+					return device.isConnected();
+				}
+			});
+		}
+		
 		createColumns(parent, viewer);
 		Table table = viewer.getTable();
 		table.setHeaderVisible(true);
@@ -121,7 +123,7 @@ public class DevicesTable {
 			}
 		});
 		column = createTableViewerColumn(titles[1], bounds[1]);
-		IObservableMap attributeMapName = BeanProperties.value(IControlDevice.class, IUlanControlDevice.PROPERTY_NAME).observeDetail(viewContentProvider.getKnownElements());
+		IObservableMap attributeMapName = BeanProperties.value(IUlanControlDevice.class, IUlanControlDevice.PROPERTY_NAME).observeDetail(viewContentProvider.getKnownElements());
 		column.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapName));
 		column.setEditingSupport(new NameEditor(viewer));
 		column = createTableViewerColumn(titles[2], bounds[2]);
@@ -135,7 +137,7 @@ public class DevicesTable {
 			}
 		});
 		column = createTableViewerColumn(titles[3], bounds[3]);
-		IObservableMap attributeMapType = BeanProperties.value(IControlDevice.class, IUlanControlDevice.PROPERTY_DEVICE_TYPE).observeDetail(viewContentProvider.getKnownElements());
+		IObservableMap attributeMapType = BeanProperties.value(IUlanControlDevice.class, IUlanControlDevice.PROPERTY_DEVICE_TYPE).observeDetail(viewContentProvider.getKnownElements());
 		column.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapType));
 	}
 
@@ -162,7 +164,7 @@ public class DevicesTable {
 
 	public void setDevices(IControlDevices devices) {
 
-		viewer.setInput(new WritableList(devices.getControlDevices(), IControlDevice.class));
+		viewer.setInput(new WritableList(devices.getControlDevices(), IUlanControlDevice.class));
 		this.devices = devices;
 	}
 

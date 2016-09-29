@@ -126,7 +126,7 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 
 	private void createTable(CheckboxTableViewer checkTable) {
 
-		TableViewerColumn column = createTableViewerColumn("Device Description", 80, 1, checkTable);
+		TableViewerColumn column = createTableViewerColumn("Name", 80, 1, checkTable);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
@@ -134,7 +134,20 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 
 				if(element instanceof IControlDevice) {
 					IControlDevice device = (IControlDevice)element;
-					return device.toString();
+					return device.getName();
+				}
+				return "";
+			}
+		});
+		column = createTableViewerColumn("Device Description", 400, 1, checkTable);
+		column.setLabelProvider(new ColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+
+				if(element instanceof IControlDevice) {
+					IControlDevice device = (IControlDevice)element;
+					return device.getDescription();
 				}
 				return "";
 			}

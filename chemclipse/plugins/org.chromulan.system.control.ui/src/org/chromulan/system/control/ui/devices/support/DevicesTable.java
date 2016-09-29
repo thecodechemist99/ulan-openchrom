@@ -41,8 +41,8 @@ public class DevicesTable {
 
 	private void createColumns(Composite parent, TableViewer viewer) {
 
-		String[] titles = {"Device Description"};
-		int[] bounds = {500};
+		String[] titles = {"Name", "Device Description"};
+		int[] bounds = {70, 400};
 		TableViewerColumn column = createTableViewerColumn(titles[0], bounds[0]);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
@@ -50,7 +50,17 @@ public class DevicesTable {
 			public String getText(Object element) {
 
 				IControlDevice controlDevice = (IControlDevice)element;
-				return controlDevice.toString();
+				return controlDevice.getName();
+			}
+		});
+		column = createTableViewerColumn(titles[1], bounds[1]);
+		column.setLabelProvider(new ColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+
+				IControlDevice controlDevice = (IControlDevice)element;
+				return controlDevice.getDescription();
 			}
 		});
 	}

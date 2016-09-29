@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.IControlDevices;
+import org.chromulan.system.control.devices.base.IUlanControlDevice;
 import org.chromulan.system.control.devices.connection.ULanConnection;
 import org.chromulan.system.control.devices.events.IControlDeviceEvents;
 import org.chromulan.system.control.devices.events.IULanConnectionEvents;
@@ -66,8 +67,11 @@ public class CloseConnection {
 	private void closeConnection() {
 
 		for(IControlDevice device : devices.getControlDevices()) {
-			device.setConnected(false);
-			eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
+			if (device instanceof IUlanControlDevice) {
+				IUlanControlDevice ulanDevice = (IUlanControlDevice) device;
+				ulanDevice.setConnected(false);
+				eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);	
+			}		
 		}
 		dataSupplier.updateControlDevices();
 		try {

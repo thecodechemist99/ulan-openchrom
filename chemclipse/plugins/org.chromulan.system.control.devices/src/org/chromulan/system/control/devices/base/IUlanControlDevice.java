@@ -32,6 +32,7 @@ public interface IUlanControlDevice extends IControlDevice {
 
 	String getID();
 
+	@Override
 	String getName();
 
 	void removePropertyChangeListener(PropertyChangeListener listener);
@@ -41,4 +42,8 @@ public interface IUlanControlDevice extends IControlDevice {
 	void setDeviceType(DeviceType deviceType);
 
 	void setName(String name);
+	
+	void setConnected(boolean b);
+	
+	void setPrepared(boolean b);
 }

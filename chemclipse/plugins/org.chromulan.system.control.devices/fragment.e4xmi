@@ -13,7 +13,7 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_6uQS4IWxEea5JaGqgknRSg" featurename="addons" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_KrdWcIWyEea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.addon.0" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.addons.AutoScanNet"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_PvH5EIW8Eea5JaGqgknRSg" featurename="parent" parentElementId="org.chromulan.system.control.ui.partstack.main">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_PvH5EIW8Eea5JaGqgknRSg" featurename="children" parentElementId="org.chromulan.system.control.ui.partstack.main">
     <elements xsi:type="basic:CompositePart" xmi:id="_kMqUQIW8Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.compositepart.ulandevices" label="Ulan Devices">
       <children xsi:type="basic:PartStack" xmi:id="_lZ8mwIW8Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.partstack.0">
         <children xsi:type="basic:Part" xmi:id="_cQ47EIW9Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.part.avaiabledevices" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.parts.AvailableDevicesPart" label="Avaiable Devices"/>

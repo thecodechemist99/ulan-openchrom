@@ -24,8 +24,9 @@ public interface IControlDevice extends Externalizable {
 	boolean isConnected();
 
 	boolean isPrepared();
-
-	void setConnected(boolean b);
-
-	void setPrepared(boolean b);
+	
+	String getName();
+	
+	String getDescription();
+	
 }

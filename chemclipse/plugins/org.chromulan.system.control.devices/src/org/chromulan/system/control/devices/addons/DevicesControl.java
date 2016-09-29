@@ -47,7 +47,7 @@ public class DevicesControl {
 		for(IControlDevice deviceCon : devices.getControlDevices()) {
 			if(deviceCon instanceof IUlanControlDevice) {
 				IUlanControlDevice device = (IUlanControlDevice)deviceCon;
-				IControlDevice controlDevice = IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), device.getID());
+				IUlanControlDevice controlDevice = IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), device.getID());
 				if(controlDevice == null) {
 					try {
 						DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
