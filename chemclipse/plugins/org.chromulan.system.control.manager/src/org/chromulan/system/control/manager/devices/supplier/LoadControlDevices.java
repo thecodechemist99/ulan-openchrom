@@ -12,6 +12,7 @@ import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.device.IDevicesProfile;
 import org.chromulan.system.control.device.IDevicesProfiles;
+import org.chromulan.system.control.device.setting.IDeviceSetting;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
@@ -52,7 +53,7 @@ public class LoadControlDevices {
 		String id = (String) in.readObject();
 		String className = (String) in.readObject();
 		for (IConfigurationElement element : elements) {
-			if(element.getDeclaringExtension().getSimpleIdentifier().equals(id))
+			if(element.getContributor().getName().equals(id))
 			{
 				Object o = element.createExecutableExtension("Create_Device");
 				if (o instanceof ICreateControlDevice) {
@@ -81,4 +82,36 @@ public class LoadControlDevices {
 		return devices;		
 	}
 	
+	public List<IDeviceSetting> loadSettings(ObjectInputStream in,IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException{
+		int size  = in.readInt();
+		List<IDeviceSetting> settings = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			IDeviceSetting setting = loadSetting(in, elements);
+			if(setting != null)
+			{
+				settings.add(setting);
+			}
+						
+		}
+		return settings;
+	}
+	
+    public IDeviceSetting loadSetting(ObjectInputStream in,IConfigurationElement[] elements) throws CoreException, ClassNotFoundException, IOException{
+    	String id = (String) in.readObject();
+		String className = (String) in.readObject();
+    	for (IConfigurationElement element : elements) {
+			if(element.getContributor().getName().equals(id))
+			{
+				Object o = element.createExecutableExtension("Create_Device");
+				if (o instanceof ICreateControlDevice) {
+					ICreateControlDevice createControlDevice = (ICreateControlDevice) o;
+					IDeviceSetting setting = createControlDevice.createDeviceSetting(className, in);
+					return setting;
+				}
+				
+			}
+		}
+    	
+    	throw new ClassNotFoundException();
+	}
 }

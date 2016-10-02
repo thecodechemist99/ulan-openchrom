@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -25,8 +26,9 @@ import javax.inject.Singleton;
 
 import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.device.IDevicesProfiles;
-import org.chromulan.system.control.events.IDataSupplierEvents;
+import org.chromulan.system.control.device.setting.IDeviceSetting;
 import org.chromulan.system.control.manager.devices.supplier.DeviceSupplier;
+import org.chromulan.system.control.manager.events.IDataSupplierEvents;
 import org.chromulan.system.control.preferences.PreferenceSupplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -72,6 +74,15 @@ public class DataSupplier {
 		if(dataStore != null) {
 			return dataStore.getControlDevices();
 		} else {
+			return null;
+		}
+	}
+	
+	public List<IDeviceSetting> getDeviceSettings(){
+		if(dataStore !=null){
+			return dataStore.getDeviceSettings();
+		}
+		else {
 			return null;
 		}
 	}
@@ -130,10 +141,6 @@ public class DataSupplier {
 		outputStream.close();
 	}
 
-	public void update() {
-
-		eventBroker.post(IDataSupplierEvents.TOPIC_DATA_UPDATE, this);
-	}
 
 	public void updateControlDevices() {
 
@@ -143,5 +150,9 @@ public class DataSupplier {
 	public void updateProfiles() {
 
 		eventBroker.post(IDataSupplierEvents.TOPIC_DATA_UPDATE_PROFILES, this);
+	}
+	public void updateSettings() {
+
+		eventBroker.post(IDataSupplierEvents.TOPIC_DATA_UPDATE_SETTINGS, this);
 	}
 }

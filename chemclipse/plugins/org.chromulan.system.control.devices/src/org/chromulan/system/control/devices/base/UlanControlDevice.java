@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import org.chromulan.system.control.device.setting.IDeviceSetting;
+import org.chromulan.system.control.devices.Activator;
+
 import net.sourceforge.ulan.base.DeviceDescription;
 
 public class UlanControlDevice implements IUlanControlDevice {
@@ -26,11 +29,14 @@ public class UlanControlDevice implements IUlanControlDevice {
 	private boolean isConnected;
 	private boolean isPrepared;
 	private String name;
+	private IDeviceSetting deviceSetting;
 	protected PropertyChangeSupport propertyChangeSupport;
+	
 
 	public UlanControlDevice() {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		this.deviceType = DeviceType.UNKNOWEN;
+		this.deviceSetting = new UlanDeviceSetting();
 	}
 
 	public UlanControlDevice(DeviceDescription description, boolean isConnected) {
@@ -108,6 +114,7 @@ public class UlanControlDevice implements IUlanControlDevice {
 		long adr = in.readLong();
 		String description = (String)in.readObject();
 		this.description = new DeviceDescription(adr, description);
+		this.deviceSetting = (IDeviceSetting) in.readObject();
 	}
 
 	@Override
@@ -159,11 +166,23 @@ public class UlanControlDevice implements IUlanControlDevice {
 		out.writeObject(deviceType.name());
 		out.writeLong(description.getAdr());
 		out.writeObject(description.getDescription());
+		out.writeObject(deviceSetting);
 	}
 	
 	@Override
-	public String getIdExtension() {
+	public String getPluginID() {
 		
-		return "org.chromulan.system.control.devices.supplier";
+		return Activator.PLUGIN_ID;
+	}
+
+	@Override
+	public void setDeviceSetting(IDeviceSetting deviceSetting) {
+		this.deviceSetting = deviceSetting;
+		
+	}
+
+	@Override
+	public IDeviceSetting getDeviceSetting() {	
+		return deviceSetting;
 	}
 }

@@ -13,6 +13,8 @@ package org.chromulan.system.control.device;
 
 import java.io.Externalizable;
 
+import org.chromulan.system.control.device.setting.IDeviceSetting;
+
 public interface IControlDevice extends Externalizable {
 
 	final int FLG_SUPPORT_CSD_CHROMATOGRAM = 0b1;
@@ -29,6 +31,10 @@ public interface IControlDevice extends Externalizable {
 	
 	String getDescription();
 	
-	String getIdExtension();
+	String getPluginID();
+	
+	void setDeviceSetting(IDeviceSetting deviceSetting);
+	
+	IDeviceSetting getDeviceSetting();
 	
 }

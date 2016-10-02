@@ -9,11 +9,11 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.events;
+package org.chromulan.system.control.manager.events;
 
 public interface IDataSupplierEvents {
 
-	String TOPIC_DATA_UPDATE = "data/update/*";
 	String TOPIC_DATA_UPDATE_DEVICES = "data/update/devices";
 	String TOPIC_DATA_UPDATE_PROFILES = "data/update/profiles";
+	String TOPIC_DATA_UPDATE_SETTINGS = "data/update/settings";
 }

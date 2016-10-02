@@ -8,6 +8,7 @@ import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.device.IDevicesProfile;
 import org.chromulan.system.control.device.IDevicesProfiles;
+import org.chromulan.system.control.device.setting.IDeviceSetting;
 
 public class SaveControlDevices {
 	
@@ -35,8 +36,17 @@ public class SaveControlDevices {
 		}
 	}
 	
+	public void saveDeviceSettings(ObjectOutputStream out,List<IDeviceSetting> settings) throws IOException{
+		out.writeInt(settings.size());
+		for (IDeviceSetting setting : settings) {
+			out.writeObject(setting.getPluginID());
+			out.writeObject(IDeviceSetting.class.getName());
+			out.writeObject(setting);
+		}
+	}
+	
 	public  void saveControlDevice(ObjectOutputStream out, IControlDevice controlDevice) throws IOException{
-		out.writeObject(controlDevice.getIdExtension());
+		out.writeObject(controlDevice.getPluginID());
 		out.writeObject(controlDevice.getClass().getName());
 		out.writeObject(controlDevice);
 	}

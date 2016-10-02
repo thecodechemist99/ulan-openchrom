@@ -14,6 +14,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: net.sourceforge.ulan.base,
  net.sourceforge.ulan.base.exceptions,
  org.chromulan.system.control.device,
+ org.chromulan.system.control.device.setting,
  org.chromulan.system.control.events,
  org.chromulan.system.control.manager.devices,
  org.chromulan.system.control.manager.devices.supplier,
