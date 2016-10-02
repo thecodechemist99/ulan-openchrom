@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.inject.Inject;
 
-import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.devices.base.IUlanControlDevice;
 import org.chromulan.system.control.devices.base.IUlanControlDevices;
@@ -25,6 +24,7 @@ import org.chromulan.system.control.devices.connection.ULanConnection;
 import org.chromulan.system.control.devices.events.IControlDeviceEvents;
 import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.devices.supports.UlanScanNetRunnable;
+import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;

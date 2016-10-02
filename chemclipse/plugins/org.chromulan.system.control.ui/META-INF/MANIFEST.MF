@@ -21,7 +21,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.osgi.services
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.chemclipse.converter.processing,
+Import-Package: org.chromulan.system.control.manager.devices,
+ org.eclipse.chemclipse.converter.processing,
  org.eclipse.chemclipse.csd.converter.chromatogram,
  org.eclipse.chemclipse.csd.model.core,
  org.eclipse.chemclipse.csd.model.implementation,

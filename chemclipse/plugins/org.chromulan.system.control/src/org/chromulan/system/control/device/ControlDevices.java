@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.chromulan.system.control.device;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,21 +28,4 @@ public class ControlDevices implements IControlDevices {
 		return controlDevices;
 	}
 
-	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-
-		controlDevices = (List<IControlDevice>)in.readObject();
-	}
-
-	@Override
-	public void removeAllControlDevices() {
-
-		controlDevices.clear();
-	}
-
-	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
-
-		out.writeObject(controlDevices);
-	}
 }

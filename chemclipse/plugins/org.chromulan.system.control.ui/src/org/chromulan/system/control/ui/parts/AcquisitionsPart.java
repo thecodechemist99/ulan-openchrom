@@ -21,11 +21,11 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.IDevicesProfile;
 import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.events.IDataSupplierEvents;
+import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.chromulan.system.control.model.AcquisitionCSD;
 import org.chromulan.system.control.model.AcquisitionCSDSaver;
 import org.chromulan.system.control.model.AcquisitionsCSD;

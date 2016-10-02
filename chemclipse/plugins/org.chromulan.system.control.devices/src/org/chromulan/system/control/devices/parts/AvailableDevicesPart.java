@@ -17,13 +17,13 @@ import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.devices.connection.ULanConnection;
 import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.devices.handlers.ScanNet;
 import org.chromulan.system.control.devices.supports.DevicesTable;
 import org.chromulan.system.control.events.IDataSupplierEvents;
+import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;

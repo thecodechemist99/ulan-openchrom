@@ -13,13 +13,13 @@ package org.chromulan.system.control.devices.addons;
 
 import javax.inject.Inject;
 
-import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.device.ControlDevices;
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.devices.base.IUlanControlDevice;
 import org.chromulan.system.control.devices.base.IUlanControlDevices;
 import org.chromulan.system.control.devices.events.IControlDeviceEvents;
 import org.chromulan.system.control.events.IControlDevicesEvents;
+import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;

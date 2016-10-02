@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.chromulan.system.control.device;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,13 +59,6 @@ public class DevicesProfile extends ControlDevices implements IDevicesProfile {
 	}
 
 	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-
-		super.readExternal(in);
-		this.name = (String)in.readObject();
-	}
-
-	@Override
 	public void removeAcqusition(IAcquisition acquisition) {
 
 		acquisitions.remove(acquisition);
@@ -78,12 +68,5 @@ public class DevicesProfile extends ControlDevices implements IDevicesProfile {
 	public void setName(String name) {
 
 		this.name = name;
-	}
-
-	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
-
-		super.writeExternal(out);
-		out.writeObject(name);
 	}
 }

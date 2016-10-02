@@ -160,4 +160,10 @@ public class UlanControlDevice implements IUlanControlDevice {
 		out.writeLong(description.getAdr());
 		out.writeObject(description.getDescription());
 	}
+	
+	@Override
+	public String getIdExtension() {
+		
+		return "org.chromulan.system.control.devices.supplier";
+	}
 }

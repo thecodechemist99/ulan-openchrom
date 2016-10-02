@@ -9,18 +9,22 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.data;
+package org.chromulan.system.control.manager.devices;
 
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.chromulan.system.control.device.ControlDevices;
 import org.chromulan.system.control.device.DevicesProfiles;
 import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.device.IDevicesProfiles;
+import org.chromulan.system.control.manager.devices.supplier.LoadControlDevices;
+import org.chromulan.system.control.manager.devices.supplier.SaveControlDevices;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
-public class DataStore implements IDataStore {
+public class DataStore {
 
 	private IControlDevices devices;
 	private IDevicesProfiles profiles;
@@ -30,29 +34,25 @@ public class DataStore implements IDataStore {
 		profiles = new DevicesProfiles();
 	}
 
-	@Override
 	public IControlDevices getControlDevices() {
 
 		return devices;
 	}
 
-	@Override
 	public IDevicesProfiles getDevicesProfiles() {
-
 		return profiles;
 	}
 
-	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-
-		this.devices = (IControlDevices)in.readObject();
-		this.profiles = (IDevicesProfiles)in.readObject();
+	public void readExternal(ObjectInputStream in,IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException {
+		LoadControlDevices loadControlDevices = new LoadControlDevices();
+		devices = loadControlDevices.loadControlDevices(in, elements);
+		profiles = loadControlDevices.loadProfiles(in, elements);
 	}
 
-	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
-
-		out.writeObject(devices);
-		out.writeObject(profiles);
+	
+	public void writeExternal(ObjectOutputStream out) throws IOException {
+		SaveControlDevices saveControlDevices = new SaveControlDevices();
+		saveControlDevices.saveControlDevices(out, devices);
+		saveControlDevices.saveProfiles(out, profiles);		
 	}
 }

@@ -8,5 +8,11 @@
             uri="fragment.e4xmi">
       </fragment>
    </extension>
-
+   <extension
+         id="org.chromulan.system.control.devices.supplier"
+         point="org.chromulan.system.control.manager.devicesupplier">
+      <DeviceSupplier
+            Create_Device="org.chromulan.system.control.devices.supplier.UlanCreateDevice">
+      </DeviceSupplier>
+   </extension>
 </plugin>

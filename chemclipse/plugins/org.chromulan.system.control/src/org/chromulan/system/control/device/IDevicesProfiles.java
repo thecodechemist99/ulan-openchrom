@@ -11,10 +11,9 @@
  *******************************************************************************/
 package org.chromulan.system.control.device;
 
-import java.io.Externalizable;
 import java.util.List;
 
-public interface IDevicesProfiles extends Externalizable {
+public interface IDevicesProfiles {
 
 	void add(IDevicesProfile devicesProfile);
 

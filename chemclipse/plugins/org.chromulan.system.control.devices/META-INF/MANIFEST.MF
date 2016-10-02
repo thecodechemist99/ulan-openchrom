@@ -1,4 +1,4 @@
-Manifest-Version: 1.0
+SManifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Devices
 Bundle-SymbolicName: org.chromulan.system.control.devices;singleton:=true
@@ -13,9 +13,10 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: net.sourceforge.ulan.base,
  net.sourceforge.ulan.base.exceptions,
- org.chromulan.system.control.data,
  org.chromulan.system.control.device,
  org.chromulan.system.control.events,
+ org.chromulan.system.control.manager.devices,
+ org.chromulan.system.control.manager.devices.supplier,
  org.chromulan.system.control.model,
  org.chromulan.system.control.preferences,
  org.eclipse.chemclipse.converter.core,

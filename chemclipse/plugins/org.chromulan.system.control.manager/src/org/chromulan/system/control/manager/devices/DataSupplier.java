@@ -9,7 +9,7 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.data;
+package org.chromulan.system.control.manager.devices;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -25,7 +26,11 @@ import javax.inject.Singleton;
 import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.device.IDevicesProfiles;
 import org.chromulan.system.control.events.IDataSupplierEvents;
+import org.chromulan.system.control.manager.devices.supplier.DeviceSupplier;
 import org.chromulan.system.control.preferences.PreferenceSupplier;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -34,18 +39,29 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 @Singleton
 public class DataSupplier {
 
-	private IDataStore dataStore;
+	private DataStore dataStore;
 	@Inject
 	private IEventBroker eventBroker;
+	@Inject
+	private IExtensionRegistry registry;
+	
 	private final String FILE_NAME = "dataStore";
 
+	
 	public DataSupplier() {
 		dataStore = new DataStore();
+	}
+	
+	
+	@PostConstruct
+	public void postConstruct() {
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor(DeviceSupplier.ID);
 		File file = getFile();
+		
 		if(file != null && file.exists()) {
 			try {
-				loadData(file);
-			} catch(ClassNotFoundException | IOException e) {
+				loadData(file,elements);
+			} catch(ClassNotFoundException | IOException | CoreException e) {
 				// logger.warn(e);
 			}
 		}
@@ -84,11 +100,11 @@ public class DataSupplier {
 		return defFile;
 	}
 
-	private void loadData(File file) throws IOException, ClassNotFoundException {
+	private void loadData(File file,IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException {
 
 		FileInputStream inputStream = new FileInputStream(file);
 		ObjectInputStream in = new ObjectInputStream(inputStream);
-		dataStore = (IDataStore)in.readObject();
+		dataStore.readExternal(in, elements);
 		in.close();
 		inputStream.close();
 	}
@@ -109,7 +125,7 @@ public class DataSupplier {
 
 		FileOutputStream outputStream = new FileOutputStream(file);
 		ObjectOutputStream out = new ObjectOutputStream(outputStream);
-		out.writeObject(dataStore);
+		dataStore.writeExternal(out);
 		out.close();
 		outputStream.close();
 	}

@@ -11,12 +11,10 @@
  *******************************************************************************/
 package org.chromulan.system.control.device;
 
-import java.io.Externalizable;
 import java.util.List;
 
-public interface IControlDevices extends Externalizable {
+public interface IControlDevices {
 
 	List<IControlDevice> getControlDevices();
 
-	void removeAllControlDevices();
 }

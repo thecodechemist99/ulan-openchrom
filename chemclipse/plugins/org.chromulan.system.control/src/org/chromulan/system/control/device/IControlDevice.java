@@ -29,4 +29,6 @@ public interface IControlDevice extends Externalizable {
 	
 	String getDescription();
 	
+	String getIdExtension();
+	
 }

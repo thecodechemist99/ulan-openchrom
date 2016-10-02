@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Manager
+Bundle-SymbolicName: org.chromulan.system.control.manager;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.chromulan.system.control.manager.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.chromulan.system.control
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.chemclipse.support.preferences,
+ org.eclipse.e4.core.di.annotations,
+ org.eclipse.e4.core.services.events
+Export-Package: org.chromulan.system.control.manager.devices,
+ org.chromulan.system.control.manager.devices.supplier
