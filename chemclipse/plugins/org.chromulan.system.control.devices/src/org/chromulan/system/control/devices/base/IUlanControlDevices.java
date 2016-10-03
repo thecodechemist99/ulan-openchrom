@@ -18,7 +18,7 @@ public interface IUlanControlDevices {
 
 	static boolean add(IControlDevices controlDevices, IUlanControlDevice device) {
 
-		if(null == containsDevice(controlDevices, device.getID())) {
+		if(null == containsDevice(controlDevices, device.getDeviceID())) {
 			controlDevices.getControlDevices().add(device);
 			return true;
 		}
@@ -50,7 +50,7 @@ public interface IUlanControlDevices {
 		for(IControlDevice device : controlDevices.getControlDevices()) {
 			if(device instanceof IUlanControlDevice) {
 				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
-				if(ulanDevice.getID().equals(id)) {
+				if(ulanDevice.getDeviceID().equals(id)) {
 					return ulanDevice;
 				}
 			}

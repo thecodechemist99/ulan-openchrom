@@ -67,18 +67,18 @@ public class ScanNet {
 		for(IUlanControlDevice device : devices.getControlDevices()) {
 			if(device instanceof IUlanControlDevice) {
 				IUlanControlDevice ulanDevice = device;
-				if(IUlanControlDevices.contains(this.dataSupplier.getControlDevices(), ulanDevice.getID())) {
-					IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getID()).setConnected(true);
+				if(IUlanControlDevices.contains(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID())) {
+					IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID()).setConnected(true);
 				} else {
 					IUlanControlDevices.add(this.dataSupplier.getControlDevices(), ulanDevice);
 				}
-				eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getID()));
+				eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID()));
 			}
 		}
 		for(IControlDevice device : this.dataSupplier.getControlDevices().getControlDevices()) {
 			if(device instanceof IUlanControlDevice) {
 				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
-				if(!devices.contains(ulanDevice.getID())) {
+				if(!devices.contains(ulanDevice.getDeviceID())) {
 					ulanDevice.setConnected(false);
 					eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, ulanDevice);
 				}

@@ -9,12 +9,23 @@ public interface IDeviceSetting extends  Externalizable{
 	
 	void setName(String name);
 	
+	String getDeviceType();
+	
+	void setDeviceType(String type);
+	
+	String getDeviceID();
+	
+	void setDeviceID(String id);
+	
 	String getPluginID();
+	
+	void setPlugnID(String id);
 		
 	HashMap<String,IValue<?>>getValues();
 	
 	void updateValueListeners();
 	
 	void addUpdateValueListener(IValueChangeListener listener);
+	
 	
 }

@@ -36,7 +36,18 @@ public class SaveControlDevices {
 		}
 	}
 	
+	public  void saveControlDevice(ObjectOutputStream out, IControlDevice controlDevice) throws IOException{
+		out.writeObject(controlDevice.getPluginID());
+		out.writeObject(controlDevice.getClass().getName());
+		out.writeObject(controlDevice);
+	}
+	
 	public void saveDeviceSettings(ObjectOutputStream out,List<IDeviceSetting> settings) throws IOException{
+		out.writeObject(settings);	
+	}
+	
+	
+	/*public void saveDeviceSettings(ObjectOutputStream out,List<IDeviceSetting> settings) throws IOException{
 		out.writeInt(settings.size());
 		for (IDeviceSetting setting : settings) {
 			out.writeObject(setting.getPluginID());
@@ -45,11 +56,7 @@ public class SaveControlDevices {
 		}
 	}
 	
-	public  void saveControlDevice(ObjectOutputStream out, IControlDevice controlDevice) throws IOException{
-		out.writeObject(controlDevice.getPluginID());
-		out.writeObject(controlDevice.getClass().getName());
-		out.writeObject(controlDevice);
-	}
+	*/
 	
 
 }

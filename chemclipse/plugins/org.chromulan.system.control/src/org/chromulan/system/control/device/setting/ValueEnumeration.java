@@ -1,6 +1,6 @@
 package org.chromulan.system.control.device.setting;
 
-public class ValueEnumeration implements IValue<String>{
+public class ValueEnumeration extends AbstractValue<String>{
 
 	/**
 	 * 
@@ -9,32 +9,15 @@ public class ValueEnumeration implements IValue<String>{
 	private String[] values;
 	private int value;
 	private int defValue;
-	private String name;
-	private IDeviceSetting device;
-	private boolean isChangeable;
+
 	
 	
 	
 	
 	public ValueEnumeration(IDeviceSetting device, String name, String[] values, int defValue, boolean isChangeable) {
-		super();
+		super(device,name,isChangeable);
 		this.values = values;
 		this.defValue = defValue;
-		this.name = name;
-		this.device = device;
-		this.isChangeable = isChangeable;
-	}
-
-
-	@Override
-	public IDeviceSetting getDevice() {
-		return device;
-	}
-
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override
@@ -44,7 +27,7 @@ public class ValueEnumeration implements IValue<String>{
 
 	@Override
 	public void setValue(String value) {
-		if(isChangeable){
+		if(isChangeable()){
 			for (int i = 0; i < values.length; i++) {
 				if (values[i].equals(value)) {
 					this.value = i;
@@ -60,10 +43,6 @@ public class ValueEnumeration implements IValue<String>{
 		return values[defValue];
 	}
 
-	@Override
-	public boolean isChangeable() {
-		return isChangeable;
-	}
 	
 	@Override
 	public String valueToString() {
@@ -71,11 +50,5 @@ public class ValueEnumeration implements IValue<String>{
 		return values[value];
 	}
 
-
-	@Override
-	public void setChangeable(boolean b) {
-		this.isChangeable = b;
-		
-	}
 
 }

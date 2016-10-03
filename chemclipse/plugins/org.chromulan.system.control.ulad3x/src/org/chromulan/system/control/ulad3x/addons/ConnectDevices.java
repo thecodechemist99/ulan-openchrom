@@ -54,11 +54,11 @@ public class ConnectDevices {
 		for(String suportDevice : supportedDevices) {
 			if(device.getDeviceDescription().getModulType().toLowerCase().equals(suportDevice)) {
 				device.setDeviceType(DeviceType.DETECTOR);
-				if(modelService.find(device.getID(), application) == null) {
+				if(modelService.find(device.getDeviceID(), application) == null) {
 					MPart part = MBasicFactory.INSTANCE.createPart();
-					part.setLabel(device.getID());
+					part.setLabel(device.getDeviceID());
 					part.setObject(device);
-					part.setElementId(device.getID());
+					part.setElementId(device.getDeviceID());
 					part.setCloseable(false);
 					part.setIconURI("platform:/plugin/org.chromulan.system.control.ulad3x/icons/16x16/devices.gif");
 					part.setContributionURI("bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.ulad3x.parts.ULad3xPart");

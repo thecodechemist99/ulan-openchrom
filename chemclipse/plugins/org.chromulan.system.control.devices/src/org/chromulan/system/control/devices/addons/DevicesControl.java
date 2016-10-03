@@ -47,13 +47,13 @@ public class DevicesControl {
 		for(IControlDevice deviceCon : devices.getControlDevices()) {
 			if(deviceCon instanceof IUlanControlDevice) {
 				IUlanControlDevice device = (IUlanControlDevice)deviceCon;
-				IUlanControlDevice controlDevice = IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), device.getID());
+				IUlanControlDevice controlDevice = IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), device.getDeviceID());
 				if(controlDevice == null) {
 					try {
 						DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
 						if(description != null) {
 							IUlanControlDevices.add(this.dataSupplier.getControlDevices(), device);
-							eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), device.getID()));
+							eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), device.getDeviceID()));
 						}
 					} catch(Exception e) {
 					}

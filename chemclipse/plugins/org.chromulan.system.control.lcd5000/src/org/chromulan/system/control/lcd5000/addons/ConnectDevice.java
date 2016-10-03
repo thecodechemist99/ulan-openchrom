@@ -54,11 +54,11 @@ public class ConnectDevice {
 		for(String nameDevice : supportedDevices) {
 			if(device.getDeviceDescription().getModulType().toLowerCase().equals(nameDevice)) {
 				device.setDeviceType(DeviceType.DETECTOR);
-				if(modelService.find(device.getID(), application) == null) {
+				if(modelService.find(device.getDeviceID(), application) == null) {
 					MPart part = MBasicFactory.INSTANCE.createPart();
-					part.setLabel(device.getID());
+					part.setLabel(device.getDeviceID());
 					part.setObject(device);
-					part.setElementId(device.getID());
+					part.setElementId(device.getDeviceID());
 					part.setCloseable(false);
 					part.setIconURI("platform:/plugin/org.chromulan.system.control.lcd5000/icons/16x16/devices.gif");
 					part.setContributionURI("bundleclass://org.chromulan.system.control.lcd5000/org.chromulan.system.control.lcd5000.parts.Lcd5000Part");

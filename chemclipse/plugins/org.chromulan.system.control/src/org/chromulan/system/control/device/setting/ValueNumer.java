@@ -1,40 +1,23 @@
 package org.chromulan.system.control.device.setting;
 
-public abstract class ValueNumer<Num extends Number> implements IValueNumber<Num> {
+public abstract class ValueNumer<Num extends Number> extends AbstractValue<Num> implements IValueNumber<Num>{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2024634992212923691L;
-	private IDeviceSetting device;
-	private String name;
 	private Num value;
 	private Num defValue;
-	private boolean isChangeable;
 	private Num min;
 	private Num max;
 	
 	public ValueNumer(IDeviceSetting device, String name, Num defValue, boolean isChangeable, Num min, Num max) {
-		super();
-		this.device = device;
-		this.name = name;
+		super(device,name,isChangeable);
 		this.defValue = defValue;
-		this.isChangeable = isChangeable;
 		this.min = min;
 		this.max = max;
 	}
 
-	@Override
-	public IDeviceSetting getDevice() {
-		
-		return device;
-	}
-
-	@Override
-	public String getName() {
-		
-		return name;
-	}
 
 	@Override
 	public Num getValue() {
@@ -44,7 +27,7 @@ public abstract class ValueNumer<Num extends Number> implements IValueNumber<Num
 
 	@Override
 	public void setValue(Num value) {
-		if (isChangeable) {
+		if (isChangeable()) {
 			this.value = value;
 		}		
 	}
@@ -55,12 +38,6 @@ public abstract class ValueNumer<Num extends Number> implements IValueNumber<Num
 		return defValue;
 	}
 
-	@Override
-	public boolean isChangeable() {
-		
-		return isChangeable;
-	}
-	
 	@Override
 	public Num getMax() {
 		
@@ -81,10 +58,5 @@ public abstract class ValueNumer<Num extends Number> implements IValueNumber<Num
 	@Override
 	public void setMin(Num min) {
 		this.min = min;
-	}
-	
-	@Override
-	public void setChangeable(boolean b) {
-		this.isChangeable = b;		
 	}
 }

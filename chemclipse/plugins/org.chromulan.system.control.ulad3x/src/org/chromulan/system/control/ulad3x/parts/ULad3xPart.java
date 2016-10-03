@@ -203,7 +203,7 @@ public class ULad3xPart {
 	@Optional
 	public void setAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition analisis) {
 
-		if(this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null && IUlanControlDevices.contains(analisis.getDevicesProfile(), controlDevice.getID())) {
+		if(this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null && IUlanControlDevices.contains(analisis.getDevicesProfile(), controlDevice.getDeviceID())) {
 			this.acquisition = analisis;
 		}
 	}

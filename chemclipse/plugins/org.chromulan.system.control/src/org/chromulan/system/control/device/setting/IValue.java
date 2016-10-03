@@ -18,6 +18,10 @@ public interface IValue<ValueType> extends Serializable{
 	
 	void setChangeable(boolean b);
 	
+	boolean isPrintable();
+	
+	void setPrintable(boolean b);
+	
 	default String valueToString()
 	{
 		return getValue().toString();

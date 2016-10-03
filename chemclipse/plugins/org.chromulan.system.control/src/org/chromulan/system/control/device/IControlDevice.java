@@ -29,6 +29,10 @@ public interface IControlDevice extends Externalizable {
 	
 	String getName();
 	
+	String getType();
+	
+	String getDeviceID();
+	
 	String getDescription();
 	
 	String getPluginID();

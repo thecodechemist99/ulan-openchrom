@@ -26,7 +26,7 @@ public class UlanDevicesStore {
 
 	public boolean add(IUlanControlDevice device) {
 
-		if(null == containsDevice(device.getID())) {
+		if(null == containsDevice(device.getDeviceID())) {
 			devices.add(device);
 			return true;
 		}
@@ -58,7 +58,7 @@ public class UlanDevicesStore {
 		for(IControlDevice device : devices) {
 			if(device instanceof IUlanControlDevice) {
 				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
-				if(ulanDevice.getID().equals(id)) {
+				if(ulanDevice.getDeviceID().equals(id)) {
 					return ulanDevice;
 				}
 			}

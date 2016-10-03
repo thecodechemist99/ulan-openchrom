@@ -18,6 +18,8 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
+	
+	public static final String PLUGIN_ID = "org.chromulan.system.control";
 
 	public static BundleContext getContext() {
 
