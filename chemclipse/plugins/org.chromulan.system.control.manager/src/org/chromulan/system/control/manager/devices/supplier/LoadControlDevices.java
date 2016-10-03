@@ -87,48 +87,4 @@ public class LoadControlDevices {
 			throws IOException, ClassNotFoundException, CoreException {
 		return (List<IDeviceSetting>) in.readObject();
 	}
-
-	/*public List<IDeviceSetting> loadSettings(ObjectInputStream in, IConfigurationElement[] elements)
-			throws IOException, ClassNotFoundException, CoreException {
-		int size = in.readInt();
-		List<IDeviceSetting> settings = new ArrayList<>();
-		for (int i = 0; i < size; i++) {
-			IDeviceSetting setting = loadSetting(in, elements);
-			settings.add(setting);
-
-		}
-		return settings;
-	}
-
-	public IDeviceSetting loadSetting(ObjectInputStream in, IConfigurationElement[] elements)
-			throws CoreException, ClassNotFoundException, IOException {
-		String id = (String) in.readObject();
-		String className = (String) in.readObject();
-		if (DeviceSetting.PLUGIN_ID.equals(id)) {
-			if (DeviceSetting.class.getName().equals(className)) {
-				return (DeviceSetting) in.readObject();
-			} else {
-				throw new ClassNotFoundException();
-			}
-		}
-
-		for (IConfigurationElement element : elements) {
-			if (element.getContributor().getName().equals(id)) {
-				Object o = element.createExecutableExtension("Create_Device");
-				if (o instanceof ICreateControlDevice) {
-					ICreateControlDevice createControlDevice = (ICreateControlDevice) o;
-					IDeviceSetting setting = createControlDevice.createDeviceSetting(className, in);
-					if (setting != null) {
-						return setting;
-					} else {
-						throw new ClassNotFoundException();
-					}
-
-				}
-
-			}
-		}
-
-		throw new ClassNotFoundException();
-	}*/
 }

@@ -45,18 +45,4 @@ public class SaveControlDevices {
 	public void saveDeviceSettings(ObjectOutputStream out,List<IDeviceSetting> settings) throws IOException{
 		out.writeObject(settings);	
 	}
-	
-	
-	/*public void saveDeviceSettings(ObjectOutputStream out,List<IDeviceSetting> settings) throws IOException{
-		out.writeInt(settings.size());
-		for (IDeviceSetting setting : settings) {
-			out.writeObject(setting.getPluginID());
-			out.writeObject(IDeviceSetting.class.getName());
-			out.writeObject(setting);
-		}
-	}
-	
-	*/
-	
-
 }
