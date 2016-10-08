@@ -18,7 +18,9 @@
       <children xsi:type="basic:PartStack" xmi:id="_lZ8mwIW8Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.partstack.0">
         <children xsi:type="basic:Part" xmi:id="_cQ47EIW9Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.part.avaiabledevices" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.parts.AvailableDevicesPart" label="Avaiable Devices"/>
       </children>
-      <children xsi:type="basic:PartStack" xmi:id="_mE194IW8Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.partstack.devicesSetting"/>
+      <children xsi:type="basic:PartStack" xmi:id="_mE194IW8Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.partstack.devicesSetting">
+        <tags>NoAutoCollapse</tags>
+      </children>
     </elements>
   </fragments>
 </fragment:ModelFragments>
