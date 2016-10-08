@@ -1,6 +1,6 @@
 package org.chromulan.system.control.device.setting;
 
-public class ValueEnumeration<Value> extends AbstractValue<Value>{
+public class ValueEnumeration<Value> extends AbstractValue<Value> {
 
 	/**
 	 * 
@@ -10,12 +10,8 @@ public class ValueEnumeration<Value> extends AbstractValue<Value>{
 	private int value;
 	private int defValue;
 
-	
-	
-	
-	
 	public ValueEnumeration(IDeviceSetting device, String name, Value[] values, int defValue, boolean isChangeable) {
-		super(device,name,isChangeable);
+		super(device, name, isChangeable);
 		this.values = values;
 		this.defValue = defValue;
 	}
@@ -32,32 +28,27 @@ public class ValueEnumeration<Value> extends AbstractValue<Value>{
 				this.value = i;
 				return;
 			}
-		}	
+		}
 	}
-	
-	public int getOrderSelection()
-	{
+
+	public int getOrderSelection() {
 		return value;
 	}
-	
-	public Value[] getValues()
-	{
+
+	public Value[] getValues() {
 		return values;
 	}
-	
 
 	@Override
 	public Value getDefaulValue() {
-		
+
 		return values[defValue];
 	}
 
-	
 	@Override
 	public String valueToString() {
-		
+
 		return values[value].toString();
 	}
-
 
 }

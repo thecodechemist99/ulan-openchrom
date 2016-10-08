@@ -29,7 +29,7 @@ public class DevicesProfile extends ControlDevices implements IDevicesProfile {
 	@Override
 	public void addAcquisition(IAcquisition acquisition) {
 
-		if(!containsAcqusition(acquisition)) {
+		if (!containsAcqusition(acquisition)) {
 			acquisitions.add(acquisition);
 		}
 	}

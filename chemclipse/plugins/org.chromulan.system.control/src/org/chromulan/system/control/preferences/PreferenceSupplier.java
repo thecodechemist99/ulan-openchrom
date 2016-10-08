@@ -29,7 +29,7 @@ public class PreferenceSupplier implements IPreferenceSupplier {
 
 	public static IPreferenceSupplier INSTANCE() {
 
-		if(preferenceSupplier == null) {
+		if (preferenceSupplier == null) {
 			preferenceSupplier = new PreferenceSupplier();
 		}
 		return preferenceSupplier;

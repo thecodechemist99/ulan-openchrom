@@ -17,8 +17,8 @@ public class AcquisitionsCSD extends AbstractAcquisitions implements IAcquisitio
 	public IAcquisitionCSD getAcquisitionCSD(int index) {
 
 		IAcquisition acquisition = getAcquisition(index);
-		if(acquisition instanceof IAcquisitionCSD) {
-			return (IAcquisitionCSD)acquisition;
+		if (acquisition instanceof IAcquisitionCSD) {
+			return (IAcquisitionCSD) acquisition;
 		}
 		return null;
 	}
@@ -27,8 +27,8 @@ public class AcquisitionsCSD extends AbstractAcquisitions implements IAcquisitio
 	public IAcquisitionCSD getActualAcquisitionCSD() {
 
 		IAcquisition acquisition = getActualAcquisition();
-		if(acquisition instanceof IAcquisitionCSD) {
-			return (IAcquisitionCSD)acquisition;
+		if (acquisition instanceof IAcquisitionCSD) {
+			return (IAcquisitionCSD) acquisition;
 		}
 		return null;
 	}

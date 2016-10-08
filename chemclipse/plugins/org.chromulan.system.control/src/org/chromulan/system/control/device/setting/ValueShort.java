@@ -11,5 +11,4 @@ public class ValueShort extends ValueNumer<Short> {
 		super(device, name, defValue, isChangeable, Short.MIN_VALUE, Short.MAX_VALUE);
 	}
 
-
 }

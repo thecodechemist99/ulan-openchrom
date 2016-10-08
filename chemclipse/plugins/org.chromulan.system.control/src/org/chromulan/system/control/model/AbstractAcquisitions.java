@@ -31,7 +31,7 @@ public abstract class AbstractAcquisitions implements IAcquisitions {
 	public void addAcquisition(IAcquisition acquisition) {
 
 		acquisitions.add(acquisition);
-		if(actualAcquisition == null) {
+		if (actualAcquisition == null) {
 			actualAcquisition = acquisition;
 		}
 	}
@@ -40,7 +40,7 @@ public abstract class AbstractAcquisitions implements IAcquisitions {
 	public void addAcquisition(IAcquisition acquisition, int index) {
 
 		acquisitions.add(index, acquisition);
-		if(actualAcquisition == null) {
+		if (actualAcquisition == null) {
 			actualAcquisition = acquisition;
 		}
 	}
@@ -84,7 +84,8 @@ public abstract class AbstractAcquisitions implements IAcquisitions {
 	@Override
 	public boolean hasNextAcquisitionActual() {
 
-		return (actualAcquisition != null) && !acquisitions.isEmpty() && (acquisitions.indexOf(actualAcquisition) + 1 < acquisitions.size());
+		return (actualAcquisition != null) && !acquisitions.isEmpty()
+				&& (acquisitions.indexOf(actualAcquisition) + 1 < acquisitions.size());
 	}
 
 	@Override
@@ -94,11 +95,11 @@ public abstract class AbstractAcquisitions implements IAcquisitions {
 		IAcquisition acquisition2 = acquisitions.get(index2);
 		acquisitions.set(index2, acquisition1);
 		acquisitions.set(index1, acquisition2);
-		if(changeActualAcquisition) {
-			if(actualAcquisition == acquisition1) {
+		if (changeActualAcquisition) {
+			if (actualAcquisition == acquisition1) {
 				actualAcquisition = acquisition2;
 			}
-			if(actualAcquisition == acquisition2) {
+			if (actualAcquisition == acquisition2) {
 				actualAcquisition = acquisition1;
 			}
 		}
@@ -114,7 +115,7 @@ public abstract class AbstractAcquisitions implements IAcquisitions {
 	public void removeAcquisition(int intex) {
 
 		IAcquisition acquisition = acquisitions.get(intex);
-		if(acquisition == actualAcquisition) {
+		if (acquisition == actualAcquisition) {
 			setNextAcquisitionActual();
 		}
 		acquisitions.remove(intex);
@@ -130,7 +131,7 @@ public abstract class AbstractAcquisitions implements IAcquisitions {
 	@Override
 	public IAcquisition setActualAcquisition(IAcquisition acquisition) {
 
-		if(acquisitions.contains(acquisition)) {
+		if (acquisitions.contains(acquisition)) {
 			actualAcquisition = acquisition;
 			return actualAcquisition;
 		} else {
@@ -147,7 +148,7 @@ public abstract class AbstractAcquisitions implements IAcquisitions {
 	@Override
 	public IAcquisition setNextAcquisitionActual() {
 
-		if(hasNextAcquisitionActual()) {
+		if (hasNextAcquisitionActual()) {
 			actualAcquisition = acquisitions.get(acquisitions.indexOf(actualAcquisition) + 1);
 			return actualAcquisition;
 		} else {

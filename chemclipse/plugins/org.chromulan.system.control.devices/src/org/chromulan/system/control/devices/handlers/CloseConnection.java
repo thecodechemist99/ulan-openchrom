@@ -56,27 +56,28 @@ public class CloseConnection {
 
 	@Inject
 	@Optional
-	public void addFilt(@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
+	public void addFilt(
+			@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
 
 		try {
 			filtCloseConnection.activateFilt();
-		} catch(IOException e) {
+		} catch (IOException e) {
 		}
 	}
 
 	private void closeConnection() {
 
-		for(IControlDevice device : devices.getControlDevices()) {
+		for (IControlDevice device : devices.getControlDevices()) {
 			if (device instanceof IUlanControlDevice) {
 				IUlanControlDevice ulanDevice = (IUlanControlDevice) device;
 				ulanDevice.setConnected(false);
-				eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);	
-			}		
+				eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
+			}
 		}
 		dataSupplier.updateControlDevices();
 		try {
 			connection.close();
-		} catch(HandleHasNotBeenInitializedException | IOException e) {
+		} catch (HandleHasNotBeenInitializedException | IOException e) {
 			// TODO Auto-generated catch block
 		} finally {
 			eventBroker.post(IULanConnectionEvents.TOPIC_CONNECTION_ULAN_CLOSE, connection);

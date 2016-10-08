@@ -77,7 +77,8 @@ public class AvailableDevicesPart {
 		Composite tableComposit = new Composite(composite, SWT.None);
 		tableComposit.setLayoutData(gridData);
 		tableComposit.setLayout(new FillLayout());
-		deviceTable = new DevicesTable(tableComposit, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, true);
+		deviceTable = new DevicesTable(tableComposit, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION,
+				true);
 		deviceTable.setDevices(devices);
 		deviceTable.setEditableName(true);
 		buttonRefreshDevices = new Button(composite, SWT.PUSH);
@@ -110,14 +111,14 @@ public class AvailableDevicesPart {
 	private void scanNet() {
 
 		ParameterizedCommand com = commandService.createCommand(ScanNet.HANDLER_ID, new HashMap<String, Object>());
-		if(handlerService.canExecute(com)) {
+		if (handlerService.canExecute(com)) {
 			handlerService.executeHandler(com);
 		}
 	}
 
 	private void setConnectionLabel() {
 
-		if(connection.isOpen()) {
+		if (connection.isOpen()) {
 			labelConnection.setText("Connection is opened");
 			labelConnection.redraw();
 			labelConnection.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
@@ -133,14 +134,16 @@ public class AvailableDevicesPart {
 
 	@Inject
 	@Optional
-	public void updateDevices(@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES) DataSupplier dataSupplier) {
+	public void updateDevices(
+			@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES) DataSupplier dataSupplier) {
 
 		rewriteTable();
 	}
 
 	@Inject
 	@Optional
-	public void updateScanState(@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN) ULanConnection connection) {
+	public void updateScanState(
+			@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN) ULanConnection connection) {
 
 		setConnectionLabel();
 		rewriteTable();

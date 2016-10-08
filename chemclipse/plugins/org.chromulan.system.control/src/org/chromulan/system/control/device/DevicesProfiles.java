@@ -40,7 +40,6 @@ public class DevicesProfiles implements IDevicesProfiles {
 		return profiles;
 	}
 
-
 	@Override
 	public void remove(IDevicesProfile devicesProfile) {
 

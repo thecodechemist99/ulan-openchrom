@@ -33,13 +33,12 @@ public class UlanControlDevice implements IUlanControlDevice {
 	private IDeviceSetting deviceSetting;
 	private String type;
 	protected PropertyChangeSupport propertyChangeSupport;
-	
 
 	public UlanControlDevice() {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		this.deviceType = DeviceType.UNKNOWEN;
 		this.deviceSetting = new DeviceSetting();
-		
+
 	}
 
 	public UlanControlDevice(DeviceDescription description, boolean isConnected) {
@@ -113,10 +112,10 @@ public class UlanControlDevice implements IUlanControlDevice {
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
-		this.name = (String)in.readObject();
-		this.deviceType = DeviceType.valueOf((String)in.readObject());
+		this.name = (String) in.readObject();
+		this.deviceType = DeviceType.valueOf((String) in.readObject());
 		long adr = in.readLong();
-		String description = (String)in.readObject();
+		String description = (String) in.readObject();
 		this.description = new DeviceDescription(adr, description);
 		this.deviceSetting = (IDeviceSetting) in.readObject();
 	}
@@ -172,34 +171,34 @@ public class UlanControlDevice implements IUlanControlDevice {
 		out.writeObject(description.getDescription());
 		out.writeObject(deviceSetting);
 	}
-	
+
 	@Override
 	public String getPluginID() {
-		
+
 		return Activator.PLUGIN_ID;
 	}
 
 	@Override
 	public void setDeviceSetting(IDeviceSetting deviceSetting) {
 		this.deviceSetting = deviceSetting;
-		
+
 	}
 
 	@Override
-	public IDeviceSetting getDeviceSetting() {	
+	public IDeviceSetting getDeviceSetting() {
 		return deviceSetting;
 	}
 
 	@Override
 	public String getType() {
-		
+
 		return type;
 	}
 
 	@Override
 	public void setType(String type) {
 		this.type = type;
-		
+
 	}
-	
+
 }

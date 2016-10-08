@@ -1,6 +1,6 @@
 package org.chromulan.system.control.device.setting;
 
-public class ValueDouble extends ValueDecimalNumber<Double>{
+public class ValueDouble extends ValueDecimalNumber<Double> {
 
 	/**
 	 * 

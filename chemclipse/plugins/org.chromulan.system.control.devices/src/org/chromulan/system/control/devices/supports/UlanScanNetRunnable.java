@@ -41,15 +41,15 @@ public class UlanScanNetRunnable implements IRunnableWithProgress {
 		devices.removeAllDevices();
 		try {
 			try {
-				for(long i = 1; i <= 100 && !monitor.isCanceled(); i++) {
+				for (long i = 1; i <= 100 && !monitor.isCanceled(); i++) {
 					monitor.worked(1);
 					monitor.subTask("Scan address " + i);
 					DeviceDescription device = ULanCommunicationInterface.getDevice(i);
-					if(device != null && (device.containsTag("oi") || device.getTag("uP").equals("51x"))) {
+					if (device != null && (device.containsTag("oi") || device.getTag("uP").equals("51x"))) {
 						devices.add(new UlanControlDevice(device, true));
 					}
 				}
-			} catch(Exception e) {
+			} catch (Exception e) {
 				InvocationTargetException e1 = new InvocationTargetException(e);
 				throw e1;
 			}

@@ -82,7 +82,7 @@ public class LoadControlDevices {
 		}
 		return devices;
 	}
-	
+
 	public List<IDeviceSetting> loadSettings(ObjectInputStream in, IConfigurationElement[] elements)
 			throws IOException, ClassNotFoundException, CoreException {
 		return (List<IDeviceSetting>) in.readObject();

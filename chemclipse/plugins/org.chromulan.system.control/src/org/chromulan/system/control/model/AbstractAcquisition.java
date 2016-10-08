@@ -131,13 +131,14 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	@Override
 	public void setDescription(String description) {
 
-		propertyChangeSupport.firePropertyChange(PROPERTY_DESCRIPTION, this.description, this.description = description);
+		propertyChangeSupport.firePropertyChange(PROPERTY_DESCRIPTION, this.description,
+				this.description = description);
 	}
 
 	@Override
 	public void setDevicesProfile(IDevicesProfile devicesProfile) {
 
-		if(this.devicesProfile != null) {
+		if (this.devicesProfile != null) {
 			this.devicesProfile.removeAcqusition(this);
 		}
 		this.devicesProfile = devicesProfile;
@@ -159,7 +160,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	@Override
 	public void start() {
 
-		if(!recording && !record) {
+		if (!recording && !record) {
 			this.date = new Date();
 			this.recording = true;
 		}
@@ -168,7 +169,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	@Override
 	public void stop() {
 
-		if(recording) {
+		if (recording) {
 			record = true;
 			recording = false;
 			this.devicesProfile.removeAcqusition(this);

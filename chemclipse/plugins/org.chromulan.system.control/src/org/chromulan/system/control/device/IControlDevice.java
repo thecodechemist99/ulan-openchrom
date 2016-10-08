@@ -26,19 +26,19 @@ public interface IControlDevice extends Externalizable {
 	boolean isConnected();
 
 	boolean isPrepared();
-	
+
 	String getName();
-	
+
 	String getType();
-	
+
 	String getDeviceID();
-	
+
 	String getDescription();
-	
+
 	String getPluginID();
-	
+
 	void setDeviceSetting(IDeviceSetting deviceSetting);
-	
+
 	IDeviceSetting getDeviceSetting();
-	
+
 }

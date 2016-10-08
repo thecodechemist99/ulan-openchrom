@@ -1,6 +1,6 @@
 package org.chromulan.system.control.device.setting;
 
-public class ValueFloat extends ValueDecimalNumber<Float>{
+public class ValueFloat extends ValueDecimalNumber<Float> {
 
 	/**
 	 * 

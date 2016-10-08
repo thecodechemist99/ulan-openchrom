@@ -32,7 +32,8 @@ public interface IAcquisitionSaver {
 
 	ISupplier getSupplier();
 
-	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<IChromatogram> chromatograms);
+	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor,
+			List<IChromatogram> chromatograms);
 
 	void setFile(File file);
 

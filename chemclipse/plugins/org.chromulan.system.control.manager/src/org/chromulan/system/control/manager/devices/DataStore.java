@@ -47,23 +47,24 @@ public class DataStore {
 	public IDevicesProfiles getDevicesProfiles() {
 		return profiles;
 	}
-	
+
 	public List<IDeviceSetting> getDeviceSettings() {
 		return deviceSettings;
 	}
 
-	public void readExternal(ObjectInputStream in,IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException {
+	public void readExternal(ObjectInputStream in, IConfigurationElement[] elements)
+			throws IOException, ClassNotFoundException, CoreException {
 		LoadControlDevices loadControlDevices = new LoadControlDevices();
 		devices = loadControlDevices.loadControlDevices(in, elements);
 		deviceSettings = loadControlDevices.loadSettings(in, elements);
 		profiles = loadControlDevices.loadProfiles(in, elements);
 	}
 
-	
 	public void writeExternal(ObjectOutputStream out) throws IOException {
 		SaveControlDevices saveControlDevices = new SaveControlDevices();
 		saveControlDevices.saveControlDevices(out, devices);
-		saveControlDevices.saveDeviceSettings(out, deviceSettings);;
-		saveControlDevices.saveProfiles(out, profiles);		
+		saveControlDevices.saveDeviceSettings(out, deviceSettings);
+		;
+		saveControlDevices.saveProfiles(out, profiles);
 	}
 }

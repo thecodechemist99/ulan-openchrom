@@ -11,38 +11,35 @@ import org.chromulan.system.control.device.IDevicesProfiles;
 import org.chromulan.system.control.device.setting.IDeviceSetting;
 
 public class SaveControlDevices {
-	
-	public void saveControlDevices(ObjectOutputStream out, IControlDevices controlDevices) throws IOException
-	{
+
+	public void saveControlDevices(ObjectOutputStream out, IControlDevices controlDevices) throws IOException {
 		List<IControlDevice> devices = controlDevices.getControlDevices();
 		out.writeInt(devices.size());
 		for (IControlDevice device : devices) {
 			saveControlDevice(out, device);
 		}
 	}
-	
-	public void saveProfile(ObjectOutputStream out, IDevicesProfile profile) throws IOException
-	{
+
+	public void saveProfile(ObjectOutputStream out, IDevicesProfile profile) throws IOException {
 		out.writeObject(profile.getName());
 		saveControlDevices(out, profile);
 	}
-	
-	public  void saveProfiles(ObjectOutputStream out, IDevicesProfiles profiles) throws IOException
-	{
-		List<IDevicesProfile>devicesProfiles = profiles.getAll();
+
+	public void saveProfiles(ObjectOutputStream out, IDevicesProfiles profiles) throws IOException {
+		List<IDevicesProfile> devicesProfiles = profiles.getAll();
 		out.writeInt(devicesProfiles.size());
 		for (IDevicesProfile profile : devicesProfiles) {
 			saveProfile(out, profile);
 		}
 	}
-	
-	public  void saveControlDevice(ObjectOutputStream out, IControlDevice controlDevice) throws IOException{
+
+	public void saveControlDevice(ObjectOutputStream out, IControlDevice controlDevice) throws IOException {
 		out.writeObject(controlDevice.getPluginID());
 		out.writeObject(controlDevice.getClass().getName());
 		out.writeObject(controlDevice);
 	}
-	
-	public void saveDeviceSettings(ObjectOutputStream out,List<IDeviceSetting> settings) throws IOException{
-		out.writeObject(settings);	
+
+	public void saveDeviceSettings(ObjectOutputStream out, List<IDeviceSetting> settings) throws IOException {
+		out.writeObject(settings);
 	}
 }

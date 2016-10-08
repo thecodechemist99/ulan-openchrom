@@ -44,9 +44,9 @@ public class AutoScanNet {
 
 	private void startScan() {
 
-		if(startScan) {
+		if (startScan) {
 			ParameterizedCommand com = commandService.createCommand(ScanNet.HANDLER_ID, new HashMap<String, Object>());
-			if(handlerService.canExecute(com)) {
+			if (handlerService.canExecute(com)) {
 				handlerService.executeHandler(com);
 			}
 			startScan = false;
@@ -55,15 +55,16 @@ public class AutoScanNet {
 
 	@Inject
 	@Optional
-	public void subscribeTopicSelectedElement(@EventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
+	public void subscribeTopicSelectedElement(
+			@EventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
 
-		if(event == null) {
+		if (event == null) {
 			return;
 		}
 		Object newValue = event.getProperty(EventTags.NEW_VALUE);
-		if((newValue instanceof MPerspective)) {
-			MPerspective perspective = (MPerspective)newValue;
-			if(perspective.getElementId().startsWith("org.chromulan.system.control.ui.perspective.chromulan")) {
+		if ((newValue instanceof MPerspective)) {
+			MPerspective perspective = (MPerspective) newValue;
+			if (perspective.getElementId().startsWith("org.chromulan.system.control.ui.perspective.chromulan")) {
 				startScan();
 			}
 		}

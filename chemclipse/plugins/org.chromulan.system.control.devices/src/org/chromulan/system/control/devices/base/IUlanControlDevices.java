@@ -18,7 +18,7 @@ public interface IUlanControlDevices {
 
 	static boolean add(IControlDevices controlDevices, IUlanControlDevice device) {
 
-		if(null == containsDevice(controlDevices, device.getDeviceID())) {
+		if (null == containsDevice(controlDevices, device.getDeviceID())) {
 			controlDevices.getControlDevices().add(device);
 			return true;
 		}
@@ -28,7 +28,7 @@ public interface IUlanControlDevices {
 	static boolean contains(IControlDevices controlDevices, String id) {
 
 		IControlDevice device = containsDevice(controlDevices, id);
-		if(device == null) {
+		if (device == null) {
 			return false;
 		} else {
 			return true;
@@ -37,9 +37,9 @@ public interface IUlanControlDevices {
 
 	static IUlanControlDevice containsDevice(IControlDevices controlDevices, String id) {
 
-		for(IControlDevice device : controlDevices.getControlDevices()) {
-			if(device instanceof IUlanControlDevice) {
-				return (IUlanControlDevice)device;
+		for (IControlDevice device : controlDevices.getControlDevices()) {
+			if (device instanceof IUlanControlDevice) {
+				return (IUlanControlDevice) device;
 			}
 		}
 		return null;
@@ -47,10 +47,10 @@ public interface IUlanControlDevices {
 
 	static IUlanControlDevice getControlDevice(IControlDevices controlDevices, String id) {
 
-		for(IControlDevice device : controlDevices.getControlDevices()) {
-			if(device instanceof IUlanControlDevice) {
-				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
-				if(ulanDevice.getDeviceID().equals(id)) {
+		for (IControlDevice device : controlDevices.getControlDevices()) {
+			if (device instanceof IUlanControlDevice) {
+				IUlanControlDevice ulanDevice = (IUlanControlDevice) device;
+				if (ulanDevice.getDeviceID().equals(id)) {
 					return ulanDevice;
 				}
 			}
@@ -61,7 +61,7 @@ public interface IUlanControlDevices {
 	static boolean remove(IControlDevices controlDevices, String id) {
 
 		IControlDevice device = containsDevice(controlDevices, id);
-		if(device != null) {
+		if (device != null) {
 			controlDevices.getControlDevices().remove(device);
 			return true;
 		}

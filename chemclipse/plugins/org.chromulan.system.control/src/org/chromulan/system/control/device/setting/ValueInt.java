@@ -1,6 +1,6 @@
 package org.chromulan.system.control.device.setting;
 
-public class ValueInt extends ValueNumer<Integer>{
+public class ValueInt extends ValueNumer<Integer> {
 
 	/**
 	 * 

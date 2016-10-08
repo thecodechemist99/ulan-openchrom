@@ -76,13 +76,13 @@ public class ULad3xPart {
 	public void createPartControl(Composite parent) {
 
 		parent.setLayout(new GridLayout(3, false));
-		controlDevice = (IUlanControlDevice)part.getObject();
+		controlDevice = (IUlanControlDevice) part.getObject();
 		controlDevice.addPropertyChangeListener(listener);
 		uLad3x = new ULad3x(controlDevice);
 		try {
 			uLad3x.connect();
 			uLad3x.start(false);
-		} catch(IOException e1) {
+		} catch (IOException e1) {
 			// logger.warn(e1);
 		}
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 0);
@@ -106,7 +106,8 @@ public class ULad3xPart {
 			public void widgetSelected(SelectionEvent e) {
 
 				uLad3x.getChromatogramRecording().setName(controlDevice.getName());
-				eventBroker.post(IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY, uLad3x.getChromatogramRecording());
+				eventBroker.post(IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY,
+						uLad3x.getChromatogramRecording());
 			}
 		});
 		buttonReadData = new Button(parent, SWT.CHECK);
@@ -115,7 +116,7 @@ public class ULad3xPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				if(buttonReadData.getSelection()) {
+				if (buttonReadData.getSelection()) {
 					uLad3x.start(false);
 				} else {
 					uLad3x.stop();
@@ -123,7 +124,7 @@ public class ULad3xPart {
 			}
 		});
 		buttonReadData.setText("read data");
-		if(uLad3x.isBeeingRecored()) {
+		if (uLad3x.isBeeingRecored()) {
 			buttonReadData.setSelection(true);
 		} else {
 			buttonReadData.setSelection(false);
@@ -149,11 +150,12 @@ public class ULad3xPart {
 
 	@Inject
 	@Optional
-	public void openConnection(@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
+	public void openConnection(
+			@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
 
 		try {
 			uLad3x.connect();
-		} catch(IOException e) {
+		} catch (IOException e) {
 			// TODO: logger.warn(e);
 		}
 	}
@@ -186,13 +188,14 @@ public class ULad3xPart {
 
 	@Inject
 	@Optional
-	public void removeAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition analisis) {
+	public void removeAcquisition(
+			@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition analisis) {
 
-		if(this.acquisition == analisis) {
+		if (this.acquisition == analisis) {
 			part.getTransientData().remove(IDetectorData.DETECTORS_DATA);
 			enableButton(true);
 			this.acquisition = null;
-			if(analisis.isCompleted()) {
+			if (analisis.isCompleted()) {
 				uLad3x.newAcquisition();
 				uLad3x.start(false);
 			}
@@ -201,18 +204,21 @@ public class ULad3xPart {
 
 	@Inject
 	@Optional
-	public void setAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition analisis) {
+	public void setAcquisition(
+			@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition analisis) {
 
-		if(this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null && IUlanControlDevices.contains(analisis.getDevicesProfile(), controlDevice.getDeviceID())) {
+		if (this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null
+				&& IUlanControlDevices.contains(analisis.getDevicesProfile(), controlDevice.getDeviceID())) {
 			this.acquisition = analisis;
 		}
 	}
 
 	@Inject
 	@Optional
-	public void startRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING) IAcquisition acquisition) {
+	public void startRecording(
+			@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING) IAcquisition acquisition) {
 
-		if(this.acquisition != null && this.acquisition == acquisition) {
+		if (this.acquisition != null && this.acquisition == acquisition) {
 			uLad3x.start(true);
 			buttonReadData.setSelection(true);
 			enableButton(false);
@@ -221,9 +227,10 @@ public class ULad3xPart {
 
 	@Inject
 	@Optional
-	public void stopRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING) IAcquisition acquisition) {
+	public void stopRecording(
+			@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING) IAcquisition acquisition) {
 
-		if(this.acquisition != null && this.acquisition == acquisition) {
+		if (this.acquisition != null && this.acquisition == acquisition) {
 			uLad3x.stop();
 			ULad3xData data = new ULad3xData(controlDevice);
 			data.setDescription("");

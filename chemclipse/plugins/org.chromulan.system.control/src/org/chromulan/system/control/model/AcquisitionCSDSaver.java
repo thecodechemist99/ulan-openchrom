@@ -38,21 +38,23 @@ public class AcquisitionCSDSaver extends AbstractAcquisitionSaver implements IAc
 	}
 
 	@Override
-	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<IChromatogram> chromatograms) {
+	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor,
+			List<IChromatogram> chromatograms) {
 
 		this.chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
 		ISupplier supplier = getSupplier();
-		if(chromatograms == null) {
+		if (chromatograms == null) {
 			throw new NullPointerException();
 		}
 		HashMap<String, Integer> names = new HashMap<>();
-		for(IChromatogram chromatogram : chromatograms) {
-			if(chromatogram instanceof IChromatogramCSD) {
-				IChromatogramCSD chromatogramCSD = (IChromatogramCSD)chromatogram;
+		for (IChromatogram chromatogram : chromatograms) {
+			if (chromatogram instanceof IChromatogramCSD) {
+				IChromatogramCSD chromatogramCSD = (IChromatogramCSD) chromatogram;
 				File file = chromatogramCSD.getFile();
-				if(file != null) {
+				if (file != null) {
 					File nfile = setFile(file, names, supplier.getFileExtension());
-					IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterCSD.convert(nfile, chromatogramCSD, supplier.getId(), progressMonitor);
+					IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterCSD.convert(nfile,
+							chromatogramCSD, supplier.getId(), progressMonitor);
 					chromatogramExportConverterProcessingInfos.add(procesInfo);
 				}
 			}
@@ -66,9 +68,10 @@ public class AcquisitionCSDSaver extends AbstractAcquisitionSaver implements IAc
 		String allName = null;
 		String name = null;
 		fileExtension = fileExtension.toLowerCase();
-		if(namefile.length() > fileExtension.length()) {
-			String nameSuffix = namefile.substring(namefile.length() - fileExtension.length(), namefile.length()).toLowerCase();
-			if(!nameSuffix.equals(fileExtension)) {
+		if (namefile.length() > fileExtension.length()) {
+			String nameSuffix = namefile.substring(namefile.length() - fileExtension.length(), namefile.length())
+					.toLowerCase();
+			if (!nameSuffix.equals(fileExtension)) {
 				allName = namefile + fileExtension;
 				name = namefile;
 			} else {
@@ -80,7 +83,7 @@ public class AcquisitionCSDSaver extends AbstractAcquisitionSaver implements IAc
 			name = namefile;
 		}
 		String newName;
-		if(names.containsKey(allName)) {
+		if (names.containsKey(allName)) {
 			int i = names.get(allName);
 			newName = name + "(" + i++ + ")" + fileExtension;
 			names.put(allName, i);

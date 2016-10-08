@@ -26,7 +26,7 @@ public class UlanDevicesStore {
 
 	public boolean add(IUlanControlDevice device) {
 
-		if(null == containsDevice(device.getDeviceID())) {
+		if (null == containsDevice(device.getDeviceID())) {
 			devices.add(device);
 			return true;
 		}
@@ -36,7 +36,7 @@ public class UlanDevicesStore {
 	public boolean contains(String id) {
 
 		IControlDevice device = containsDevice(id);
-		if(device == null) {
+		if (device == null) {
 			return false;
 		} else {
 			return true;
@@ -45,9 +45,9 @@ public class UlanDevicesStore {
 
 	public IUlanControlDevice containsDevice(String id) {
 
-		for(IControlDevice device : devices) {
-			if(device instanceof IUlanControlDevice) {
-				return (IUlanControlDevice)device;
+		for (IControlDevice device : devices) {
+			if (device instanceof IUlanControlDevice) {
+				return (IUlanControlDevice) device;
 			}
 		}
 		return null;
@@ -55,10 +55,10 @@ public class UlanDevicesStore {
 
 	public IControlDevice getControlDevice(String id) {
 
-		for(IControlDevice device : devices) {
-			if(device instanceof IUlanControlDevice) {
-				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
-				if(ulanDevice.getDeviceID().equals(id)) {
+		for (IControlDevice device : devices) {
+			if (device instanceof IUlanControlDevice) {
+				IUlanControlDevice ulanDevice = (IUlanControlDevice) device;
+				if (ulanDevice.getDeviceID().equals(id)) {
 					return ulanDevice;
 				}
 			}
@@ -74,7 +74,7 @@ public class UlanDevicesStore {
 	public boolean remove(String id) {
 
 		IControlDevice device = containsDevice(id);
-		if(device != null) {
+		if (device != null) {
 			devices.remove(device);
 			return true;
 		}

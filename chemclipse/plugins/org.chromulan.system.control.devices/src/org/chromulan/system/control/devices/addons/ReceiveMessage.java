@@ -52,11 +52,12 @@ public class ReceiveMessage {
 
 	@Inject
 	@Optional
-	public void openCommunicationEvent(@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
+	public void openCommunicationEvent(
+			@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
 
 		try {
 			filtStartRecording.activateFilt();
-		} catch(IOException e) {
+		} catch (IOException e) {
 			// TODO: exception
 		}
 	}
@@ -64,10 +65,10 @@ public class ReceiveMessage {
 	@PostConstruct
 	public void postConstruct() {
 
-		if(ULanCommunicationInterface.isOpen()) {
+		if (ULanCommunicationInterface.isOpen()) {
 			try {
 				filtStartRecording.activateFilt();
-			} catch(IOException e1) {
+			} catch (IOException e1) {
 				// TODO: exception logger.warn(e1);
 			}
 		}

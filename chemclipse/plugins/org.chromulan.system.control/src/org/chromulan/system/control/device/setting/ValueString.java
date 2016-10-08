@@ -1,6 +1,6 @@
 package org.chromulan.system.control.device.setting;
 
-public class ValueString extends AbstractValue<String>{
+public class ValueString extends AbstractValue<String> {
 
 	/**
 	 * 
@@ -10,20 +10,18 @@ public class ValueString extends AbstractValue<String>{
 	String defValue;
 	int maxNumCharacters;
 	int minNumCharacters;
-	
 
-	public ValueString(IDeviceSetting deviceSetting,String name, String defValue, boolean isChangeable) {
-		super(deviceSetting,name,isChangeable);
+	public ValueString(IDeviceSetting deviceSetting, String name, String defValue, boolean isChangeable) {
+		super(deviceSetting, name, isChangeable);
 		this.defValue = defValue;
 		this.value = defValue;
 		this.maxNumCharacters = -1;
 		this.minNumCharacters = -1;
 	}
 
-
 	@Override
 	public String getValue() {
-		
+
 		return value;
 	}
 
@@ -34,18 +32,18 @@ public class ValueString extends AbstractValue<String>{
 
 	@Override
 	public String getDefaulValue() {
-		
+
 		return defValue;
 	}
 
 	public void setMaxNumCharacters(int maxNumCharacters) {
 		this.maxNumCharacters = maxNumCharacters;
 	}
-	
+
 	public void setMinNumCharacters(int minNumCharacters) {
 		this.minNumCharacters = minNumCharacters;
 	}
-	
+
 	public int getMaxNumCharacters() {
 		return maxNumCharacters;
 	}

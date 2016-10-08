@@ -40,12 +40,11 @@ public interface IUlanControlDevice extends IControlDevice {
 	void setDeviceType(DeviceType deviceType);
 
 	void setType(String type);
-	
+
 	void setName(String name);
-	
+
 	void setConnected(boolean b);
-	
+
 	void setPrepared(boolean b);
-	
-	
+
 }

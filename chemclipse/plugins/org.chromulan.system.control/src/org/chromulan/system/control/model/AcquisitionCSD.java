@@ -21,8 +21,8 @@ public class AcquisitionCSD extends AbstractAcquisition implements IAcquisitionC
 	public IAcquisitionCSDSaver getAcquisitionCSDSaver() {
 
 		IAcquisitionSaver acquisitionSaver = getAcquisitionSaver();
-		if(acquisitionSaver instanceof IAcquisitionCSDSaver) {
-			return (IAcquisitionCSDSaver)acquisitionSaver;
+		if (acquisitionSaver instanceof IAcquisitionCSDSaver) {
+			return (IAcquisitionCSDSaver) acquisitionSaver;
 		}
 		return null;
 	}
