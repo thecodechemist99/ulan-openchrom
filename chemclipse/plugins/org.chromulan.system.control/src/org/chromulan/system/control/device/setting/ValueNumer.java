@@ -27,9 +27,7 @@ public abstract class ValueNumer<Num extends Number> extends AbstractValue<Num> 
 
 	@Override
 	public void setValue(Num value) {
-		if (isChangeable()) {
-			this.value = value;
-		}		
+		this.value = value;		
 	}
 
 	@Override

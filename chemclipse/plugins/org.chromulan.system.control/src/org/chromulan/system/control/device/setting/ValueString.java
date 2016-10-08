@@ -29,9 +29,7 @@ public class ValueString extends AbstractValue<String>{
 
 	@Override
 	public void setValue(String value) {
-		if (isChangeable()) {
-			this.value = value;
-		}
+		this.value = value;
 	}
 
 	@Override

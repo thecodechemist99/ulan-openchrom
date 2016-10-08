@@ -1,12 +1,12 @@
 package org.chromulan.system.control.device.setting;
 
-public class ValueEnumeration extends AbstractValue<String>{
+public class ValueEnumeration<Value> extends AbstractValue<Value>{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1550272675179584635L;
-	private String[] values;
+	private Value[] values;
 	private int value;
 	private int defValue;
 
@@ -14,31 +14,40 @@ public class ValueEnumeration extends AbstractValue<String>{
 	
 	
 	
-	public ValueEnumeration(IDeviceSetting device, String name, String[] values, int defValue, boolean isChangeable) {
+	public ValueEnumeration(IDeviceSetting device, String name, Value[] values, int defValue, boolean isChangeable) {
 		super(device,name,isChangeable);
 		this.values = values;
 		this.defValue = defValue;
 	}
 
 	@Override
-	public String getValue() {
+	public Value getValue() {
 		return values[value];
 	}
 
 	@Override
-	public void setValue(String value) {
-		if(isChangeable()){
-			for (int i = 0; i < values.length; i++) {
-				if (values[i].equals(value)) {
-					this.value = i;
-					return;
-				}
+	public void setValue(Value value) {
+		for (int i = 0; i < values.length; i++) {
+			if (values[i].equals(value)) {
+				this.value = i;
+				return;
 			}
 		}	
 	}
+	
+	public int getOrderSelection()
+	{
+		return value;
+	}
+	
+	public Value[] getValues()
+	{
+		return values;
+	}
+	
 
 	@Override
-	public String getDefaulValue() {
+	public Value getDefaulValue() {
 		
 		return values[defValue];
 	}
@@ -47,7 +56,7 @@ public class ValueEnumeration extends AbstractValue<String>{
 	@Override
 	public String valueToString() {
 		
-		return values[value];
+		return values[value].toString();
 	}
 
 
