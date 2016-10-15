@@ -20,9 +20,9 @@ public class WizardNewAcquisitions extends Wizard {
 
 	private WizarPageNewAcquisitionsMain base;
 
-	public WizardNewAcquisitions(String defFile, String defSupplier, boolean autoScan) {
+	public WizardNewAcquisitions(File defFile, ISupplier defSupplierCSD, ISupplier defSupplierMSD, ISupplier defSupplierWSD) {
 		super();
-		base = new WizarPageNewAcquisitionsMain("Select Default Directory", defFile, defSupplier, autoScan);
+		base = new WizarPageNewAcquisitionsMain("Select Default Parameters", defFile, defSupplierCSD, defSupplierWSD, defSupplierMSD);
 	}
 
 	@Override
@@ -31,19 +31,24 @@ public class WizardNewAcquisitions extends Wizard {
 		addPage(base);
 	}
 
-	public boolean getAutoScan() {
-
-		return base.getAutoScan();
-	}
-
 	public File getFile() {
 
 		return base.getFile();
 	}
 
-	public ISupplier getSupplier() {
+	public ISupplier getSupplierCSD() {
 
-		return base.getSupplier();
+		return base.getSupplierCSD();
+	}
+
+	public ISupplier getSupplierMSD() {
+
+		return base.getSupplierMSD();
+	}
+
+	public ISupplier getSupplierWSD() {
+
+		return base.getSupplierWSD();
 	}
 
 	@Override

@@ -13,7 +13,12 @@ package org.chromulan.system.control.ui.wizard;
 
 import java.util.List;
 
+import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.IDevicesProfile;
+import org.chromulan.system.control.model.IAcquisition;
+import org.chromulan.system.control.model.IAcquisitionCSD;
+import org.chromulan.system.control.model.IAcquisitionMSD;
+import org.chromulan.system.control.model.IAcquisitionWSD;
 import org.chromulan.system.control.ui.devices.support.ValidatorDevicesProfile;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -49,16 +54,39 @@ public class WizardNewAcquisitionProfile extends WizardPage {
 		this.devicesProfil = devicesProfil;
 	}
 
+	private boolean controlProfile(IDevicesProfile profile) {
+
+		WizardModelAcquisition model = ((WizardNewAcquisition)getWizard()).getModel();
+		Class<? extends IAcquisition> classAcquistion = (Class<? extends IAcquisition>)model.acquisitionType.getValue();
+		if((IAcquisitionCSD.class.isAssignableFrom(classAcquistion))) {
+			for(IControlDevice device : profile.getControlDevices()) {
+				if((device.getFlg() & IControlDevice.FLG_SUPPORT_CSD_CHROMATOGRAM) == 0) {
+					return false;
+				}
+			}
+			return true;
+		} else if((IAcquisitionMSD.class.isAssignableFrom(classAcquistion))) {
+			for(IControlDevice device : profile.getControlDevices()) {
+				if((device.getFlg() & IControlDevice.FLG_SUPPORT_MSD_CHROMATOGRAM) == 0) {
+					return false;
+				}
+			}
+			return true;
+		} else if((IAcquisitionWSD.class.isAssignableFrom(classAcquistion))) {
+			for(IControlDevice device : profile.getControlDevices()) {
+				if((device.getFlg() & IControlDevice.FLG_SUPPORT_WSD_CHROMATOGRAM) == 0) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public void createControl(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.None);
-		if(devicesProfil == null || devicesProfil.isEmpty()) {
-			setErrorMessage("Can not find any devices profiles, please create devices profiles");
-			setPageComplete(false);
-			setControl(composite);
-			return;
-		}
 		DataBindingContext dbc = new DataBindingContext();
 		WizardPageSupport.create(this, dbc);
 		WizardModelAcquisition model = ((WizardNewAcquisition)getWizard()).getModel();
@@ -75,5 +103,19 @@ public class WizardNewAcquisitionProfile extends WizardPage {
 		dbc.bindValue(selectedRadioButtonObservable, model.devicesProfile, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorDevicesProfile()), null);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		setControl(composite);
+	}
+
+	@Override
+	public boolean isPageComplete() {
+
+		WizardModelAcquisition model = ((WizardNewAcquisition)getWizard()).getModel();
+		IDevicesProfile profile = (IDevicesProfile)model.devicesProfile.getValue();
+		if(profile != null) {
+			if(!controlProfile(profile)) {
+				setErrorMessage("Device in profile does not support this type acquisition");
+				return false;
+			}
+		}
+		return super.isPageComplete();
 	}
 }

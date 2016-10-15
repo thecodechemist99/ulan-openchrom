@@ -103,7 +103,10 @@ public class AcquisitionSettingsPreferencePage extends PreferencePage {
 
 	private void setErrors() {
 
-		if(acquisition.isCompleted()) {
+		if(acquisition.isRunning()) {
+			textDuration.setEnabled(false);
+			buttonAutoStop.setEnabled(false);
+		} else if(acquisition.isCompleted()) {
 			setErrorMessage("Can not change acquisition because Anaysis has been recorded");
 			disableEdition();
 		}

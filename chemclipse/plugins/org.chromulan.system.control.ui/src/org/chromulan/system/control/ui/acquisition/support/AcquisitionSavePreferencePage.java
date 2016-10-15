@@ -14,10 +14,14 @@ package org.chromulan.system.control.ui.acquisition.support;
 import java.io.File;
 import java.util.List;
 
+import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.model.IAcquisitionCSD;
-import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
+import org.chromulan.system.control.model.IAcquisitionMSD;
+import org.chromulan.system.control.model.IAcquisitionWSD;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
+import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
+import org.eclipse.chemclipse.wsd.converter.chromatogram.ChromatogramConverterWSD;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -28,7 +32,6 @@ import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -42,27 +45,18 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class AcquisitionCDSSavePreferencePage extends PreferencePage {
+public class AcquisitionSavePreferencePage extends PreferencePage {
 
-	private IAcquisitionCSD acquisitionCSD;
+	private IAcquisition acquisition;
 	private Button buttonSelectDirectory;
 	private DataBindingContext dbc;
 	private Text directory;
 	private IObservableValue file;
 	private IObservableValue supplier;
+	private List<ISupplier> suppliers;
 
-	public AcquisitionCDSSavePreferencePage(IAcquisitionCSD acquisition) {
+	public AcquisitionSavePreferencePage(IAcquisition acquisition) {
 		super("Save");
-		setAcquisition(acquisition);
-	}
-
-	public AcquisitionCDSSavePreferencePage(String title, IAcquisitionCSD acquisition) {
-		super(title);
-		setAcquisition(acquisition);
-	}
-
-	public AcquisitionCDSSavePreferencePage(String title, ImageDescriptor image, IAcquisitionCSD acquisition) {
-		super(title, image);
 		setAcquisition(acquisition);
 	}
 
@@ -74,8 +68,6 @@ public class AcquisitionCDSSavePreferencePage extends PreferencePage {
 		Label label = new Label(composite, SWT.None);
 		label.setText("Type File");
 		ComboViewer combo = new ComboViewer(composite, SWT.READ_ONLY);
-		ChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
-		List<ISupplier> suppliers = support.getExportSupplier();
 		combo.setContentProvider(ArrayContentProvider.getInstance());
 		combo.setLabelProvider(new LabelProvider() {
 
@@ -128,29 +120,36 @@ public class AcquisitionCDSSavePreferencePage extends PreferencePage {
 	@Override
 	public boolean performOk() {
 
-		if(acquisitionCSD.isCompleted()) {
+		if(acquisition.isCompleted()) {
 			performDefaults();
 			disableEdition();
 			return false;
 		} else {
 			dbc.updateModels();
-			acquisitionCSD.getAcquisitionCSDSaver().setFile((File)file.getValue());
-			acquisitionCSD.getAcquisitionCSDSaver().setSuplier((ISupplier)supplier.getValue());
+			acquisition.getAcquisitionSaver().setFile((File)file.getValue());
+			acquisition.getAcquisitionSaver().setSupplier((ISupplier)supplier.getValue());
 			return true;
 		}
 	}
 
-	private void setAcquisition(IAcquisitionCSD acquisition) {
+	private void setAcquisition(IAcquisition acquisition) {
 
-		this.acquisitionCSD = acquisition;
-		file = new WritableValue(acquisition.getAcquisitionCSDSaver().getFile(), File.class);
-		supplier = new WritableValue(acquisition.getAcquisitionCSDSaver().getSupplier(), ISupplier.class);
+		this.acquisition = acquisition;
+		if(acquisition instanceof IAcquisitionCSD) {
+			this.suppliers = ChromatogramConverterCSD.getChromatogramConverterSupport().getSupplier();
+		} else if(acquisition instanceof IAcquisitionMSD) {
+			this.suppliers = ChromatogramConverterMSD.getChromatogramConverterSupport().getSupplier();
+		} else if(acquisition instanceof IAcquisitionWSD) {
+			this.suppliers = ChromatogramConverterWSD.getChromatogramConverterSupport().getSupplier();
+		}
+		file = new WritableValue(acquisition.getAcquisitionSaver().getFile(), File.class);
+		supplier = new WritableValue(acquisition.getAcquisitionSaver().getSupplier(), ISupplier.class);
 		this.dbc = new DataBindingContext();
 	}
 
 	private void setErrors() {
 
-		if(acquisitionCSD.isCompleted()) {
+		if(acquisition.isCompleted()) {
 			setErrorMessage("Can not change acquisitionCSD because Anaysis has been recorded");
 			disableEdition();
 		}

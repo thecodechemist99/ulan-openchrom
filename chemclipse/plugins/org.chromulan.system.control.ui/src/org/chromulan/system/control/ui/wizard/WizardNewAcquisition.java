@@ -19,6 +19,7 @@ import org.eclipse.jface.wizard.Wizard;
 public class WizardNewAcquisition extends Wizard {
 
 	private WizardModelAcquisition modelAcquisition;
+	private WizardNewAcquisitionType page0;
 	private WizardNewAcquisitionProfile page1;
 	private WizardNewAcquisitionMain page2;
 	private WizardNewAcquisitionMultiple page3;
@@ -28,6 +29,7 @@ public class WizardNewAcquisition extends Wizard {
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Acquisition wizard");
 		modelAcquisition = new WizardModelAcquisition();
+		page0 = new WizardNewAcquisitionType();
 		page1 = new WizardNewAcquisitionProfile(devicesProfil);
 		page2 = new WizardNewAcquisitionMain();
 		page3 = new WizardNewAcquisitionMultiple();
@@ -36,6 +38,7 @@ public class WizardNewAcquisition extends Wizard {
 	@Override
 	public void addPages() {
 
+		addPage(page0);
 		addPage(page1);
 		addPage(page2);
 		addPage(page3);

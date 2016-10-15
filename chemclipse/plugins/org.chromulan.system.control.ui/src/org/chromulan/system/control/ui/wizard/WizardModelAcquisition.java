@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 
 public class WizardModelAcquisition {
 
+	public IObservableValue acquisitionType;
 	public IObservableValue autoStop;
 	public IObservableValue description;
 	public IObservableValue devicesProfile;
@@ -35,5 +36,6 @@ public class WizardModelAcquisition {
 		numberofAcquisitions = new WritableValue(1, Integer.class);
 		devicesProfile = new WritableValue(null, IDevicesProfile.class);
 		description = new WritableValue("", String.class);
+		acquisitionType = new WritableValue(null, Class.class);
 	}
 }

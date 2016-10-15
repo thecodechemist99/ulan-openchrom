@@ -112,8 +112,8 @@ public class AcquisitionsTable {
 			public void update(ViewerCell cell) {
 
 				Object element = cell.getElement();
-				boolean value = (boolean)attributeMaps[0].get(element);
-				cell.setText(value == true ? "Yes" : "No"); //$NON-NLS-1$
+				IAcquisition acquisition = (IAcquisition)element;
+				cell.setText(acquisition.getAutoStop() == true ? "Yes" : "No"); //$NON-NLS-1$
 			}
 		});
 		// column for the interval

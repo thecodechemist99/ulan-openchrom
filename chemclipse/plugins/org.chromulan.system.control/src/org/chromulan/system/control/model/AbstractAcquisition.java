@@ -124,8 +124,12 @@ public abstract class AbstractAcquisition implements IAcquisition {
 
 	@Override
 	public void setAutoStop(boolean b) {
-
-		propertyChangeSupport.firePropertyChange(PROPERTY_AUTO_STOP, this.autoStop, this.autoStop = b);
+		synchronized (this) {
+			if(!isRunning())
+			{
+				propertyChangeSupport.firePropertyChange(PROPERTY_AUTO_STOP, this.autoStop, this.autoStop = b);
+			}
+		}	
 	}
 
 	@Override
@@ -147,8 +151,11 @@ public abstract class AbstractAcquisition implements IAcquisition {
 
 	@Override
 	public void setDuration(long duration) {
-
-		propertyChangeSupport.firePropertyChange(PROPERTY_DURATION, this.duration, this.duration = duration);
+		synchronized (this) {
+			if(!isRunning()){
+				propertyChangeSupport.firePropertyChange(PROPERTY_DURATION, this.duration, this.duration = duration);
+			}
+		}
 	}
 
 	@Override
@@ -159,20 +166,22 @@ public abstract class AbstractAcquisition implements IAcquisition {
 
 	@Override
 	public void start() {
-
-		if (!recording && !record) {
-			this.date = new Date();
-			this.recording = true;
+		synchronized (this) {
+			if (!recording && !record) {
+				this.date = new Date();
+				this.recording = true;
+			}
 		}
 	}
 
 	@Override
 	public void stop() {
-
-		if (recording) {
-			record = true;
-			recording = false;
-			this.devicesProfile.removeAcqusition(this);
+		synchronized (this) {
+			if (recording) {
+				record = true;
+				recording = false;
+				this.devicesProfile.removeAcqusition(this);
+			}
 		}
 	}
 }

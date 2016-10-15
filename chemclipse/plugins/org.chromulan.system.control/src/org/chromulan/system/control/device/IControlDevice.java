@@ -18,8 +18,8 @@ import org.chromulan.system.control.device.setting.IDeviceSetting;
 public interface IControlDevice extends Externalizable {
 
 	final int FLG_SUPPORT_CSD_CHROMATOGRAM = 0b1;
-	final int FLG_SUPPORT_MSD_CHROMATOGRAM = 0b100;
-	final int FLG_SUPPORT_WSD_CHROMATOGRAM = 0b10;
+	final int FLG_SUPPORT_MSD_CHROMATOGRAM = 0b10;
+	final int FLG_SUPPORT_WSD_CHROMATOGRAM = 0b100;
 
 	int getFlg();
 

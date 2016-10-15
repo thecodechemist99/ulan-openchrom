@@ -20,12 +20,12 @@ import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IAcquisitionSaver {
+	
+	
+	void setAcquisition(IAcquisition acquisition);
 
-	static File setOriginalFileName(File name, ISupplier supplier) {
-
-		return null;
-	}
-
+	IAcquisition getAcquisition();
+	
 	File getFile();
 
 	List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessInfo();
@@ -37,5 +37,5 @@ public interface IAcquisitionSaver {
 
 	void setFile(File file);
 
-	void setSuplier(ISupplier suplier);
+	void setSupplier(ISupplier supplier);
 }

@@ -11,18 +11,18 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
-public abstract class AbstractAcquisitions implements IAcquisitions {
+public  class Acquisitions implements IAcquisitions {
 
 	private List<IAcquisition> acquisitions;
 	private IAcquisition actualAcquisition;
 	private String name;
 
-	public AbstractAcquisitions() {
-		acquisitions = new LinkedList<IAcquisition>();
+	public Acquisitions() {
+		acquisitions = new ArrayList<>();
 		name = DEFAULT_NAME;
 		actualAcquisition = null;
 	}
