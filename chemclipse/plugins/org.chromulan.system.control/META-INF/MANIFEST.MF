@@ -33,5 +33,8 @@ Import-Package: org.eclipse.chemclipse.converter.core,
  org.eclipse.chemclipse.swt.ui.support,
  org.eclipse.chemclipse.wsd.converter.chromatogram,
  org.eclipse.chemclipse.wsd.model.core,
+ org.eclipse.chemclipse.wsd.model.core.selection,
+ org.eclipse.chemclipse.wsd.model.core.support,
  org.eclipse.e4.core.di.annotations,
- org.eclipse.e4.core.services.events
+ org.eclipse.e4.core.services.events,
+ org.swtchart;version="0.10.0"
