@@ -1,9 +1,8 @@
 package org.chromulan.system.control.device.setting;
 
-public interface IValueDecimalNumber<DecimalNumber extends Number> extends IValueNumber<DecimalNumber> {
-
-	void setNumeberDecimalPlace(int number);
+public interface IValueDecimalNumber<DecimalNumber extends Number> extends IValue<DecimalNumber> {
 
 	int getNumeberDecimalPlace();
 
+	void setNumeberDecimalPlace(int number);
 }

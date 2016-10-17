@@ -2,7 +2,9 @@ package org.chromulan.system.control.device.setting;
 
 import java.io.Serializable;
 
-public interface IValue<ValueType> extends Serializable {
+public interface IValue<ValueType extends Serializable> extends Serializable {
+
+	ValueType getDefaulValue();
 
 	IDeviceSetting getDevice();
 
@@ -10,19 +12,20 @@ public interface IValue<ValueType> extends Serializable {
 
 	ValueType getValue();
 
-	void setValue(ValueType value);
-
-	ValueType getDefaulValue();
-
 	boolean isChangeable();
-
-	void setChangeable(boolean b);
 
 	boolean isPrintable();
 
+	void setDefValue(ValueType defValue);
+
+	void setChangeable(boolean b);
+
 	void setPrintable(boolean b);
 
+	void setValue(ValueType value);
+
 	default String valueToString() {
+
 		return getValue().toString();
 	}
 }

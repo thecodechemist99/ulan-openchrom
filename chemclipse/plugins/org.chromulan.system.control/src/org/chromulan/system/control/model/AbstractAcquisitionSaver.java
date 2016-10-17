@@ -21,12 +21,12 @@ import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExp
 
 public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 
-	private File file;
-	private ISupplier supplier;
-	private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos;
-	private HashMap<String,Integer> names;
 	private IAcquisition acquisition;
-	
+	private File file;
+	private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos;
+	private HashMap<String, Integer> names;
+	private ISupplier supplier;
+
 	public AbstractAcquisitionSaver(IAcquisition acquisition) {
 		this.chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
 		this.names = new HashMap<>();
@@ -34,9 +34,9 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 	}
 
 	@Override
-	public List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessInfo() {
+	public IAcquisition getAcquisition() {
 
-		return chromatogramExportConverterProcessingInfos;
+		return acquisition;
 	}
 
 	@Override
@@ -46,9 +46,26 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 	}
 
 	@Override
+	public List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessInfo() {
+
+		return chromatogramExportConverterProcessingInfos;
+	}
+
+	protected HashMap<String, Integer> getNames() {
+
+		return names;
+	}
+
+	@Override
 	public ISupplier getSupplier() {
 
 		return supplier;
+	}
+
+	@Override
+	public void setAcquisition(IAcquisition acquisition) {
+
+		this.acquisition = acquisition;
 	}
 
 	@Override
@@ -57,28 +74,15 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 		this.file = file;
 	}
 
-	@Override
-	public void setSupplier(ISupplier suplier) {
-
-		this.supplier = suplier;
-	}
-	
-	
-	protected HashMap<String,Integer> getNames(){
-		return names;
-	}
-	
-	
 	protected File setFile(File file, String fileExtension) {
 
 		String namefile = file.getName();
 		String allName = null;
 		String name = null;
 		fileExtension = fileExtension.toLowerCase();
-		if (namefile.length() > fileExtension.length()) {
-			String nameSuffix = namefile.substring(namefile.length() - fileExtension.length(), namefile.length())
-					.toLowerCase();
-			if (!nameSuffix.equals(fileExtension)) {
+		if(namefile.length() > fileExtension.length()) {
+			String nameSuffix = namefile.substring(namefile.length() - fileExtension.length(), namefile.length()).toLowerCase();
+			if(!nameSuffix.equals(fileExtension)) {
 				allName = namefile + fileExtension;
 				name = namefile;
 			} else {
@@ -90,7 +94,7 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 			name = namefile;
 		}
 		String newName;
-		if (names.containsKey(allName)) {
+		if(names.containsKey(allName)) {
 			int i = names.get(allName);
 			newName = name + "(" + i++ + ")" + fileExtension;
 			names.put(allName, i);
@@ -100,17 +104,10 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 		}
 		return new File(file.getParentFile().getAbsolutePath() + File.separator + newName);
 	}
-	
-	
+
 	@Override
-	public IAcquisition getAcquisition() {
-		
-		return acquisition;
-	}
-	
-	@Override
-	public void setAcquisition(IAcquisition acquisition) {
-		this.acquisition = acquisition;
-		
+	public void setSupplier(ISupplier suplier) {
+
+		this.supplier = suplier;
 	}
 }

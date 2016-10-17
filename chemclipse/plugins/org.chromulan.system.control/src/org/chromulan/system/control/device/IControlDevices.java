@@ -16,5 +16,4 @@ import java.util.List;
 public interface IControlDevices {
 
 	List<IControlDevice> getControlDevices();
-
 }

@@ -44,32 +44,17 @@ public class DataSupplier {
 	private DataStore dataStore;
 	@Inject
 	private IEventBroker eventBroker;
+	private final String FILE_NAME = "dataStore";
 	@Inject
 	private IExtensionRegistry registry;
-
-	private final String FILE_NAME = "dataStore";
 
 	public DataSupplier() {
 		dataStore = new DataStore();
 	}
 
-	@PostConstruct
-	public void postConstruct() {
-		IConfigurationElement[] elements = registry.getConfigurationElementsFor(DeviceSupplier.ID);
-		File file = getFile();
-
-		if (file != null && file.exists()) {
-			try {
-				loadData(file, elements);
-			} catch (ClassNotFoundException | IOException | CoreException e) {
-				// logger.warn(e);
-			}
-		}
-	}
-
 	public IControlDevices getControlDevices() {
 
-		if (dataStore != null) {
+		if(dataStore != null) {
 			return dataStore.getControlDevices();
 		} else {
 			return null;
@@ -77,7 +62,8 @@ public class DataSupplier {
 	}
 
 	public List<IDeviceSetting> getDeviceSettings() {
-		if (dataStore != null) {
+
+		if(dataStore != null) {
 			return dataStore.getDeviceSettings();
 		} else {
 			return null;
@@ -86,7 +72,7 @@ public class DataSupplier {
 
 	public IDevicesProfiles getDevicesProfiles() {
 
-		if (dataStore != null) {
+		if(dataStore != null) {
 			return dataStore.getDevicesProfiles();
 		} else {
 			return null;
@@ -97,19 +83,18 @@ public class DataSupplier {
 
 		IPath defPath = PreferenceSupplier.INSTANCE().getScopeContext().getLocation();
 		File defFile = null;
-		if (defPath != null) {
+		if(defPath != null) {
 			defFile = defPath.append(FILE_NAME).toFile();
 		} else {
 			String path = PreferenceSupplier.INSTANCE().getPreferences().get("file", null);
-			if (path != null) {
+			if(path != null) {
 				defFile = new File(path, FILE_NAME);
 			}
 		}
 		return defFile;
 	}
 
-	private void loadData(File file, IConfigurationElement[] elements)
-			throws IOException, ClassNotFoundException, CoreException {
+	private void loadData(File file, IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException {
 
 		FileInputStream inputStream = new FileInputStream(file);
 		ObjectInputStream in = new ObjectInputStream(inputStream);
@@ -118,15 +103,29 @@ public class DataSupplier {
 		inputStream.close();
 	}
 
+	@PostConstruct
+	public void postConstruct() {
+
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor(DeviceSupplier.ID);
+		File file = getFile();
+		if(file != null && file.exists()) {
+			try {
+				loadData(file, elements);
+			} catch(ClassNotFoundException | IOException | CoreException e) {
+				// logger.warn(e);
+			}
+		}
+	}
+
 	@PreDestroy
 	public void save() {
 
 		try {
 			File file = getFile();
-			if (file != null) {
+			if(file != null) {
 				saveData(file);
 			}
-		} catch (IOException e) {
+		} catch(IOException e) {
 		}
 	}
 

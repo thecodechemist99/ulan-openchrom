@@ -34,7 +34,7 @@ public class CreateChromatogram {
 
 	@Inject
 	@Optional
-	public void displayChromatogam(@UIEventTopic(value = IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IChromatogramCSDAcquisition chromatogram) {
+	public void displayChromatogamCSD(@UIEventTopic(value = IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IChromatogramCSDAcquisition chromatogram) {
 
 		if(chromatogram == null) {
 			return;

@@ -45,5 +45,4 @@ public class DevicesProfiles implements IDevicesProfiles {
 
 		profiles.remove(devicesProfile);
 	}
-
 }

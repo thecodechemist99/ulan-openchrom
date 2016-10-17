@@ -8,12 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class AbstractDeviceSetting implements IDeviceSetting {
-	private String name;
-	private List<IValueChangeListener> listeners;
-	private HashMap<String, IValue<?>> values;
-	private String deviceType;
-	private String pluginID;
+
 	private String deviceID;
+	private String deviceType;
+	private List<IValueChangeListener> listeners;
+	private String name;
+	private String pluginID;
+	private HashMap<String, IValue<?>> values;
 
 	public AbstractDeviceSetting() {
 		this.name = "";
@@ -21,73 +22,10 @@ public abstract class AbstractDeviceSetting implements IDeviceSetting {
 		listeners = new ArrayList<>();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		this.name = (String) in.readObject();
-		this.deviceType = (String) in.readObject();
-		this.pluginID = (String) in.readObject();
-		this.values = (HashMap<String, IValue<?>>) in.readObject();
-	}
-
-	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeObject(name);
-		out.writeObject(deviceType);
-		out.writeObject(pluginID);
-		out.writeObject(values);
-	}
-
-	@Override
-	public String getName() {
-		return name;
-
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public HashMap<String, IValue<?>> getValues() {
-		return values;
-	}
-
 	@Override
 	public void addUpdateValueListener(IValueChangeListener listener) {
+
 		listeners.add(listener);
-	}
-
-	@Override
-	public void updateValueListeners() {
-		for (IValueChangeListener listener : listeners) {
-			listener.update();
-		}
-	}
-
-	@Override
-	public String getDeviceType() {
-
-		return deviceType;
-	}
-
-	@Override
-	public void setDeviceType(String type) {
-		this.deviceType = type;
-	}
-
-	@Override
-	public String getPluginID() {
-
-		return pluginID;
-	}
-
-	@Override
-	public void setPlugnID(String id) {
-
-		this.pluginID = id;
-
 	}
 
 	@Override
@@ -97,9 +35,77 @@ public abstract class AbstractDeviceSetting implements IDeviceSetting {
 	}
 
 	@Override
-	public void setDeviceID(String id) {
-		this.deviceID = id;
+	public String getDeviceType() {
 
+		return deviceType;
 	}
 
+	@Override
+	public String getName() {
+
+		return name;
+	}
+
+	@Override
+	public String getPluginID() {
+
+		return pluginID;
+	}
+
+	@Override
+	public HashMap<String, IValue<?>> getValues() {
+
+		return values;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
+		this.name = (String)in.readObject();
+		this.deviceType = (String)in.readObject();
+		this.pluginID = (String)in.readObject();
+		this.values = (HashMap<String, IValue<?>>)in.readObject();
+	}
+
+	@Override
+	public void setDeviceID(String id) {
+
+		this.deviceID = id;
+	}
+
+	@Override
+	public void setDeviceType(String type) {
+
+		this.deviceType = type;
+	}
+
+	@Override
+	public void setName(String name) {
+
+		this.name = name;
+	}
+
+	@Override
+	public void setPlugnID(String id) {
+
+		this.pluginID = id;
+	}
+
+	@Override
+	public void updateValueListeners() {
+
+		for(IValueChangeListener listener : listeners) {
+			listener.update();
+		}
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+
+		out.writeObject(name);
+		out.writeObject(deviceType);
+		out.writeObject(pluginID);
+		out.writeObject(values);
+	}
 }

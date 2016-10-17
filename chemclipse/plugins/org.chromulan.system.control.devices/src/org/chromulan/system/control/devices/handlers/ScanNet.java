@@ -52,36 +52,33 @@ public class ScanNet {
 				dialog.run(true, false, runnable);
 				UlanDevicesStore devices = runnable.getDevices();
 				setDevices(devices);
-			} catch (InvocationTargetException e) {
+			} catch(InvocationTargetException e) {
 				// /logger.warn(e);
-			} catch (InterruptedException e) {
+			} catch(InterruptedException e) {
 				// logger.warn(e);
 			}
-		} catch (IOException e) {
+		} catch(IOException e) {
 			// TODO:Exception
 		}
 	}
 
 	private void setDevices(UlanDevicesStore devices) {
 
-		for (IUlanControlDevice device : devices.getControlDevices()) {
-			if (device instanceof IUlanControlDevice) {
+		for(IUlanControlDevice device : devices.getControlDevices()) {
+			if(device instanceof IUlanControlDevice) {
 				IUlanControlDevice ulanDevice = device;
-				if (IUlanControlDevices.contains(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID())) {
-					IUlanControlDevices
-							.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID())
-							.setConnected(true);
+				if(IUlanControlDevices.contains(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID())) {
+					IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID()).setConnected(true);
 				} else {
 					IUlanControlDevices.add(this.dataSupplier.getControlDevices(), ulanDevice);
 				}
-				eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices
-						.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID()));
+				eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID()));
 			}
 		}
-		for (IControlDevice device : this.dataSupplier.getControlDevices().getControlDevices()) {
-			if (device instanceof IUlanControlDevice) {
-				IUlanControlDevice ulanDevice = (IUlanControlDevice) device;
-				if (!devices.contains(ulanDevice.getDeviceID())) {
+		for(IControlDevice device : this.dataSupplier.getControlDevices().getControlDevices()) {
+			if(device instanceof IUlanControlDevice) {
+				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
+				if(!devices.contains(ulanDevice.getDeviceID())) {
 					ulanDevice.setConnected(false);
 					eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, ulanDevice);
 				}

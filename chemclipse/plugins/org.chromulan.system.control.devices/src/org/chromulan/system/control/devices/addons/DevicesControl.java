@@ -39,40 +39,35 @@ public class DevicesControl {
 
 	@Inject
 	@Optional
-	public void conectReqiredDevice(
-			@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_CONTROL) ControlDevices devices) {
+	public void conectReqiredDevice(@UIEventTopic(value = IControlDevicesEvents.TOPIC_CONTROL_DEVICES_CONTROL) ControlDevices devices) {
 
-		if (devices == null) {
+		if(devices == null) {
 			return;
 		}
-		for (IControlDevice deviceCon : devices.getControlDevices()) {
-			if (deviceCon instanceof IUlanControlDevice) {
-				IUlanControlDevice device = (IUlanControlDevice) deviceCon;
-				IUlanControlDevice controlDevice = IUlanControlDevices
-						.getControlDevice(this.dataSupplier.getControlDevices(), device.getDeviceID());
-				if (controlDevice == null) {
+		for(IControlDevice deviceCon : devices.getControlDevices()) {
+			if(deviceCon instanceof IUlanControlDevice) {
+				IUlanControlDevice device = (IUlanControlDevice)deviceCon;
+				IUlanControlDevice controlDevice = IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), device.getDeviceID());
+				if(controlDevice == null) {
 					try {
-						DeviceDescription description = ULanCommunicationInterface
-								.getDevice(device.getDeviceDescription().getAdr());
-						if (description != null) {
+						DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
+						if(description != null) {
 							IUlanControlDevices.add(this.dataSupplier.getControlDevices(), device);
-							eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices
-									.getControlDevice(this.dataSupplier.getControlDevices(), device.getDeviceID()));
+							eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), device.getDeviceID()));
 						}
-					} catch (Exception e) {
+					} catch(Exception e) {
 					}
 				} else {
 					try {
-						DeviceDescription description = ULanCommunicationInterface
-								.getDevice(device.getDeviceDescription().getAdr());
-						if (description != null) {
+						DeviceDescription description = ULanCommunicationInterface.getDevice(device.getDeviceDescription().getAdr());
+						if(description != null) {
 							controlDevice.setConnected(true);
 							eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, controlDevice);
 						} else {
 							controlDevice.setConnected(false);
 							eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, controlDevice);
 						}
-					} catch (Exception e) {
+					} catch(Exception e) {
 						// TODO Auto-generated catch block
 						// e.printStackTrace();
 					}

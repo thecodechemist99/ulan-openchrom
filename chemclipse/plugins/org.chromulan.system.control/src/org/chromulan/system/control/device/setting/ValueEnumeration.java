@@ -1,54 +1,54 @@
 package org.chromulan.system.control.device.setting;
 
-public class ValueEnumeration<Value> extends AbstractValue<Value> {
+import java.io.Serializable;
+
+public class ValueEnumeration<Value extends Serializable> extends AbstractValue<Value> {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -1550272675179584635L;
 	private Value[] values;
-	private int value;
-	private int defValue;
 
-	public ValueEnumeration(IDeviceSetting device, String name, Value[] values, int defValue, boolean isChangeable) {
-		super(device, name, isChangeable);
-		this.values = values;
-		this.defValue = defValue;
+	public ValueEnumeration(IDeviceSetting device, String name, Value[] values, int defValue) {
+		super(device, name, values[defValue]);
+	}
+
+	public int getOrderValue() {
+
+		Value v = getValue();
+		for(int i = 0; i < values.length; i++) {
+			if(values[i].equals(v)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public Value[] getValues() {
+
+		return values;
 	}
 
 	@Override
-	public Value getValue() {
-		return values[value];
-	}
+	public void setDefValue(Value defValue) {
 
-	@Override
-	public void setValue(Value value) {
-		for (int i = 0; i < values.length; i++) {
-			if (values[i].equals(value)) {
-				this.value = i;
+		for(int i = 0; i < values.length; i++) {
+			if(values[i].equals(defValue)) {
+				super.setDefValue(defValue);
 				return;
 			}
 		}
 	}
 
-	public int getOrderSelection() {
-		return value;
-	}
-
-	public Value[] getValues() {
-		return values;
-	}
-
 	@Override
-	public Value getDefaulValue() {
+	public void setValue(Value value) {
 
-		return values[defValue];
+		for(int i = 0; i < values.length; i++) {
+			if(values[i].equals(value)) {
+				super.setValue(value);
+				return;
+			}
+		}
 	}
-
-	@Override
-	public String valueToString() {
-
-		return values[value].toString();
-	}
-
 }

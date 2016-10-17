@@ -1,24 +1,16 @@
 package org.chromulan.system.control.device.setting;
 
-public abstract class ValueDecimalNumber<Num extends Number> extends ValueNumer<Num>
-		implements IValueDecimalNumber<Num> {
+public abstract class ValueDecimalNumber<Num extends Number> extends AbstractValue<Num> implements IValueDecimalNumber<Num> {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 2560189805897499195L;
-
-	public ValueDecimalNumber(IDeviceSetting device, String name, Num defValue, boolean isChangeable, Num min,
-			Num max) {
-		super(device, name, defValue, isChangeable, min, max);
-	}
-
 	private int decimalNumber;
 
-	@Override
-	public void setNumeberDecimalPlace(int number) {
-		this.decimalNumber = number;
-
+	public ValueDecimalNumber(IDeviceSetting device, String name, Num defValue, int numeberDecimalPlace) {
+		super(device, name, defValue);
+		this.decimalNumber = numeberDecimalPlace;
 	}
 
 	@Override
@@ -27,4 +19,9 @@ public abstract class ValueDecimalNumber<Num extends Number> extends ValueNumer<
 		return decimalNumber;
 	}
 
+	@Override
+	public void setNumeberDecimalPlace(int number) {
+
+		this.decimalNumber = number;
+	}
 }

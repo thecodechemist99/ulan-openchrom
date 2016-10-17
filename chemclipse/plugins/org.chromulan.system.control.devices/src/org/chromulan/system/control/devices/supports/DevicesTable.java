@@ -57,13 +57,13 @@ public class DevicesTable {
 		@Override
 		protected Object getValue(Object element) {
 
-			return ((IUlanControlDevice) element).getName();
+			return ((IUlanControlDevice)element).getName();
 		}
 
 		@Override
 		protected void setValue(Object element, Object value) {
 
-			((IUlanControlDevice) element).setName(String.valueOf(value));
+			((IUlanControlDevice)element).setName(String.valueOf(value));
 		}
 	}
 
@@ -81,25 +81,23 @@ public class DevicesTable {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 
-				if (element instanceof IUlanControlDevice) {
+				if(element instanceof IUlanControlDevice) {
 					return true;
 				}
 				return false;
 			}
 		});
-
-		if (setFilter) {
+		if(setFilter) {
 			viewer.addFilter(new ViewerFilter() {
 
 				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
 
-					IUlanControlDevice device = (IUlanControlDevice) element;
+					IUlanControlDevice device = (IUlanControlDevice)element;
 					return device.isConnected();
 				}
 			});
 		}
-
 		createColumns(parent, viewer);
 		Table table = viewer.getTable();
 		table.setHeaderVisible(true);
@@ -109,22 +107,20 @@ public class DevicesTable {
 
 	private void createColumns(Composite parent, TableViewer viewer) {
 
-		String[] titles = { "Adr", "Name", "Description", "Type" };
-		int[] bounds = { 50, 150, 300, 100 };
+		String[] titles = {"Adr", "Name", "Description", "Type"};
+		int[] bounds = {50, 150, 300, 100};
 		TableViewerColumn column = createTableViewerColumn(titles[0], bounds[0]);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
 
-				IUlanControlDevice controlDevice = (IUlanControlDevice) element;
+				IUlanControlDevice controlDevice = (IUlanControlDevice)element;
 				return Long.toString(controlDevice.getDeviceDescription().getAdr());
 			}
 		});
 		column = createTableViewerColumn(titles[1], bounds[1]);
-		IObservableMap attributeMapName = BeanProperties
-				.value(IUlanControlDevice.class, IUlanControlDevice.PROPERTY_NAME)
-				.observeDetail(viewContentProvider.getKnownElements());
+		IObservableMap attributeMapName = BeanProperties.value(IUlanControlDevice.class, IUlanControlDevice.PROPERTY_NAME).observeDetail(viewContentProvider.getKnownElements());
 		column.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapName));
 		column.setEditingSupport(new NameEditor(viewer));
 		column = createTableViewerColumn(titles[2], bounds[2]);
@@ -133,14 +129,12 @@ public class DevicesTable {
 			@Override
 			public String getText(Object element) {
 
-				IUlanControlDevice controlDevice = (IUlanControlDevice) element;
+				IUlanControlDevice controlDevice = (IUlanControlDevice)element;
 				return controlDevice.getDeviceDescription().getDescription();
 			}
 		});
 		column = createTableViewerColumn(titles[3], bounds[3]);
-		IObservableMap attributeMapType = BeanProperties
-				.value(IUlanControlDevice.class, IUlanControlDevice.PROPERTY_DEVICE_TYPE)
-				.observeDetail(viewContentProvider.getKnownElements());
+		IObservableMap attributeMapType = BeanProperties.value(IUlanControlDevice.class, IUlanControlDevice.PROPERTY_DEVICE_TYPE).observeDetail(viewContentProvider.getKnownElements());
 		column.setLabelProvider(new ObservableMapCellLabelProvider(attributeMapType));
 	}
 

@@ -35,36 +35,33 @@ public class ConnectDevices {
 	private EModelService modelService;
 	@Inject
 	private EPartService partService;
-	private String[] supportedDevices = new String[] { "ulad31", "ulad32" };
+	private String[] supportedDevices = new String[]{"ulad31", "ulad32"};
 
 	@Inject
 	@Optional
-	public void connectDevice(
-			@UIEventTopic(value = IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT) IControlDevice controlDevice) {
+	public void connectDevice(@UIEventTopic(value = IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT) IControlDevice controlDevice) {
 
 		IUlanControlDevice device;
-		if (controlDevice instanceof IUlanControlDevice) {
-			device = (IUlanControlDevice) controlDevice;
+		if(controlDevice instanceof IUlanControlDevice) {
+			device = (IUlanControlDevice)controlDevice;
 		} else {
 			return;
 		}
-		MPartStack stack = (MPartStack) modelService
-				.find("org.chromulan.system.control.devices.partstack.devicesSetting", application);
-		if (stack == null) {
+		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.devices.partstack.devicesSetting", application);
+		if(stack == null) {
 			return;
 		}
-		for (String suportDevice : supportedDevices) {
-			if (device.getDeviceDescription().getModulType().toLowerCase().equals(suportDevice)) {
+		for(String suportDevice : supportedDevices) {
+			if(device.getDeviceDescription().getModulType().toLowerCase().equals(suportDevice)) {
 				device.setDeviceType(DeviceType.DETECTOR);
-				if (modelService.find(device.getDeviceID(), application) == null) {
+				if(modelService.find(device.getDeviceID(), application) == null) {
 					MPart part = MBasicFactory.INSTANCE.createPart();
 					part.setLabel(device.getDeviceID());
 					part.setObject(device);
 					part.setElementId(device.getDeviceID());
 					part.setCloseable(false);
 					part.setIconURI("platform:/plugin/org.chromulan.system.control.ulad3x/icons/16x16/devices.gif");
-					part.setContributionURI(
-							"bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.ulad3x.parts.ULad3xPart");
+					part.setContributionURI("bundleclass://org.chromulan.system.control.ulad3x/org.chromulan.system.control.ulad3x.parts.ULad3xPart");
 					stack.getChildren().add(part);
 					partService.showPart(part, PartState.CREATE);
 				}

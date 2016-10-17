@@ -40,14 +40,14 @@ public class ChromatogramCSDMaker {
 	public List<IChromatogram> getChromatograms(String path, ISupplier supplier) {
 
 		List<IChromatogram> chromatograms = new ArrayList<>();
-		if (path == null || acquisition == null) {
+		if(path == null || acquisition == null) {
 			// TODO: exception or return null ??
 			return null;
 		}
 		String npath = path + File.separator + acquisition.getName();
 		File nFile = new File(npath);
-		if (!nFile.exists()) {
-			if (!nFile.mkdir()) {
+		if(!nFile.exists()) {
+			if(!nFile.mkdir()) {
 				// TODO:excetpiton or return null ??
 				return null;
 			}
@@ -55,19 +55,18 @@ public class ChromatogramCSDMaker {
 		StringBuilder stringBuilder = new StringBuilder("");
 		stringBuilder.append(acquisition.getDescription());
 		stringBuilder.append("\r\n");
-		for (IDetectorData detectorData : detectorsData) {
+		for(IDetectorData detectorData : detectorsData) {
 			IChromatogram chromatogram = detectorData.getChromatogram();
-			if (chromatogram instanceof IChromatogramCSD) {
-				IChromatogramCSD chromatogramCSD = (IChromatogramCSD) chromatogram;
+			if(chromatogram instanceof IChromatogramCSD) {
+				IChromatogramCSD chromatogramCSD = (IChromatogramCSD)chromatogram;
 				String shortInfo;
-				if (detectorData.getDescription() != null) {
+				if(detectorData.getDescription() != null) {
 					shortInfo = stringBuilder.toString() + detectorData.getDescription();
 				} else {
 					shortInfo = stringBuilder.toString();
 				}
 				chromatogramCSD.setShortInfo(shortInfo);
-				File fileSave = new File(nFile + File.separator + acquisition.getName() + "-"
-						+ IChromatogramMaker.fileValidation(detectorData.getName()) + supplier.getFileExtension());
+				File fileSave = new File(nFile + File.separator + acquisition.getName() + "-" + IChromatogramMaker.fileValidation(detectorData.getName()) + supplier.getFileExtension());
 				chromatogramCSD.setFile(fileSave);
 				chromatograms.add(chromatogramCSD);
 			}

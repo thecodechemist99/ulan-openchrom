@@ -20,20 +20,18 @@ import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IAcquisitionSaver {
-	
-	
-	void setAcquisition(IAcquisition acquisition);
 
 	IAcquisition getAcquisition();
-	
+
 	File getFile();
 
 	List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessInfo();
 
 	ISupplier getSupplier();
 
-	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor,
-			List<IChromatogram> chromatograms);
+	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<IChromatogram> chromatograms);
+
+	void setAcquisition(IAcquisition acquisition);
 
 	void setFile(File file);
 

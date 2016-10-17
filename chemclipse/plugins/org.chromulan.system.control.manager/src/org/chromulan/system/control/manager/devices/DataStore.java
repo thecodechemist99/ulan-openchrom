@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public class DataStore {
 
 	private IControlDevices devices;
-	private IDevicesProfiles profiles;
 	private List<IDeviceSetting> deviceSettings;
+	private IDevicesProfiles profiles;
 
 	public DataStore() {
 		devices = new ControlDevices();
@@ -44,16 +44,18 @@ public class DataStore {
 		return devices;
 	}
 
-	public IDevicesProfiles getDevicesProfiles() {
-		return profiles;
-	}
-
 	public List<IDeviceSetting> getDeviceSettings() {
+
 		return deviceSettings;
 	}
 
-	public void readExternal(ObjectInputStream in, IConfigurationElement[] elements)
-			throws IOException, ClassNotFoundException, CoreException {
+	public IDevicesProfiles getDevicesProfiles() {
+
+		return profiles;
+	}
+
+	public void readExternal(ObjectInputStream in, IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException {
+
 		LoadControlDevices loadControlDevices = new LoadControlDevices();
 		devices = loadControlDevices.loadControlDevices(in, elements);
 		deviceSettings = loadControlDevices.loadSettings(in, elements);
@@ -61,6 +63,7 @@ public class DataStore {
 	}
 
 	public void writeExternal(ObjectOutputStream out) throws IOException {
+
 		SaveControlDevices saveControlDevices = new SaveControlDevices();
 		saveControlDevices.saveControlDevices(out, devices);
 		saveControlDevices.saveDeviceSettings(out, deviceSettings);

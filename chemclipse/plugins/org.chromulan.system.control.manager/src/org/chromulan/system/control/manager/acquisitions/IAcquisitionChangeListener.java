@@ -5,10 +5,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.manager.acquisitions;
 
 import java.util.List;
@@ -17,17 +17,29 @@ import org.chromulan.system.control.model.IAcquisition;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public interface IAcquisitionChangeListener {
-	
-	default void setAcquisition(IAcquisition acquisition){};
-	
-	default void startAcquisition(IAcquisition acquisition){};
-	
-	default void stopAcquisition(IAcquisition acquisition){};
 
-	default void proccessDataAcquisition(IAcquisition acquisition){};
-	
-	default List<IChromatogram> getChromatograms(IAcquisition acquisition){return null;};
-	
-	default void endAcquisition(IAcquisition acquisition){};
+	default void endAcquisition(IAcquisition acquisition) {
 
+	};
+
+	default List<IChromatogram> getChromatograms(IAcquisition acquisition) {
+
+		return null;
+	};
+
+	default void proccessDataAcquisition(IAcquisition acquisition) {
+
+	};
+
+	default void setAcquisition(IAcquisition acquisition) {
+
+	};
+
+	default void startAcquisition(IAcquisition acquisition) {
+
+	};
+
+	default void stopAcquisition(IAcquisition acquisition) {
+
+	};
 }

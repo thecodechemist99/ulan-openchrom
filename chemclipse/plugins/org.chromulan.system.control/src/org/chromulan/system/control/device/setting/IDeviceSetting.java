@@ -5,26 +5,25 @@ import java.util.HashMap;
 
 public interface IDeviceSetting extends Externalizable {
 
-	String getName();
-
-	void setName(String name);
-
-	String getDeviceType();
-
-	void setDeviceType(String type);
+	void addUpdateValueListener(IValueChangeListener listener);
 
 	String getDeviceID();
 
-	void setDeviceID(String id);
+	String getDeviceType();
+
+	String getName();
 
 	String getPluginID();
 
-	void setPlugnID(String id);
-
 	HashMap<String, IValue<?>> getValues();
 
+	void setDeviceID(String id);
+
+	void setDeviceType(String type);
+
+	void setName(String name);
+
+	void setPlugnID(String id);
+
 	void updateValueListeners();
-
-	void addUpdateValueListener(IValueChangeListener listener);
-
 }

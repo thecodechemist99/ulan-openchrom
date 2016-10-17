@@ -27,5 +27,4 @@ public class ControlDevices implements IControlDevices {
 
 		return controlDevices;
 	}
-
 }

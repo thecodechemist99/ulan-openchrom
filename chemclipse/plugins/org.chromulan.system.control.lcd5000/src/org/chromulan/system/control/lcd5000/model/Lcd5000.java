@@ -53,9 +53,9 @@ public class Lcd5000 {
 			public void completed(ULanMsg arg0, Void arg1) {
 
 				ByteBuffer buffer = arg0.getMsg();
-				synchronized (isBeeingRecored) {
-					if (isBeeingRecored) {
-						while (buffer.hasRemaining()) {
+				synchronized(isBeeingRecored) {
+					if(isBeeingRecored) {
+						while(buffer.hasRemaining()) {
 							chromatogramAcquisition.addScanAutoSet(new ScanCSD(buffer.getFloat()));
 						}
 					}
@@ -79,7 +79,7 @@ public class Lcd5000 {
 
 	public void connect() throws ClosedChannelException, IOException {
 
-		if (ULanCommunicationInterface.isOpen()) {
+		if(ULanCommunicationInterface.isOpen()) {
 			filtGetData.activateFilt();
 		}
 	}
@@ -148,14 +148,14 @@ public class Lcd5000 {
 	public void start(boolean reset) {
 
 		isBeeingRecored = true;
-		if (reset) {
+		if(reset) {
 			chromatogramAcquisition.newAcquisition(DEFAULT_SCAN_INTERVAL, DEFAULT_SCAN_DELAY);
 		}
 	}
 
 	public void stop() {
 
-		synchronized (isBeeingRecored) {
+		synchronized(isBeeingRecored) {
 			isBeeingRecored = false;
 		}
 	}

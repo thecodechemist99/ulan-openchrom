@@ -21,7 +21,7 @@ public interface IChromatogramMaker {
 	static String fileValidation(String file) {
 
 		String nfile = file.trim();
-		if (nfile.isEmpty()) {
+		if(nfile.isEmpty()) {
 			return "Chromatogram";
 		}
 		nfile.replace('<', '_');

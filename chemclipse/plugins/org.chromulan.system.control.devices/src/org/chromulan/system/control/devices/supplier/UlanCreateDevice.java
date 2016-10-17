@@ -11,11 +11,11 @@ public class UlanCreateDevice implements ICreateControlDevice {
 
 	@Override
 	public IControlDevice createDevice(String className, ObjectInput in) throws ClassNotFoundException, IOException {
-		if (className.equals(UlanControlDevice.class.getName())) {
-			return (IControlDevice) in.readObject();
+
+		if(className.equals(UlanControlDevice.class.getName())) {
+			return (IControlDevice)in.readObject();
 		} else {
 			return null;
 		}
 	}
-
 }

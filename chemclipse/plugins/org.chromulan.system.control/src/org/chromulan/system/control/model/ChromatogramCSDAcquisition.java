@@ -38,8 +38,8 @@ public class ChromatogramCSDAcquisition extends AbstractChromatogramAcquisition 
 	public IChromatogramCSD getChromatogramCSD() {
 
 		IChromatogram chromatogram = getChromatogram();
-		if (chromatogram instanceof IChromatogramCSD) {
-			return (IChromatogramCSD) chromatogram;
+		if(chromatogram instanceof IChromatogramCSD) {
+			return (IChromatogramCSD)chromatogram;
 		}
 		return null;
 	}
@@ -51,7 +51,7 @@ public class ChromatogramCSDAcquisition extends AbstractChromatogramAcquisition 
 		List<IChromatogramOverview> list = new ArrayList<IChromatogramOverview>(1);
 		list.add(chromatogram);
 		IMultipleSeries series = null;
-		synchronized (this) {
+		synchronized(this) {
 			series = SeriesConverter.convertChromatogramOverviews(list, Sign.POSITIVE, null, false);
 		}
 		return series;

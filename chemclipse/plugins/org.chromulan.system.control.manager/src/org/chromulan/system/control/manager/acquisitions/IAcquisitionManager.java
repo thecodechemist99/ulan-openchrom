@@ -5,10 +5,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
-*******************************************************************************/
+ *******************************************************************************/
 package org.chromulan.system.control.manager.acquisitions;
 
 import java.util.ArrayList;
@@ -33,61 +33,142 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
-
 @Creatable
 @Singleton
 public class IAcquisitionManager {
-	private List<IAcquisitionChangeListener> changeListeners;
-	private ScheduledThreadPoolExecutor executor;
-	
-	
+
 	@Inject
 	IEventBroker eventBroker;
-	
+	private ScheduledThreadPoolExecutor executor;
+	private List<IAcquisitionChangeListener> changeListeners;
+
 	public IAcquisitionManager() {
 		changeListeners = new ArrayList<>();
 		executor = new ScheduledThreadPoolExecutor(100);
 	}
-	
-	public boolean set(IAcquisition acquisition){
-		return setAcquisition(acquisition);		
+
+	public void addChangeListener(IAcquisitionChangeListener changeListener) {
+
+		synchronized(changeListeners) {
+			changeListeners.add(changeListener);
+		}
 	}
-	
-	public boolean end(IAcquisition acquisition){
-		if(acquisition != null && !acquisition.isRunning()){
+
+	public boolean end(IAcquisition acquisition) {
+
+		if(acquisition != null && !acquisition.isRunning()) {
 			endAcqustion(acquisition);
 			return false;
 		} else {
 			return false;
 		}
 	}
-	
-	private boolean setAcquisition(IAcquisition acquisition){
-		synchronized (changeListeners) {
-			for (IAcquisitionChangeListener listener : changeListeners) {
+
+	private void endAcqustion(IAcquisition acquisition) {
+
+		for(IAcquisitionChangeListener listener : changeListeners) {
+			listener.endAcquisition(acquisition);
+		}
+		eventBroker.post(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END, acquisition);
+	}
+
+	private void proccessDataAcqusition(IAcquisition acquisition) {
+
+		for(IAcquisitionChangeListener listener : changeListeners) {
+			listener.proccessDataAcquisition(acquisition);
+		}
+	}
+
+	public void removeChangeListener(IAcquisitionChangeListener changeListener) {
+
+		synchronized(changeListeners) {
+			changeListeners.remove(changeListener);
+		}
+	}
+
+	private void saveAcqusition(IAcquisition acquisition) {
+
+		List<IChromatogram> chromatogramsToSave = new ArrayList<>();
+		IAcquisitionSaver saver = null;
+		if(acquisition instanceof IAcquisitionCSD) {
+			IAcquisitionCSD acquisitionCSD = (IAcquisitionCSD)acquisition;
+			for(IAcquisitionChangeListener listener : changeListeners) {
+				List<IChromatogram> chromatograms = listener.getChromatograms(acquisitionCSD);
+				if(chromatograms != null) {
+					for(IChromatogram chromatogram : chromatograms) {
+						if(chromatogram instanceof IChromatogramCSD) {
+							IChromatogramCSD chromatogramCSD = (IChromatogramCSD)chromatogram;
+							chromatogramsToSave.add(chromatogramCSD);
+						}
+					}
+				}
+			}
+			saver = acquisitionCSD.getAcquisitionCSDSaver();
+		} else if(acquisition instanceof IAcquisitionWSD) {
+			IAcquisitionWSD acquisitionWSD = (IAcquisitionWSD)acquisition;
+			for(IAcquisitionChangeListener listener : changeListeners) {
+				List<IChromatogram> chromatograms = listener.getChromatograms(acquisitionWSD);
+				if(chromatograms != null) {
+					for(IChromatogram chromatogram : chromatograms) {
+						if(chromatogram instanceof IChromatogramWSD) {
+							IChromatogramWSD chromatogramWSD = (IChromatogramWSD)chromatogram;
+							chromatogramsToSave.add(chromatogramWSD);
+						}
+					}
+				}
+			}
+			saver = acquisitionWSD.getAcquisitionWSDSaver();
+		} else if(acquisition instanceof IAcquisitionMSD) {
+			IAcquisitionMSD acquisitionMSD = (IAcquisitionMSD)acquisition;
+			for(IAcquisitionChangeListener listener : changeListeners) {
+				List<IChromatogram> chromatograms = listener.getChromatograms(acquisitionMSD);
+				if(chromatograms != null) {
+					for(IChromatogram chromatogram : chromatograms) {
+						if(chromatogram instanceof IChromatogramMSD) {
+							IChromatogramMSD chromatogramMSD = (IChromatogramMSD)chromatogram;
+							chromatogramsToSave.add(chromatogramMSD);
+						}
+					}
+				}
+			}
+			saver = acquisitionMSD.getAcquisitionMSDSaver();
+		}
+		if(saver != null && !chromatogramsToSave.isEmpty()) {
+			saver.save(new NullProgressMonitor(), chromatogramsToSave);
+		}
+	}
+
+	public boolean set(IAcquisition acquisition) {
+
+		return setAcquisition(acquisition);
+	}
+
+	private boolean setAcquisition(IAcquisition acquisition) {
+
+		synchronized(changeListeners) {
+			for(IAcquisitionChangeListener listener : changeListeners) {
 				listener.setAcquisition(acquisition);
 			}
 			eventBroker.post(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET, acquisition);
 			return true;
 		}
 	}
-	
-	public  boolean start(final IAcquisition acquisition){
-		synchronized (changeListeners) {
-			if(acquisition != null && !acquisition.isRunning() && !acquisition.isCompleted())
-			{
+
+	public boolean start(final IAcquisition acquisition) {
+
+		synchronized(changeListeners) {
+			if(acquisition != null && !acquisition.isRunning() && !acquisition.isCompleted()) {
 				acquisition.start();
-				for (IAcquisitionChangeListener listener : changeListeners) {
+				for(IAcquisitionChangeListener listener : changeListeners) {
 					listener.startAcquisition(acquisition);
 				}
-				if(acquisition.getAutoStop())
-				{
+				if(acquisition.getAutoStop()) {
 					executor.schedule(new Runnable() {
-						
+
 						@Override
 						public void run() {
+
 							stop(acquisition);
-							
 						}
 					}, acquisition.getDuration(), TimeUnit.MILLISECONDS);
 				}
@@ -96,18 +177,27 @@ public class IAcquisitionManager {
 			} else {
 				return false;
 			}
-			
 		}
 	}
-	
-	
-	public boolean stop(IAcquisition acquisition){
+
+	public boolean stop(IAcquisition acquisition) {
+
 		return stopAndProcessAcquisition(acquisition);
 	}
-	
-	private boolean stopAndProcessAcquisition(IAcquisition acquisition){
-		synchronized (changeListeners) {
-			if((acquisition != null)&& acquisition.isRunning()){
+
+	private void stopAcquisition(IAcquisition acquisition) {
+
+		acquisition.stop();
+		for(IAcquisitionChangeListener listener : changeListeners) {
+			listener.stopAcquisition(acquisition);
+		}
+		eventBroker.post(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING, acquisition);
+	}
+
+	private boolean stopAndProcessAcquisition(IAcquisition acquisition) {
+
+		synchronized(changeListeners) {
+			if((acquisition != null) && acquisition.isRunning()) {
 				stopAcquisition(acquisition);
 				proccessDataAcqusition(acquisition);
 				saveAcqusition(acquisition);
@@ -118,103 +208,4 @@ public class IAcquisitionManager {
 			}
 		}
 	}
-	
-	private void stopAcquisition(IAcquisition acquisition)
-	{
-		acquisition.stop();
-		for (IAcquisitionChangeListener listener : changeListeners) {
-			listener.stopAcquisition(acquisition);
-		}
-		eventBroker.post(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING, acquisition);
-	}
-	
-	private void proccessDataAcqusition(IAcquisition acquisition)
-	{
-		for (IAcquisitionChangeListener listener : changeListeners) {
-			listener.proccessDataAcquisition(acquisition);
-		}
-	}
-	
-	private void saveAcqusition(IAcquisition acquisition)
-	{
-		List<IChromatogram> chromatogramsToSave = new ArrayList<>();
-		IAcquisitionSaver saver = null;
-		
-		if (acquisition instanceof IAcquisitionCSD) {
-			IAcquisitionCSD acquisitionCSD = (IAcquisitionCSD) acquisition;
-			for (IAcquisitionChangeListener listener : changeListeners) {
-				List<IChromatogram> chromatograms = listener.getChromatograms(acquisitionCSD);
-				if(chromatograms != null){
-					for (IChromatogram chromatogram : chromatograms) {
-						if (chromatogram instanceof IChromatogramCSD) {
-							IChromatogramCSD chromatogramCSD = (IChromatogramCSD) chromatogram;
-							chromatogramsToSave.add(chromatogramCSD);
-						}
-					}
-				}
-				
-			}
-			saver = acquisitionCSD.getAcquisitionCSDSaver();
-			
-		} else if(acquisition instanceof IAcquisitionWSD){
-			IAcquisitionWSD acquisitionWSD = (IAcquisitionWSD)acquisition;
-			for (IAcquisitionChangeListener listener : changeListeners) {
-				List<IChromatogram> chromatograms = listener.getChromatograms(acquisitionWSD);
-				if(chromatograms != null){
-					for (IChromatogram chromatogram : chromatograms) {
-						if (chromatogram instanceof IChromatogramWSD) {
-							IChromatogramWSD chromatogramWSD = (IChromatogramWSD) chromatogram;
-							chromatogramsToSave.add(chromatogramWSD);
-						}
-					}
-				}	
-			}
-			
-			saver = acquisitionWSD.getAcquisitionWSDSaver();
-			
-			
-		} else if(acquisition instanceof IAcquisitionMSD){
-			IAcquisitionMSD acquisitionMSD = (IAcquisitionMSD)acquisition;
-			for (IAcquisitionChangeListener listener : changeListeners) {
-				List<IChromatogram> chromatograms = listener.getChromatograms(acquisitionMSD);
-				if(chromatograms != null){
-					for (IChromatogram chromatogram : chromatograms) {
-						if (chromatogram instanceof IChromatogramMSD) {
-							IChromatogramMSD chromatogramMSD = (IChromatogramMSD) chromatogram;
-							chromatogramsToSave.add(chromatogramMSD);
-						}
-					}
-				}	
-			}
-			saver = acquisitionMSD.getAcquisitionMSDSaver();
-		}
-		
-		if(saver != null && !chromatogramsToSave.isEmpty()){
-			saver.save(new NullProgressMonitor(), chromatogramsToSave);
-		}
-	}
-	
-	private void endAcqustion(IAcquisition acquisition)
-	{
-		for (IAcquisitionChangeListener listener : changeListeners) {
-			listener.endAcquisition(acquisition);
-		}
-		eventBroker.post(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END, acquisition);
-	}
-	
-	
-	
-	public void addChangeListener(IAcquisitionChangeListener changeListener){
-		synchronized (changeListeners) {
-			changeListeners.add(changeListener);
-		}
-	}
-	
-	public void removeChangeListener(IAcquisitionChangeListener changeListener){
-		synchronized (changeListeners) {
-			changeListeners.remove(changeListener);
-		}
-	}
-	
-	
 }

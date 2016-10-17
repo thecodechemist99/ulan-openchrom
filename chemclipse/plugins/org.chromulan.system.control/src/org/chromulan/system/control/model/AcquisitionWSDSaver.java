@@ -16,30 +16,26 @@ public class AcquisitionWSDSaver extends AbstractAcquisitionSaver implements IAc
 		super(acquisitionWSD);
 	}
 
-
 	@Override
-	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor,
-			List<IChromatogram> chromatograms) {
+	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<IChromatogram> chromatograms) {
 
 		List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos = getChromatogramExportConverterProcessInfo();
 		ISupplier supplier = getSupplier();
-		if (chromatograms == null) {
+		if(chromatograms == null) {
 			throw new NullPointerException();
 		}
-		for (IChromatogram chromatogram : chromatograms) {
-			if (chromatogram instanceof IChromatogramWSD) {
-				IChromatogramWSD chromatogramWSD = (IChromatogramWSD) chromatogram;
+		for(IChromatogram chromatogram : chromatograms) {
+			if(chromatogram instanceof IChromatogramWSD) {
+				IChromatogramWSD chromatogramWSD = (IChromatogramWSD)chromatogram;
 				File file = chromatogramWSD.getFile();
-				if (file != null) {
+				if(file != null) {
 					getNames().clear();
 					File nfile = setFile(file, supplier.getFileExtension());
-					IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterWSD.convert(nfile,
-							chromatogramWSD, supplier.getId(), progressMonitor);
+					IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterWSD.convert(nfile, chromatogramWSD, supplier.getId(), progressMonitor);
 					chromatogramExportConverterProcessingInfos.add(procesInfo);
 				}
 			}
 		}
 		return chromatogramExportConverterProcessingInfos;
 	}
-
 }

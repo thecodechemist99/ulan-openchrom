@@ -37,14 +37,13 @@ public interface IUlanControlDevice extends IControlDevice {
 
 	void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
-	void setDeviceType(DeviceType deviceType);
+	void setConnected(boolean b);
 
-	void setType(String type);
+	void setDeviceType(DeviceType deviceType);
 
 	void setName(String name);
 
-	void setConnected(boolean b);
-
 	void setPrepared(boolean b);
 
+	void setType(String type);
 }
