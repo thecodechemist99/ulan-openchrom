@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.model.IChromatogramAcquisition;
+import org.chromulan.system.control.model.IChromatogramWSDAcquisition;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 @SuppressWarnings("restriction")
-public class ChromatogramViewer {
+public class ChromatogramWSDViewer {
 
 	private class RedrawChromatogram implements Runnable {
 
@@ -57,13 +57,13 @@ public class ChromatogramViewer {
 	private Display display;
 	@Inject
 	private EHandlerService handlerService;
-	private IChromatogramAcquisition chromatogramAcquisition;
-	private ChromatogramOverviewUI chromatogramOverView;
+	private IChromatogramWSDAcquisition chromatogramAcquisition;
+	private ChromatogramWSDOverviewUI chromatogramOverView;
 	@Inject
 	private MPart part;
 	private RedrawChromatogram redrawChromatogram;
 
-	public ChromatogramViewer() {
+	public ChromatogramWSDViewer() {
 		diplayChromatogram = DISPLAY_INTERVAL_CHROMATOGRAM;
 		autoRedraw = true;
 		redrawChromatogram = new RedrawChromatogram();
@@ -119,9 +119,9 @@ public class ChromatogramViewer {
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 
-		chromatogramAcquisition = (IChromatogramAcquisition)part.getObject();
+		chromatogramAcquisition = (IChromatogramWSDAcquisition)part.getObject();
 		redrawChromatogram(autoRedraw);
-		chromatogramOverView = new ChromatogramOverviewUI(parent, SWT.NONE);
+		chromatogramOverView = new ChromatogramWSDOverviewUI(parent, SWT.NONE);
 		chromatogramOverView.setChromatogram(chromatogramAcquisition);
 		addHandler();
 	}

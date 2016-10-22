@@ -37,13 +37,21 @@
     <elements xsi:type="commands:Category" xmi:id="_IDBJcHZDEeWkxZUZTkqg1A" elementId="org.chromulan.system.control.ui.category.chromatogramoverview" name="ChromatogramDisplay"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_OPlIsHgMEeWkxZUZTkqg1A" featurename="descriptors" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
-    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_EsgscHgLEeWkxZUZTkqg1A" elementId="org.chromulan.system.control.ui.ChromatogramRecording" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/signal_monitor.gif" allowMultiple="true" closeable="true" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramViewer">
+    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_EsgscHgLEeWkxZUZTkqg1A" elementId="org.chromulan.system.control.ui.ChromatogramCSDRecording" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/signal_monitor.gif" allowMultiple="true" closeable="true" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramCSDViewer">
       <tags>removeOnHide</tags>
       <toolbar xmi:id="_ctMbsHojEeWegb6SmdMD8w" elementId="org.chromulan.system.control.ui.toolbar.0">
         <children xsi:type="menu:HandledToolItem" xmi:id="_KuJ2EHqNEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.handledtoolitem.0" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/updates.gif" selected="true" type="Check" command="_mWfs0HilEeWB3ebT_GT_3Q"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_LF19UHqNEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.handledtoolitem.1" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/ion.gif" selected="true" type="Radio" command="_4HfJkHiiEeWB3ebT_GT_3Q"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_LdPwsHqNEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.handledtoolitem.2" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/massSpectrum.gif" type="Radio" command="_jP3OIHgYEeWB3ebT_GT_3Q"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_U6HqgJKZEeW1lIunxr5KXg" elementId="org.chromulan.system.control.ui.handledtoolitem.3" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/settings.gif" command="_NY044HimEeWB3ebT_GT_3Q"/>
+      </toolbar>
+    </elements>
+    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_GYoVYJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.ChromatogramWSDRecording" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/signal_monitor.gif" closeable="true" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramWSDViewer">
+      <toolbar xmi:id="_hfM6EJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.toolbar.1">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_8qSyYJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.handledtoolitem.4" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/updates.gif" selected="true" type="Check" command="_mWfs0HilEeWB3ebT_GT_3Q"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_9SASoJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.handledtoolitem.5" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/ion.gif" selected="true" type="Radio" command="_4HfJkHiiEeWB3ebT_GT_3Q"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_9u2msJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.handledtoolitem.6" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/massSpectrum.gif" type="Radio" command="_jP3OIHgYEeWB3ebT_GT_3Q"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_-IP-IJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.handledtoolitem.7" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/settings.gif" command="_NY044HimEeWB3ebT_GT_3Q"/>
       </toolbar>
     </elements>
   </fragments>

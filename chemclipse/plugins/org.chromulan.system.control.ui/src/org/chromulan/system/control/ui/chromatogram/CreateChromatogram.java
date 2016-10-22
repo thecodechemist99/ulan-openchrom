@@ -44,7 +44,7 @@ public class CreateChromatogram {
 		if(stack == null) {
 			return;
 		}
-		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramRecording");
+		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramCSDRecording");
 		part.setLabel(chromatogram.getName());
 		part.setObject(chromatogram);
 		stack.getChildren().add(part);
@@ -62,7 +62,7 @@ public class CreateChromatogram {
 		if(stack == null) {
 			return;
 		}
-		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramRecording");
+		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramWSDRecording");
 		part.setLabel(chromatogram.getName());
 		part.setObject(chromatogram);
 		stack.getChildren().add(part);
