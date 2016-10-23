@@ -13,11 +13,12 @@
 package org.chromulan.system.control.devices.parts;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.device.IControlDevices;
+import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.devices.connection.ULanConnection;
 import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.devices.handlers.ScanNet;
@@ -51,7 +52,7 @@ public class AvailableDevicesPart {
 	private ULanConnection connection;
 	@Inject
 	private DataSupplier dataSupplier;
-	private IControlDevices devices;
+	private List<IControlDevice> devices;
 	private DevicesTable deviceTable;
 	@Inject
 	private Display display;

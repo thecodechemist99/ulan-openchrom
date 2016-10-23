@@ -12,12 +12,12 @@
 package org.chromulan.system.control.devices.handlers;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.device.IControlDevice;
-import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.devices.base.IUlanControlDevice;
 import org.chromulan.system.control.devices.connection.ULanConnection;
 import org.chromulan.system.control.devices.events.IControlDeviceEvents;
@@ -43,7 +43,7 @@ public class CloseConnection {
 	private ULanConnection connection;
 	@Inject
 	private DataSupplier dataSupplier;
-	private IControlDevices devices;
+	private List<IControlDevice> devices;
 	@Inject
 	private Display display;
 	@Inject
@@ -66,7 +66,7 @@ public class CloseConnection {
 
 	private void closeConnection() {
 
-		for(IControlDevice device : devices.getControlDevices()) {
+		for(IControlDevice device : devices) {
 			if(device instanceof IUlanControlDevice) {
 				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
 				ulanDevice.setConnected(false);

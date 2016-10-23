@@ -24,8 +24,8 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.chromulan.system.control.device.IControlDevices;
-import org.chromulan.system.control.device.IDevicesProfiles;
+import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.device.IDevicesProfile;
 import org.chromulan.system.control.device.setting.IDeviceSetting;
 import org.chromulan.system.control.manager.devices.supplier.DeviceSupplier;
 import org.chromulan.system.control.manager.events.IDataSupplierEvents;
@@ -52,7 +52,7 @@ public class DataSupplier {
 		dataStore = new DataStore();
 	}
 
-	public IControlDevices getControlDevices() {
+	public List<IControlDevice> getControlDevices() {
 
 		if(dataStore != null) {
 			return dataStore.getControlDevices();
@@ -70,7 +70,7 @@ public class DataSupplier {
 		}
 	}
 
-	public IDevicesProfiles getDevicesProfiles() {
+	public List<IDevicesProfile> getDevicesProfiles() {
 
 		if(dataStore != null) {
 			return dataStore.getDevicesProfiles();

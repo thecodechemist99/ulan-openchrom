@@ -25,14 +25,15 @@ import net.sourceforge.ulan.base.DeviceDescription;
 
 public class UlanControlDevice implements IUlanControlDevice {
 
+	private final String COMPANY = "PiKRON";
 	private DeviceDescription description;
 	private IDeviceSetting deviceSetting;
 	private DeviceType deviceType;
 	private boolean isConnected;
 	private boolean isPrepared;
+	private final String MODEL = "ULAD32";
 	private String name;
 	protected PropertyChangeSupport propertyChangeSupport;
-	private String type;
 
 	public UlanControlDevice() {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
@@ -64,6 +65,12 @@ public class UlanControlDevice implements IUlanControlDevice {
 	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 
 		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public String getCompany() {
+
+		return COMPANY;
 	}
 
 	@Override
@@ -103,6 +110,12 @@ public class UlanControlDevice implements IUlanControlDevice {
 	}
 
 	@Override
+	public String getModel() {
+
+		return MODEL;
+	}
+
+	@Override
 	public String getName() {
 
 		return name;
@@ -112,12 +125,6 @@ public class UlanControlDevice implements IUlanControlDevice {
 	public String getPluginID() {
 
 		return Activator.PLUGIN_ID;
-	}
-
-	@Override
-	public String getType() {
-
-		return type;
 	}
 
 	@Override
@@ -183,12 +190,6 @@ public class UlanControlDevice implements IUlanControlDevice {
 	public void setPrepared(boolean b) {
 
 		this.isPrepared = b;
-	}
-
-	@Override
-	public void setType(String type) {
-
-		this.type = type;
 	}
 
 	@Override

@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.chromulan.system.control.devices.supports;
 
-import org.chromulan.system.control.device.IControlDevices;
+import java.util.List;
+
+import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.devices.base.IUlanControlDevice;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -67,7 +69,7 @@ public class DevicesTable {
 		}
 	}
 
-	private IControlDevices devices;
+	private List<IControlDevice> devices;
 	private boolean editableName;
 	private ObservableListContentProvider viewContentProvider;
 	private TableViewer viewer;
@@ -149,7 +151,7 @@ public class DevicesTable {
 		return viewerColumn;
 	}
 
-	public IControlDevices getDevices() {
+	public List<IControlDevice> getDevices() {
 
 		return devices;
 	}
@@ -159,9 +161,9 @@ public class DevicesTable {
 		return viewer;
 	}
 
-	public void setDevices(IControlDevices devices) {
+	public void setDevices(List<IControlDevice> devices) {
 
-		viewer.setInput(new WritableList(devices.getControlDevices(), IUlanControlDevice.class));
+		viewer.setInput(new WritableList(devices, IUlanControlDevice.class));
 		this.devices = devices;
 	}
 

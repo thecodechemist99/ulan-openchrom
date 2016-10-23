@@ -28,6 +28,9 @@ public interface IUlanControlDevice extends IControlDevice {
 
 	DeviceDescription getDeviceDescription();
 
+	@Override
+	String getDeviceID();
+
 	DeviceType getDeviceType();
 
 	@Override
@@ -44,6 +47,4 @@ public interface IUlanControlDevice extends IControlDevice {
 	void setName(String name);
 
 	void setPrepared(boolean b);
-
-	void setType(String type);
 }

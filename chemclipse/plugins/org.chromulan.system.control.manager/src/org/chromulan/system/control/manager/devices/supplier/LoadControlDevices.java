@@ -3,15 +3,14 @@ package org.chromulan.system.control.manager.devices.supplier;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.chromulan.system.control.device.ControlDevices;
 import org.chromulan.system.control.device.DevicesProfile;
-import org.chromulan.system.control.device.DevicesProfiles;
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.device.IDevicesProfile;
-import org.chromulan.system.control.device.IDevicesProfiles;
 import org.chromulan.system.control.device.setting.IDeviceSetting;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -68,10 +67,10 @@ public class LoadControlDevices {
 		return profile;
 	}
 
-	public IDevicesProfiles loadProfiles(ObjectInputStream in, IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException {
+	public List<IDevicesProfile> loadProfiles(ObjectInputStream in, IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException {
 
 		int size = in.readInt();
-		IDevicesProfiles profiles = new DevicesProfiles();
+		List<IDevicesProfile> profiles = new LinkedList<>();
 		for(int i = 0; i < size; i++) {
 			IDevicesProfile profile = loadProfile(in, elements);
 			profiles.add(profile);

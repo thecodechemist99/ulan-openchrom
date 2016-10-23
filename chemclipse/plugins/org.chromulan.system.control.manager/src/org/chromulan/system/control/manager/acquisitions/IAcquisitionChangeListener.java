@@ -14,7 +14,7 @@ package org.chromulan.system.control.manager.acquisitions;
 import java.util.List;
 
 import org.chromulan.system.control.model.IAcquisition;
-import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.chromulan.system.control.model.SaveChromatogram;
 
 public interface IAcquisitionChangeListener {
 
@@ -22,7 +22,7 @@ public interface IAcquisitionChangeListener {
 
 	};
 
-	default List<IChromatogram> getChromatograms(IAcquisition acquisition) {
+	default List<SaveChromatogram> getChromatograms(IAcquisition acquisition) {
 
 		return null;
 	};

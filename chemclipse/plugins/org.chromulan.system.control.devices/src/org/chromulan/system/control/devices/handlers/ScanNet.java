@@ -75,7 +75,7 @@ public class ScanNet {
 				eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID()));
 			}
 		}
-		for(IControlDevice device : this.dataSupplier.getControlDevices().getControlDevices()) {
+		for(IControlDevice device : this.dataSupplier.getControlDevices()) {
 			if(device instanceof IUlanControlDevice) {
 				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
 				if(!devices.contains(ulanDevice.getDeviceID())) {

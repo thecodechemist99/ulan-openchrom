@@ -11,11 +11,11 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.wizard;
 
+import java.util.List;
+
 import org.chromulan.system.control.device.DevicesProfile;
 import org.chromulan.system.control.device.IControlDevice;
-import org.chromulan.system.control.device.IControlDevices;
 import org.chromulan.system.control.device.IDevicesProfile;
-import org.chromulan.system.control.device.IDevicesProfiles;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -40,10 +40,10 @@ import org.eclipse.swt.widgets.Text;
 
 public class WizarsNewDevicesProfilePage extends WizardPage {
 
-	private IControlDevices controlDevices;
+	private List<IControlDevice> controlDevices;
 	private IDevicesProfile profile;
 
-	public WizarsNewDevicesProfilePage(IControlDevices controlDevices, IDevicesProfiles profiles) {
+	public WizarsNewDevicesProfilePage(List<IControlDevice> controlDevices) {
 		super("New Devices Profile");
 		profile = new DevicesProfile();
 		this.controlDevices = controlDevices;
@@ -96,7 +96,7 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				for(IControlDevice controlDevice : controlDevices.getControlDevices()) {
+				for(IControlDevice controlDevice : controlDevices) {
 					checkTable.setChecked(controlDevice, true);
 					if(!profile.getControlDevices().contains(controlDevice)) {
 						profile.getControlDevices().add(controlDevice);
@@ -111,7 +111,7 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				for(IControlDevice controlDevice : controlDevices.getControlDevices()) {
+				for(IControlDevice controlDevice : controlDevices) {
 					checkTable.setChecked(controlDevice, false);
 					profile.getControlDevices().clear();
 				}
@@ -153,7 +153,7 @@ public class WizarsNewDevicesProfilePage extends WizardPage {
 			}
 		});
 		checkTable.setContentProvider(new ArrayContentProvider());
-		checkTable.setInput(controlDevices.getControlDevices());
+		checkTable.setInput(controlDevices);
 		checkTable.addCheckStateListener(new ICheckStateListener() {
 
 			@Override

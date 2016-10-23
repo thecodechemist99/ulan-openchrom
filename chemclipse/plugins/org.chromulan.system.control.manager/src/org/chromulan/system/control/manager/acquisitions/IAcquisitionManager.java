@@ -25,8 +25,8 @@ import org.chromulan.system.control.model.IAcquisitionCSD;
 import org.chromulan.system.control.model.IAcquisitionMSD;
 import org.chromulan.system.control.model.IAcquisitionSaver;
 import org.chromulan.system.control.model.IAcquisitionWSD;
+import org.chromulan.system.control.model.SaveChromatogram;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
-import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -88,17 +88,16 @@ public class IAcquisitionManager {
 
 	private void saveAcqusition(IAcquisition acquisition) {
 
-		List<IChromatogram> chromatogramsToSave = new ArrayList<>();
+		List<SaveChromatogram> chromatogramsToSave = new ArrayList<>();
 		IAcquisitionSaver saver = null;
 		if(acquisition instanceof IAcquisitionCSD) {
 			IAcquisitionCSD acquisitionCSD = (IAcquisitionCSD)acquisition;
 			for(IAcquisitionChangeListener listener : changeListeners) {
-				List<IChromatogram> chromatograms = listener.getChromatograms(acquisitionCSD);
+				List<SaveChromatogram> chromatograms = listener.getChromatograms(acquisitionCSD);
 				if(chromatograms != null) {
-					for(IChromatogram chromatogram : chromatograms) {
-						if(chromatogram instanceof IChromatogramCSD) {
-							IChromatogramCSD chromatogramCSD = (IChromatogramCSD)chromatogram;
-							chromatogramsToSave.add(chromatogramCSD);
+					for(SaveChromatogram saveChromatogram : chromatograms) {
+						if(saveChromatogram.getChromatogram() instanceof IChromatogramCSD) {
+							chromatogramsToSave.add(saveChromatogram);
 						}
 					}
 				}
@@ -107,12 +106,11 @@ public class IAcquisitionManager {
 		} else if(acquisition instanceof IAcquisitionWSD) {
 			IAcquisitionWSD acquisitionWSD = (IAcquisitionWSD)acquisition;
 			for(IAcquisitionChangeListener listener : changeListeners) {
-				List<IChromatogram> chromatograms = listener.getChromatograms(acquisitionWSD);
+				List<SaveChromatogram> chromatograms = listener.getChromatograms(acquisitionWSD);
 				if(chromatograms != null) {
-					for(IChromatogram chromatogram : chromatograms) {
-						if(chromatogram instanceof IChromatogramWSD) {
-							IChromatogramWSD chromatogramWSD = (IChromatogramWSD)chromatogram;
-							chromatogramsToSave.add(chromatogramWSD);
+					for(SaveChromatogram saveChromatogram : chromatograms) {
+						if(saveChromatogram.getChromatogram() instanceof IChromatogramWSD) {
+							chromatogramsToSave.add(saveChromatogram);
 						}
 					}
 				}
@@ -121,12 +119,11 @@ public class IAcquisitionManager {
 		} else if(acquisition instanceof IAcquisitionMSD) {
 			IAcquisitionMSD acquisitionMSD = (IAcquisitionMSD)acquisition;
 			for(IAcquisitionChangeListener listener : changeListeners) {
-				List<IChromatogram> chromatograms = listener.getChromatograms(acquisitionMSD);
+				List<SaveChromatogram> chromatograms = listener.getChromatograms(acquisitionMSD);
 				if(chromatograms != null) {
-					for(IChromatogram chromatogram : chromatograms) {
-						if(chromatogram instanceof IChromatogramMSD) {
-							IChromatogramMSD chromatogramMSD = (IChromatogramMSD)chromatogram;
-							chromatogramsToSave.add(chromatogramMSD);
+					for(SaveChromatogram saveChromatogram : chromatograms) {
+						if(saveChromatogram.getChromatogram() instanceof IChromatogramMSD) {
+							chromatogramsToSave.add(saveChromatogram);
 						}
 					}
 				}

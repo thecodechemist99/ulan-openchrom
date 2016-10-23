@@ -11,21 +11,22 @@
  *******************************************************************************/
 package org.chromulan.system.control.devices.base;
 
+import java.util.List;
+
 import org.chromulan.system.control.device.IControlDevice;
-import org.chromulan.system.control.device.IControlDevices;
 
 public interface IUlanControlDevices {
 
-	static boolean add(IControlDevices controlDevices, IUlanControlDevice device) {
+	static boolean add(List<IControlDevice> controlDevices, IUlanControlDevice device) {
 
 		if(null == containsDevice(controlDevices, device.getDeviceID())) {
-			controlDevices.getControlDevices().add(device);
+			controlDevices.add(device);
 			return true;
 		}
 		return false;
 	}
 
-	static boolean contains(IControlDevices controlDevices, String id) {
+	static boolean contains(List<IControlDevice> controlDevices, String id) {
 
 		IControlDevice device = containsDevice(controlDevices, id);
 		if(device == null) {
@@ -35,9 +36,9 @@ public interface IUlanControlDevices {
 		}
 	}
 
-	static IUlanControlDevice containsDevice(IControlDevices controlDevices, String id) {
+	static IUlanControlDevice containsDevice(List<IControlDevice> controlDevices, String id) {
 
-		for(IControlDevice device : controlDevices.getControlDevices()) {
+		for(IControlDevice device : controlDevices) {
 			if(device instanceof IUlanControlDevice) {
 				return (IUlanControlDevice)device;
 			}
@@ -45,9 +46,9 @@ public interface IUlanControlDevices {
 		return null;
 	}
 
-	static IUlanControlDevice getControlDevice(IControlDevices controlDevices, String id) {
+	static IUlanControlDevice getControlDevice(List<IControlDevice> controlDevices, String id) {
 
-		for(IControlDevice device : controlDevices.getControlDevices()) {
+		for(IControlDevice device : controlDevices) {
 			if(device instanceof IUlanControlDevice) {
 				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
 				if(ulanDevice.getDeviceID().equals(id)) {
@@ -58,11 +59,11 @@ public interface IUlanControlDevices {
 		return null;
 	}
 
-	static boolean remove(IControlDevices controlDevices, String id) {
+	static boolean remove(List<IControlDevice> controlDevices, String id) {
 
 		IControlDevice device = containsDevice(controlDevices, id);
 		if(device != null) {
-			controlDevices.getControlDevices().remove(device);
+			controlDevices.remove(device);
 			return true;
 		}
 		return false;

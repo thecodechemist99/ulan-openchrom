@@ -14,13 +14,11 @@ package org.chromulan.system.control.manager.devices;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.chromulan.system.control.device.ControlDevices;
-import org.chromulan.system.control.device.DevicesProfiles;
-import org.chromulan.system.control.device.IControlDevices;
-import org.chromulan.system.control.device.IDevicesProfiles;
+import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.device.IDevicesProfile;
 import org.chromulan.system.control.device.setting.IDeviceSetting;
 import org.chromulan.system.control.manager.devices.supplier.LoadControlDevices;
 import org.chromulan.system.control.manager.devices.supplier.SaveControlDevices;
@@ -29,17 +27,17 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public class DataStore {
 
-	private IControlDevices devices;
+	private List<IControlDevice> devices;
 	private List<IDeviceSetting> deviceSettings;
-	private IDevicesProfiles profiles;
+	private List<IDevicesProfile> profiles;
 
 	public DataStore() {
-		devices = new ControlDevices();
-		profiles = new DevicesProfiles();
-		deviceSettings = new ArrayList<>();
+		devices = new CopyOnWriteArrayList<>();
+		profiles = new CopyOnWriteArrayList<>();
+		deviceSettings = new CopyOnWriteArrayList<>();
 	}
 
-	public IControlDevices getControlDevices() {
+	public List<IControlDevice> getControlDevices() {
 
 		return devices;
 	}
@@ -49,7 +47,7 @@ public class DataStore {
 		return deviceSettings;
 	}
 
-	public IDevicesProfiles getDevicesProfiles() {
+	public List<IDevicesProfile> getDevicesProfiles() {
 
 		return profiles;
 	}
@@ -57,9 +55,12 @@ public class DataStore {
 	public void readExternal(ObjectInputStream in, IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException {
 
 		LoadControlDevices loadControlDevices = new LoadControlDevices();
-		devices = loadControlDevices.loadControlDevices(in, elements);
-		deviceSettings = loadControlDevices.loadSettings(in, elements);
-		profiles = loadControlDevices.loadProfiles(in, elements);
+		List<IControlDevice> devices = loadControlDevices.loadDevices(in, elements);
+		List<IDeviceSetting> deviceSettings = loadControlDevices.loadSettings(in, elements);
+		List<IDevicesProfile> profiles = loadControlDevices.loadProfiles(in, elements);
+		this.devices.addAll(devices);
+		this.deviceSettings.addAll(deviceSettings);
+		this.profiles.addAll(profiles);
 	}
 
 	public void writeExternal(ObjectOutputStream out) throws IOException {

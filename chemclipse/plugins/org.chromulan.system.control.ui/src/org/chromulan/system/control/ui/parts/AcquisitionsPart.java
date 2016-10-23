@@ -177,7 +177,7 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				List<IAcquisition> newAcquisitions = acquisitionsAdministator.createAcqusitions(dataSupplier.getDevicesProfiles().getAll(), display);
+				List<IAcquisition> newAcquisitions = acquisitionsAdministator.createAcqusitions(dataSupplier.getDevicesProfiles(), display);
 				addAcquisitions(newAcquisitions);
 			}
 		});
