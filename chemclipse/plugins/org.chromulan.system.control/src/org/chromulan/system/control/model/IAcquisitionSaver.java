@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
-import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IAcquisitionSaver {
@@ -29,7 +28,7 @@ public interface IAcquisitionSaver {
 
 	ISupplier getSupplier();
 
-	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<IChromatogram> chromatograms);
+	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<SaveChromatogram> chromatograms);
 
 	void setAcquisition(IAcquisition acquisition);
 

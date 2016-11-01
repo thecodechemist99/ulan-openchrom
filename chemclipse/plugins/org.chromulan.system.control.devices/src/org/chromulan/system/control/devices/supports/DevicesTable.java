@@ -78,23 +78,15 @@ public class DevicesTable {
 		this.viewer = new TableViewer(parent, style);
 		viewContentProvider = new ObservableListContentProvider();
 		viewer.setContentProvider(viewContentProvider);
-		viewer.addFilter(new ViewerFilter() {
-
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-
-				if(element instanceof IUlanControlDevice) {
-					return true;
-				}
-				return false;
-			}
-		});
 		if(setFilter) {
 			viewer.addFilter(new ViewerFilter() {
 
 				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
 
+					if(!(element instanceof IUlanControlDevice)) {
+						return false;
+					}
 					IUlanControlDevice device = (IUlanControlDevice)element;
 					return device.isConnected();
 				}

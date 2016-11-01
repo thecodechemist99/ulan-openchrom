@@ -108,6 +108,7 @@ public class WizardNewAcquisitionProfile extends WizardPage {
 	@Override
 	public boolean isPageComplete() {
 
+		setErrorMessage(null);
 		WizardModelAcquisition model = ((WizardNewAcquisition)getWizard()).getModel();
 		IDevicesProfile profile = (IDevicesProfile)model.devicesProfile.getValue();
 		if(profile != null) {

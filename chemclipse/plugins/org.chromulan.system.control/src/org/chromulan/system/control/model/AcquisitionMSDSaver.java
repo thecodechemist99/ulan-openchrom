@@ -17,23 +17,23 @@ public class AcquisitionMSDSaver extends AbstractAcquisitionSaver implements IAc
 	}
 
 	@Override
-	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<IChromatogram> chromatograms) {
+	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<SaveChromatogram> chromatograms) {
 
 		List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos = getChromatogramExportConverterProcessInfo();
+		File file = getFile();
 		ISupplier supplier = getSupplier();
-		if(chromatograms == null) {
+		if(chromatograms == null || file == null || supplier == null) {
 			throw new NullPointerException();
 		}
-		for(IChromatogram chromatogram : chromatograms) {
+		getNames().clear();
+		chromatogramExportConverterProcessingInfos.clear();
+		for(SaveChromatogram saveChromatogram : chromatograms) {
+			IChromatogram chromatogram = saveChromatogram.getChromatogram();
 			if(chromatogram instanceof IChromatogramMSD) {
 				IChromatogramMSD chromatogramMSD = (IChromatogramMSD)chromatogram;
-				File file = chromatogramMSD.getFile();
-				if(file != null) {
-					getNames().clear();
-					File nfile = setFile(file, supplier.getFileExtension());
-					IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterMSD.convert(nfile, chromatogramMSD, supplier.getId(), progressMonitor);
-					chromatogramExportConverterProcessingInfos.add(procesInfo);
-				}
+				File nfile = setFile(saveChromatogram.getName(), supplier.getFileExtension());
+				IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterMSD.convert(nfile, chromatogramMSD, supplier.getId(), progressMonitor);
+				chromatogramExportConverterProcessingInfos.add(procesInfo);
 			}
 		}
 		return chromatogramExportConverterProcessingInfos;

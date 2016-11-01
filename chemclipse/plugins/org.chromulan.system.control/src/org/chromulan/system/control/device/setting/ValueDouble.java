@@ -7,8 +7,8 @@ public class ValueDouble extends ValueDecimalNumber<Double> {
 	 */
 	private static final long serialVersionUID = 4309413325867057120L;
 
-	public ValueDouble(IDeviceSetting device, String name, Double defValue, int numeberDecimalPlace) {
-		super(device, name, defValue, numeberDecimalPlace);
+	public ValueDouble(IDeviceSetting device, String identificator, String name, Double defValue, String unit, int numeberDecimalPlace) {
+		super(device, identificator, name, defValue, unit, numeberDecimalPlace);
 	}
 
 	@Override

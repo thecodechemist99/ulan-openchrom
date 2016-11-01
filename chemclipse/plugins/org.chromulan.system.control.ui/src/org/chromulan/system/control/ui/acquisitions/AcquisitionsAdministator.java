@@ -118,6 +118,7 @@ public class AcquisitionsAdministator {
 			IAcquisitionCSD acquisition = new AcquisitionCSD();
 			saveDefChromatogramType(IAcquisitionCSD.class);
 			IAcquisitionSaver saver = new AcquisitionCSDSaver(acquisition);
+			saver.setSupplier(defSupplierCSD);
 			saver.setFile((File)model.folder.getValue());
 			acquisition.setAcquisitionSaver(saver);
 			return acquisition;
@@ -125,6 +126,7 @@ public class AcquisitionsAdministator {
 			IAcquisitionMSD acquisition = new AcquisitionMSD();
 			saveDefChromatogramType(IAcquisitionMSD.class);
 			IAcquisitionSaver saver = new AcquisitionMSDSaver(acquisition);
+			saver.setSupplier(defSupplierMSD);
 			saver.setFile((File)model.folder.getValue());
 			acquisition.setAcquisitionSaver(saver);
 			return acquisition;
@@ -132,6 +134,7 @@ public class AcquisitionsAdministator {
 			IAcquisitionWSD acquisition = new AcquisitionWSD();
 			saveDefChromatogramType(IAcquisitionWSD.class);
 			IAcquisitionSaver saver = new AcquisitionWSDSaver(acquisition);
+			saver.setSupplier(defSupplierWSD);
 			saver.setFile((File)model.folder.getValue());
 			acquisition.setAcquisitionSaver(saver);
 			return acquisition;

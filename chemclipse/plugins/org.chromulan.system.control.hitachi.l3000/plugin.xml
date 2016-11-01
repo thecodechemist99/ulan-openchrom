@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="org.chromulan.system.control.hitachi.l3000.fragment"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            uri="fragment.e4xmi">
+      </fragment>
+   </extension>
+   <extension
+         id="id1"
+         point="org.chromulan.system.control.manager.devicesupplier">
+      <DeviceSupplier
+            Create_Device="org.chromulan.system.control.hitachi.l3000.model.CreateControlDevice">
+      </DeviceSupplier>
+   </extension>
+
+</plugin>

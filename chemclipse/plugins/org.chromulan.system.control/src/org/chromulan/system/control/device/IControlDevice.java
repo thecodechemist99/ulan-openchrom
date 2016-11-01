@@ -21,6 +21,8 @@ public interface IControlDevice extends Externalizable {
 	final int FLG_SUPPORT_MSD_CHROMATOGRAM = 0b10;
 	final int FLG_SUPPORT_WSD_CHROMATOGRAM = 0b100;
 
+	String getCompany();
+
 	String getDescription();
 
 	String getDeviceID();
@@ -29,11 +31,11 @@ public interface IControlDevice extends Externalizable {
 
 	int getFlg();
 
+	String getModel();
+
 	String getName();
 
 	String getPluginID();
-
-	String getType();
 
 	boolean isConnected();
 

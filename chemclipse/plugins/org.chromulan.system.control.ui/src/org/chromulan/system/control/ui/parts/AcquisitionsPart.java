@@ -200,8 +200,9 @@ public class AcquisitionsPart {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 
-				if(event.getSource() instanceof IAcquisition) {
-					IAcquisition acquisition = (IAcquisition)event.getSource();
+				IStructuredSelection thisSelection = (IStructuredSelection)event.getSelection();
+				if(thisSelection.getFirstElement() instanceof IAcquisition) {
+					IAcquisition acquisition = (IAcquisition)thisSelection.getFirstElement();
 					acquisitionsAdministator.acquisitionSettings(acquisition, display, modelService, application, partService);
 				}
 			}

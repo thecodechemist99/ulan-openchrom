@@ -7,8 +7,8 @@ public class ValueFloat extends ValueDecimalNumber<Float> {
 	 */
 	private static final long serialVersionUID = 4466274019988822233L;
 
-	public ValueFloat(IDeviceSetting device, String name, Float defValue, int numeberDecimalPlace) {
-		super(device, name, defValue, numeberDecimalPlace);
+	public ValueFloat(IDeviceSetting device, String identificator, String name, Float defValue, String unit, int numeberDecimalPlace) {
+		super(device, name, identificator, defValue, unit, numeberDecimalPlace);
 	}
 
 	@Override

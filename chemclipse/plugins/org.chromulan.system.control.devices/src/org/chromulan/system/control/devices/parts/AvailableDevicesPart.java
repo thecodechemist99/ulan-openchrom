@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.chromulan.system.control.devices.parts;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,6 +20,8 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.devices.base.IUlanControlDevice;
+import org.chromulan.system.control.devices.base.IUlanControlDevices;
 import org.chromulan.system.control.devices.connection.ULanConnection;
 import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.devices.handlers.ScanNet;
@@ -61,12 +64,23 @@ public class AvailableDevicesPart {
 	private Label labelConnection;
 
 	public AvailableDevicesPart() {
+		devices = new ArrayList<>();
+	}
+
+	public void addDevice(DataSupplier dataSupplier) {
+
+		List<IControlDevice> globalDevices = dataSupplier.getControlDevices();
+		for(IControlDevice iControlDevice : globalDevices) {
+			if(iControlDevice instanceof IUlanControlDevice) {
+				IUlanControlDevices.add(devices, (IUlanControlDevice)iControlDevice);
+			}
+		}
 	}
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 
-		devices = dataSupplier.getControlDevices();
+		addDevice(dataSupplier);
 		Composite composite = new Composite(parent, SWT.None);
 		GridLayout gridLayout = new GridLayout(1, false);
 		composite.setLayout(gridLayout);
@@ -136,6 +150,10 @@ public class AvailableDevicesPart {
 	@Optional
 	public void updateDevices(@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES) DataSupplier dataSupplier) {
 
+		if(dataSupplier == null) {
+			return;
+		}
+		addDevice(dataSupplier);
 		rewriteTable();
 	}
 

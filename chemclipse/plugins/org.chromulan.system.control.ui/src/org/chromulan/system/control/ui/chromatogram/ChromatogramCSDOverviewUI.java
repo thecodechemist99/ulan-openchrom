@@ -29,7 +29,7 @@ public class ChromatogramCSDOverviewUI extends ChromatogramOverviewUI {
 		super(parent, style);
 	}
 
-	IChromatogramCSDAcquisition getChromatogramCSD() {
+	public IChromatogramCSDAcquisition getChromatogramCSD() {
 
 		IChromatogramAcquisition chromatogramAcquisition = getChromatogram();
 		if(chromatogramAcquisition instanceof IChromatogramCSDAcquisition) {

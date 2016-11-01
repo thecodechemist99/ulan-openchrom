@@ -8,6 +8,8 @@ public interface IValue<ValueType extends Serializable> extends Serializable {
 
 	IDeviceSetting getDevice();
 
+	String getIdentificator();
+
 	String getName();
 
 	ValueType getValue();
@@ -16,13 +18,17 @@ public interface IValue<ValueType extends Serializable> extends Serializable {
 
 	boolean isPrintable();
 
-	void setDefValue(ValueType defValue);
+	IValue<ValueType> setDefValue(ValueType defValue);
 
-	void setChangeable(boolean b);
+	IValue<ValueType> setDevice(IDeviceSetting deviceSetting);
 
-	void setPrintable(boolean b);
+	IValue<ValueType> setChangeable(boolean b);
 
-	void setValue(ValueType value);
+	IValue<ValueType> setIdentificator(String id);
+
+	IValue<ValueType> setPrintable(boolean b);
+
+	IValue<ValueType> setValue(ValueType value);
 
 	default String valueToString() {
 

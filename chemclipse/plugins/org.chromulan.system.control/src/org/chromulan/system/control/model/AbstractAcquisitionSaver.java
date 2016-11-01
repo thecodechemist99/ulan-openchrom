@@ -74,9 +74,8 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 		this.file = file;
 	}
 
-	protected File setFile(File file, String fileExtension) {
+	protected File setFile(String namefile, String fileExtension) {
 
-		String namefile = file.getName();
 		String allName = null;
 		String name = null;
 		fileExtension = fileExtension.toLowerCase();
@@ -102,7 +101,7 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 			newName = allName;
 			names.put(allName, 1);
 		}
-		return new File(file.getParentFile().getAbsolutePath() + File.separator + newName);
+		return new File(file + File.separator + newName);
 	}
 
 	@Override
