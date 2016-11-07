@@ -26,11 +26,24 @@ import org.chromulan.system.control.device.setting.ValueBoolean;
 import org.chromulan.system.control.device.setting.ValueEnumeration;
 import org.chromulan.system.control.device.setting.ValueFloat;
 import org.chromulan.system.control.device.setting.ValueInt;
-import org.chromulan.system.control.device.setting.ValueString;
 import org.chromulan.system.control.hitachi.l3000.Activator;
+
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 
 public class ControlDevice implements IControlDevice {
 
+	public static final int BOUD_RATE_1200 = 1200;
+	public static final int BOUD_RATE_150 = 150;
+	public static final int BOUD_RATE_2400 = 2400;
+	public static final int BOUD_RATE_300 = 300;
+	public static final int BOUD_RATE_4800 = 4800;
+	public static final int BOUD_RATE_600 = 600;
+	public static final int BOUD_RATE_75 = 75;
+	public static final String DELIMITER_CR = "\r";
+	public static final String DELIMITER_CRLF = "\r\n";
 	public final static int OUTPUT_ANALOG = 0;
 	public final static int OUTPUT_DIGITAL = 1;
 	public final static String PROPERTY_AUTOSET_VALUE = "autoSetValue";
@@ -38,7 +51,6 @@ public class ControlDevice implements IControlDevice {
 	public final static String PROPERTY_DATA_OUTPUT_DATA_COMMUNICATION = "dataCommunication";
 	public final static String PROPERTY_NAME = "name";
 	public final static String PROPERTY_OUTPUT_TYPE = "outputType";
-	public final static String PROPERTY_PORT_NAME = "portName";
 	public final static String PROPERTY_SEND_START = "sendStart";
 	public final static String PROPERTY_SEND_STOP = "sendStop";
 	public final static String PROPERTY_TIME_INTERVAL = "timeInterval";
@@ -48,7 +60,6 @@ public class ControlDevice implements IControlDevice {
 	public static final String SETTING_DATA_OUTPUT_ANALOG = "analog output";
 	public static final String SETTING_DATA_OUTPUT_DATA_COMMUNICATION = "data communication output";
 	public static final String SETTING_DATA_OUTPUT_TYPE = "output type";
-	public static final String SETTING_NAME_PORT = "port name";
 	public static final String SETTING_SEND_START = "send start";
 	public static final String SETTING_SEND_STOP = "send stop";
 	public static final String SETTING_TIME_INTERVAL = "time interval";
@@ -59,16 +70,21 @@ public class ControlDevice implements IControlDevice {
 	private final String COMPANY = "HITACHI";
 	private final int DATA_OUTPUT_ANALOG_VALUE = 0;
 	private final int DATA_OUTPUT_DATA_COMMUNICATION_VALUE = 1;
+	private DataReceive dataReceive;
 	private IDeviceSetting deviceSetting;
-	private boolean isConnected;
 	private boolean isPrepare;
 	private final String MODEL = "L3000";
 	private String name;
 	private int outputType;
+	private int portBaudRate;
+	private boolean portDataControlSignal;
+	private String portDelimeter;
+	private boolean portEventParity;
 	private String portName;
 	private PropertyChangeSupport propertyChangeSupport;
 	private boolean sendStart;
 	private boolean sendStop;
+	private SerialPort serialPort;
 	private float timeInterval;
 	private float wavelenghtInterval;
 	private int wavelenghtRangeFrom;
@@ -76,8 +92,7 @@ public class ControlDevice implements IControlDevice {
 
 	public ControlDevice() {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
-		this.isConnected = false;
-		this.isPrepare = false;
+		this.isPrepare = true;
 		deviceSetting = create();
 		setName(COMPANY + " " + MODEL);
 		setOutputType(OUTPUT_DIGITAL);
@@ -87,6 +102,46 @@ public class ControlDevice implements IControlDevice {
 		setWavelenghtRangeTo(360);
 		setSendStart(false);
 		setSendStop(false);
+		portName = "";
+		portBaudRate = BOUD_RATE_4800;
+		portDelimeter = DELIMITER_CR;
+		portDataControlSignal = true;
+		portEventParity = true;
+		dataReceive = new DataReceive(this);
+	}
+
+	private void addDataEvent() throws SerialPortException {
+
+		final StringBuilder builder = new StringBuilder();
+		serialPort.addEventListener(new SerialPortEventListener() {
+
+			@Override
+			public void serialEvent(SerialPortEvent arg) {
+
+				if(arg.isRXCHAR() && arg.getEventValue() > 0) {
+					byte[] messagge;
+					try {
+						messagge = serialPort.readBytes();
+						for(int i = 0; i < messagge.length; i++) {
+							if(messagge[i] == 'D') {
+								builder.append((char)messagge[i]);
+							} else {
+								if(builder.length() != 0) {
+									if(messagge[i] == '\r') {
+										dataReceive.addScan(builder.toString());
+										builder.setLength(0);
+									} else {
+										builder.append((char)messagge[i]);
+									}
+								}
+							}
+						}
+					} catch(SerialPortException e) {
+						// TODO:logger.warn(e);
+					}
+				}
+			}
+		}, SerialPort.MASK_RXCHAR);
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -99,11 +154,17 @@ public class ControlDevice implements IControlDevice {
 		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 	}
 
+	public void closeSerialPort() throws SerialPortException {
+
+		if(serialPort != null) {
+			serialPort.closePort();
+		}
+	}
+
 	private IDeviceSetting create() {
 
 		IDeviceSetting deviceSetting = new DeviceSetting(getPluginID(), "settings", COMPANY + " " + MODEL, getDeviceID());
 		HashMap<String, IValue<?>> values = deviceSetting.getValues();
-		values.put(PROPERTY_PORT_NAME, new ValueString(deviceSetting, PROPERTY_PORT_NAME, SETTING_NAME_PORT, ""));
 		values.put(PROPERTY_TIME_INTERVAL, new ValueFloat(deviceSetting, PROPERTY_TIME_INTERVAL, SETTING_TIME_INTERVAL, 0.1f, "sec", 1).setPrintable(false));
 		values.put(PROPERTY_WAVELENGHT_INTERVA, new ValueFloat(deviceSetting, PROPERTY_WAVELENGHT_INTERVA, SETTING_WAVELENGHT_INTERVAL, 5f, "nm", 1));
 		values.put(PROPERTY_WAVELENGHT_RANGE_FROM, new ValueInt(deviceSetting, PROPERTY_WAVELENGHT_RANGE_FROM, SETTING_WAVELENGHT_RANGE_FROM, 200, "nm"));
@@ -116,15 +177,33 @@ public class ControlDevice implements IControlDevice {
 	}
 
 	@Override
+	protected void finalize() throws Throwable {
+
+		try {
+			closeSerialPort();
+		} finally {
+			super.finalize();
+		}
+	}
+
+	@Override
 	public String getCompany() {
 
 		return COMPANY;
 	}
 
+	public DataReceive getDatareceive() {
+
+		return dataReceive;
+	}
+
 	@Override
 	public String getDescription() {
 
-		return null;
+		if(serialPort != null) {
+			return "Port Name: " + serialPort.getPortName();
+		}
+		return "";
 	}
 
 	@Override
@@ -168,6 +247,16 @@ public class ControlDevice implements IControlDevice {
 		return Activator.PLUGIN_ID;
 	}
 
+	public int getPortBaudRate() {
+
+		return portBaudRate;
+	}
+
+	public String getPortDelimeter() {
+
+		return portDelimeter;
+	}
+
 	public String getPortName() {
 
 		return portName;
@@ -206,7 +295,20 @@ public class ControlDevice implements IControlDevice {
 	@Override
 	public boolean isConnected() {
 
-		return isConnected;
+		if(serialPort == null) {
+			return false;
+		}
+		return serialPort.isOpened();
+	}
+
+	public boolean isPortDataControlSignal() {
+
+		return portDataControlSignal;
+	}
+
+	public boolean isPortEventParity() {
+
+		return portEventParity;
 	}
 
 	@Override
@@ -225,6 +327,23 @@ public class ControlDevice implements IControlDevice {
 		return sendStop;
 	}
 
+	public void openSerialPort(String portName, int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) throws SerialPortException {
+
+		if(serialPort == null) {
+			serialPort = new SerialPort(portName);
+		} else {
+			if(!serialPort.isOpened() && !serialPort.getPortName().equals(portName)) {
+				serialPort = new SerialPort(portName);
+			}
+		}
+		this.portName = portName;
+		if(!serialPort.isOpened()) {
+			serialPort.openPort();
+			setPortParameters(portBaudRate, portEventParity, portDataControlSignal, portDelimiter);
+			addDataEvent();
+		}
+	}
+
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
@@ -237,6 +356,11 @@ public class ControlDevice implements IControlDevice {
 		boolean sendStart = in.readBoolean();
 		boolean sendStop = in.readBoolean();
 		boolean autosetValue = in.readBoolean();
+		String portName = (String)in.readObject();
+		int portBaudRate = in.readInt();
+		String portDelimeter = (String)in.readObject();
+		boolean portDataControlSignal = in.readBoolean();
+		boolean portEventParity = in.readBoolean();
 		setName(name);
 		setOutputType(outPutType);
 		setTimeInterval(timeInterval);
@@ -246,6 +370,12 @@ public class ControlDevice implements IControlDevice {
 		setSendStart(sendStart);
 		setSendStop(sendStop);
 		setAutoSetValue(autosetValue);
+		this.portName = portName;
+		this.portBaudRate = portBaudRate;
+		this.portDelimeter = portDelimeter;
+		this.portDataControlSignal = portDataControlSignal;
+		this.portEventParity = portEventParity;
+		this.dataReceive = new DataReceive(this);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -258,15 +388,58 @@ public class ControlDevice implements IControlDevice {
 		propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 	}
 
+	public void sendDataOutputType() throws SerialPortException {
+
+		if(outputType == OUTPUT_ANALOG) {
+			sendMessagge("SEND", " 0");
+		} else if(outputType == OUTPUT_DIGITAL) {
+			sendMessagge("SEND", " 1");
+		}
+	}
+
+	private boolean sendMessagge(String command, String messagge) throws SerialPortException {
+
+		if(serialPort != null && serialPort.isOpened()) {
+			if(messagge != null) {
+				return serialPort.writeString(command + " " + messagge + portDelimeter);
+			} else {
+				return serialPort.writeString(command + portDelimeter);
+			}
+		}
+		return false;
+	}
+
+	public void sendStart() throws SerialPortException {
+
+		sendMessagge("START", null);
+	}
+
+	public void sendStop() throws SerialPortException {
+
+		sendMessagge("STOP", null);
+	}
+
+	public void sendTimeInterval() throws SerialPortException {
+
+		String timeInterval = String.format("%.1f", this.timeInterval);
+		sendMessagge("TIME", timeInterval);
+	}
+
+	public void sendWavelenghtInterval() throws SerialPortException {
+
+		String waveLenghtInterval = String.format("%.1f", this.wavelenghtInterval);
+		sendMessagge("WL", waveLenghtInterval);
+	}
+
+	public void sendWaveLenghtRange() {
+
+		// TODO:body of function
+	}
+
 	public void setAutoSetValue(boolean autoSetValue) {
 
 		propertyChangeSupport.firePropertyChange(PROPERTY_AUTOSET_VALUE, this.autoSetValue, autoSetValue);
 		this.autoSetValue = autoSetValue;
-	}
-
-	public void setConnected(boolean isConnected) {
-
-		this.isConnected = isConnected;
 	}
 
 	@Override
@@ -289,12 +462,19 @@ public class ControlDevice implements IControlDevice {
 		this.outputType = outputType;
 	}
 
-	public void setPortName(String portName) {
+	public void setPortParameters(int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) throws SerialPortException {
 
-		propertyChangeSupport.firePropertyChange(PROPERTY_PORT_NAME, this.portName, portName);
-		ValueString value = (ValueString)deviceSetting.getValues().get(PROPERTY_PORT_NAME);
-		value.setValue(portName);
-		this.portName = portName;
+		if(serialPort != null && serialPort.isOpened()) {
+			if(portEventParity) {
+				serialPort.setParams(portBaudRate, 7, 2, SerialPort.PARITY_EVEN, portDataControlSignal, false);
+			} else {
+				serialPort.setParams(portBaudRate, 7, 2, SerialPort.PARITY_NONE, portDataControlSignal, false);
+			}
+			this.portBaudRate = portBaudRate;
+			this.portEventParity = portEventParity;
+			this.portDataControlSignal = portDataControlSignal;
+			this.portDelimeter = portDelimiter;
+		}
 	}
 
 	public void setPrepare(boolean isPrepare) {
@@ -362,5 +542,10 @@ public class ControlDevice implements IControlDevice {
 		out.writeBoolean(sendStart);
 		out.writeBoolean(sendStop);
 		out.writeBoolean(autoSetValue);
+		out.writeObject(portName);
+		out.writeInt(portBaudRate);
+		out.writeObject(portDelimeter);
+		out.writeBoolean(portDataControlSignal);
+		out.writeBoolean(portEventParity);
 	}
 }

@@ -33,6 +33,8 @@ import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.e4.core.di.annotations.Creatable;
 
+import jssc.SerialPortException;
+
 @Creatable
 @Singleton
 public class DeviceInterface {
@@ -40,7 +42,6 @@ public class DeviceInterface {
 	private ControlDevice controlDevice;
 	@Inject
 	private DataSupplier dataSupplier;
-	private DeviceCommunication deviceCommunication;
 	private IAcquisitionChangeListener changeListener;
 	@Inject
 	private IAcquisitionManager manager;
@@ -54,6 +55,7 @@ public class DeviceInterface {
 
 				if(acquisition == setAcqiusition) {
 					setAcqiusition = null;
+					controlDevice.setPrepare(true);
 				}
 			}
 
@@ -62,18 +64,17 @@ public class DeviceInterface {
 
 				List<SaveChromatogram> chromatograms = new ArrayList<>();
 				if(acquisition == setAcqiusition) {
-					IChromatogramWSD chromatogramWSD = deviceCommunication.getChromatogram().geChromatogramWSD();
+					IChromatogramWSD chromatogramWSD = controlDevice.getDatareceive().getChromatogram().geChromatogramWSD();
 					if(acquisition instanceof IAcquisitionCSD) {
 						HashMap<Integer, IChromatogramCSD> newChrom = IChromatogramWSDAcquisition.chromatogramWSDtoCSD(chromatogramWSD);
 						for(Entry<Integer, IChromatogramCSD> chromSet : newChrom.entrySet()) {
 							IChromatogramCSD chromatogramCSD = chromSet.getValue();
-							chromatograms.add(new SaveChromatogram(chromatogramCSD, chromSet.getKey().toString()));
+							chromatograms.add(new SaveChromatogram(chromatogramCSD, acquisition.getName() + " " + chromSet.getKey().toString()));
 						}
 					}
 					if(acquisition instanceof IChromatogramWSD) {
-						chromatograms.add(new SaveChromatogram(chromatogramWSD, ""));
+						chromatograms.add(new SaveChromatogram(chromatogramWSD, acquisition.getName()));
 					}
-					deviceCommunication.resetChromatogram();
 				}
 				return chromatograms;
 			}
@@ -97,7 +98,15 @@ public class DeviceInterface {
 			public void startAcquisition(IAcquisition acquisition) {
 
 				if(acquisition == setAcqiusition) {
-					deviceCommunication.start();
+					if(controlDevice.isSendStart()) {
+						try {
+							controlDevice.sendStart();
+							controlDevice.getDatareceive().reset(true);
+						} catch(SerialPortException e) {
+							// logger.warn(e);
+						}
+					}
+					controlDevice.setPrepare(false);
 				}
 			}
 
@@ -105,7 +114,7 @@ public class DeviceInterface {
 			public void stopAcquisition(IAcquisition acquisition) {
 
 				if(acquisition == setAcqiusition) {
-					deviceCommunication.stop();
+					controlDevice.getDatareceive().setSaveData(false);
 				}
 			}
 		};
@@ -117,9 +126,9 @@ public class DeviceInterface {
 		manager.removeChangeListener(changeListener);
 	}
 
-	public IChromatogramWSDAcquisition geChromatogramWSDAcquisition() {
+	public IAcquisition getAcqiusition() {
 
-		return deviceCommunication.getChromatogram();
+		return setAcqiusition;
 	}
 
 	public ControlDevice getControlDevice() {
@@ -139,12 +148,6 @@ public class DeviceInterface {
 			controlDevice = new ControlDevice();
 			dataSupplier.getControlDevices().add(controlDevice);
 		}
-		deviceCommunication = new DeviceCommunication(controlDevice);
 		manager.addChangeListener(changeListener);
-	}
-
-	public void setParametrs() {
-
-		deviceCommunication.setParamenters();
 	}
 }
