@@ -17,6 +17,7 @@ import org.eclipse.chemclipse.swt.ui.preferences.PreferenceSupplier;
 import org.eclipse.chemclipse.swt.ui.series.IMultipleSeries;
 import org.eclipse.chemclipse.swt.ui.series.ISeries;
 import org.eclipse.chemclipse.swt.ui.support.Colors;
+import org.eclipse.chemclipse.swt.ui.support.IColorScheme;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.swtchart.ILineSeries;
@@ -38,29 +39,36 @@ public class ChromatogramWSDOverviewUI extends ChromatogramOverviewUI {
 		return null;
 	}
 
+	private void setAdditionalIonSeries(ISeries series, Color color) {
+
+		addSeries(series);
+		ILineSeries lineSeries = (ILineSeries)getSeriesSet().createSeries(SeriesType.LINE, series.getId());
+		lineSeries.setXSeries(series.getXSeries());
+		lineSeries.setYSeries(series.getYSeries());
+		lineSeries.enableArea(true);
+		lineSeries.setSymbolType(PlotSymbolType.NONE);
+		lineSeries.setLineColor(color);
+	}
+
 	@Override
 	public void setViewSeries() {
 
-		ISeries series;
-		ILineSeries lineSeries;
-		boolean showChromatogramArea = PreferenceSupplier.showChromatogramArea();
 		IChromatogramWSDAcquisition chromatogramWSD = getChromatogramWSD();
 		if(chromatogramWSD != null) {
 			IMultipleSeries multipleSeries = chromatogramWSD.getSeries();
 			if(!multipleSeries.getMultipleSeries().isEmpty()) {
-				series = multipleSeries.getMultipleSeries().get(0);
-				setMaxSignal(series.getYMax());
-				addSeries(series);
-				lineSeries = (ILineSeries)getSeriesSet().createSeries(SeriesType.LINE, series.getId());
-				lineSeries.setXSeries(series.getXSeries());
-				lineSeries.setYSeries(series.getYSeries());
-				lineSeries.enableArea(showChromatogramArea);
-				lineSeries.setSymbolType(PlotSymbolType.NONE);
-				Color chromatogramColor = PreferenceSupplier.getChromatogramColor();
-				if(chromatogramColor == null) {
-					chromatogramColor = Colors.RED;
+				int size = multipleSeries.getMultipleSeries().size();
+				setMaxSignal(multipleSeries.getYMax());
+				ISeries series;
+				String colorSchemeOverlay = PreferenceSupplier.getColorSchemeOverlay();
+				IColorScheme colorScheme = Colors.getColorScheme(colorSchemeOverlay);
+				for(int i = 0; i < size; i++) {
+					series = multipleSeries.getMultipleSeries().get(i);
+					if(series.getXSeries().length != 0) {
+						setAdditionalIonSeries(series, colorScheme.getColor());
+						colorScheme.incrementColor();
+					}
 				}
-				lineSeries.setLineColor(chromatogramColor);
 			}
 		}
 	}

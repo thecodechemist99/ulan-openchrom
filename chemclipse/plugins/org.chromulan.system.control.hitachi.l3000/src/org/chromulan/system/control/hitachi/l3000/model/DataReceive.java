@@ -108,8 +108,8 @@ public class DataReceive {
 			for(int i = 2; i < data.length; i++) {
 				float value = Float.valueOf(data[i]);
 				addScanSignal(value, actualScan, i - 2);
-				addScan(actualScan);
 			}
+			addScan(actualScan);
 		} catch(NumberFormatException e) {
 		}
 	}
