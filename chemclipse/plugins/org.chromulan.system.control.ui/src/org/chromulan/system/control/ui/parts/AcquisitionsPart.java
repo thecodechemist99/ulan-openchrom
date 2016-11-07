@@ -22,17 +22,13 @@ import javax.inject.Named;
 
 import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.manager.devices.DataSupplier;
-import org.chromulan.system.control.model.Acquisitions;
 import org.chromulan.system.control.model.IAcquisition;
-import org.chromulan.system.control.model.IAcquisitions;
 import org.chromulan.system.control.ui.acquisition.support.AcquisitionsTable;
 import org.chromulan.system.control.ui.acquisition.support.LabelAcquisitionDuration;
 import org.chromulan.system.control.ui.acquisitions.AcquisitionProcess;
 import org.chromulan.system.control.ui.acquisitions.AcquisitionsAdministator;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -68,7 +64,7 @@ public class AcquisitionsPart {
 		@Override
 		public void run() {
 
-			IAcquisition acquisition = acquisitionProcess.getAcqisition();
+			IAcquisition acquisition = acquisitionProcess.getActualAcquisition();
 			if(acquisition == null || acquisition.isCompleted()) {
 				return;
 			}
@@ -91,8 +87,8 @@ public class AcquisitionsPart {
 	public final static String ID_COMMAND_SEARCH = "org.chromulan.system.control.ui.command.acquisitions.search";
 	public final static String ID_PARAMETER_SEARCH_NAME = "name";
 	private LabelAcquisitionDuration acquisitionInterval;
+	@Inject
 	private AcquisitionProcess acquisitionProcess;
-	private IAcquisitions acquisitions;
 	private AcquisitionsAdministator acquisitionsAdministator;
 	private AcquisitionsTable acquisitionsTable;
 	@Inject
@@ -103,8 +99,6 @@ public class AcquisitionsPart {
 	private Button buttonStart;
 	private Button buttonStartMeasurement;
 	private Button buttonStop;
-	@Inject
-	private IEclipseContext context;
 	private PropertyChangeListener dataAcquisitionChange;
 	@Inject
 	private DataSupplier dataSupplier;
@@ -133,23 +127,14 @@ public class AcquisitionsPart {
 				setTable((IAcquisition)evt.getSource());
 			}
 		};
-		acquisitions = new Acquisitions();
 		acquisitionsAdministator = new AcquisitionsAdministator();
 	}
 
 	private void addAcquisitions(List<IAcquisition> newAcquisitions) {
 
-		if(acquisitions.getActualAcquisition() == null) {
-			for(IAcquisition acquisition : newAcquisitions) {
-				acquisitions.addAcquisition(acquisition);
-			}
-			if(acquisitionProcess.getAcqisition() == null && acquisitions.getActualAcquisition() != null) {
-				acquisitionProcess.setAcquisition(acquisitions.getActualAcquisition());
-			}
-		} else {
-			for(IAcquisition acquisition : newAcquisitions) {
-				acquisitions.addAcquisition(acquisition);
-			}
+		acquisitionProcess.addAcquisitions(newAcquisitions);
+		if(acquisitionProcess.getActualAcquisition() != null) {
+			buttonEnd.setEnabled(true);
 		}
 		redrawTable();
 	}
@@ -157,7 +142,6 @@ public class AcquisitionsPart {
 	@PostConstruct
 	public void createAcquisitionsArea() {
 
-		acquisitionProcess = ContextInjectionFactory.make(AcquisitionProcess.class, context);
 		Composite composite = new Composite(parent, SWT.None);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
@@ -165,7 +149,7 @@ public class AcquisitionsPart {
 		GridData gridData;
 		final Composite tableComposite = new Composite(composite, SWT.None);
 		acquisitionsTable = new AcquisitionsTable(tableComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		acquisitionsTable.setAcquisitions(acquisitions);
+		acquisitionsTable.setAcquisitions(acquisitionProcess);
 		tableComposite.setLayout(new FillLayout());
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gridData.horizontalSpan = 2;
@@ -260,9 +244,10 @@ public class AcquisitionsPart {
 
 				boolean b = acquisitionProcess.endAcquisition();
 				if(b) {
-					IAcquisition acquisition;
-					if((acquisition = acquisitions.setNextAcquisitionActual()) != null) {
-						acquisitionProcess.setAcquisition(acquisition);
+					IAcquisition acquisition = acquisitionProcess.setNextAcquisition();
+					redrawTable();
+					if(acquisition == null) {
+						buttonEnd.setEnabled(false);
 					}
 				}
 			}
@@ -288,7 +273,7 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				acquisitionProcess.stopAcquisition();
+				acquisitionProcess.stopAcquisition(true);
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, false, false);
@@ -318,15 +303,20 @@ public class AcquisitionsPart {
 	@Optional
 	public void endAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition acquisition) {
 
-		if(acquisition != null && acquisition != this.acquisitionProcess.getAcqisition()) {
+		if(acquisition != null && acquisition == this.acquisitionProcess.getActualAcquisition()) {
 			acquisition.removePropertyChangeListener(dataAcquisitionChange);
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(false);
-			buttonEnd.setEnabled(false);
 			acquisitionInterval.setTime(0);
 			tableActualAcquisition.removeAll();
 			lableNameAcquisition.setText("");
 			progressBarTimeRemain.setSelection(0);
+			acquisitionProcess.setNextAcquisition();
+			if(acquisitionProcess.getActualAcquisition() != null) {
+				buttonEnd.setEnabled(false);
+			} else {
+				buttonEnd.setEnabled(true);
+			}
 		}
 	}
 
@@ -368,21 +358,13 @@ public class AcquisitionsPart {
 
 	private boolean removeAcquisition(IAcquisition acquisition) {
 
-		int number = acquisitions.getIndex(acquisition);
-		boolean remove = false;
-		if(acquisitionProcess.getAcqisition() == acquisition) {
-			if(acquisitionProcess.endAcquisition()) {
-				IAcquisition newAcquisition = acquisitions.setNextAcquisitionActual();
-				acquisitions.removeAcquisition(number);
-				setAcquisition(newAcquisition);
-				remove = true;
-			}
+		boolean b = acquisitionProcess.removeAcquisition(acquisition);
+		if(acquisitionProcess.getActualAcquisition() != null) {
+			buttonEnd.setEnabled(true);
 		} else {
-			acquisitions.removeAcquisition(number);
-			remove = true;
+			buttonEnd.setEnabled(false);
 		}
-		redrawTable();
-		return remove;
+		return b;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -395,13 +377,14 @@ public class AcquisitionsPart {
 				return;
 			}
 		}
+		redrawTable();
 	}
 
 	@Inject
 	@Optional
 	public void setAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition acquisition) {
 
-		if(acquisition != null && this.acquisitionProcess.getAcqisition() != acquisition) {
+		if(acquisition != null && this.acquisitionProcess.getActualAcquisition() == acquisition) {
 			buttonStart.setEnabled(true);
 			buttonStop.setEnabled(false);
 			buttonEnd.setEnabled(true);
@@ -443,7 +426,7 @@ public class AcquisitionsPart {
 	@Optional
 	public void startRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING) IAcquisition acquisition) {
 
-		if(acquisition != null && this.acquisitionProcess.getAcqisition() != acquisition) {
+		if(acquisition != null && this.acquisitionProcess.getActualAcquisition() == acquisition) {
 			display.asyncExec(timeRecording);
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(true);
@@ -455,7 +438,7 @@ public class AcquisitionsPart {
 	@Optional
 	public void stopRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING) IAcquisition acquisition) {
 
-		if(acquisition != null && this.acquisitionProcess.getAcqisition() == acquisition) {
+		if(acquisition != null && this.acquisitionProcess.getActualAcquisition() == acquisition) {
 			display.timerExec(-1, timeRecording);
 		}
 	}

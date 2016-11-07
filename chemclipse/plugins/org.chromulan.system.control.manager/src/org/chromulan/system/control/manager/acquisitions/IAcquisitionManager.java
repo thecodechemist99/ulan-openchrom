@@ -38,7 +38,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 public class IAcquisitionManager {
 
 	@Inject
-	IEventBroker eventBroker;
+	private IEventBroker eventBroker;
 	private ScheduledThreadPoolExecutor executor;
 	private List<IAcquisitionChangeListener> changeListeners;
 
@@ -165,7 +165,7 @@ public class IAcquisitionManager {
 						@Override
 						public void run() {
 
-							stop(acquisition);
+							stop(acquisition, false);
 						}
 					}, acquisition.getDuration(), TimeUnit.MILLISECONDS);
 				}
@@ -177,25 +177,25 @@ public class IAcquisitionManager {
 		}
 	}
 
-	public boolean stop(IAcquisition acquisition) {
+	public boolean stop(IAcquisition acquisition, boolean changeDuaration) {
 
-		return stopAndProcessAcquisition(acquisition);
+		return stopAndProcessAcquisition(acquisition, changeDuaration);
 	}
 
-	private void stopAcquisition(IAcquisition acquisition) {
+	private void stopAcquisition(IAcquisition acquisition, boolean changeDuaration) {
 
-		acquisition.stop();
+		acquisition.stop(changeDuaration);
 		for(IAcquisitionChangeListener listener : changeListeners) {
 			listener.stopAcquisition(acquisition);
 		}
 		eventBroker.post(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING, acquisition);
 	}
 
-	private boolean stopAndProcessAcquisition(IAcquisition acquisition) {
+	private boolean stopAndProcessAcquisition(IAcquisition acquisition, boolean changeDuaration) {
 
 		synchronized(changeListeners) {
 			if((acquisition != null) && acquisition.isRunning()) {
-				stopAcquisition(acquisition);
+				stopAcquisition(acquisition, changeDuaration);
 				proccessDataAcqusition(acquisition);
 				saveAcqusition(acquisition);
 				endAcqustion(acquisition);

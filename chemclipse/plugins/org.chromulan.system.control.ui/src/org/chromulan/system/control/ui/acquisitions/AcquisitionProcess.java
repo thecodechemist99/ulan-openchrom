@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.acquisitions;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.chromulan.system.control.device.IControlDevice;
@@ -18,21 +20,43 @@ import org.chromulan.system.control.events.IControlDevicesEvents;
 import org.chromulan.system.control.manager.acquisitions.IAcquisitionManager;
 import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.chromulan.system.control.manager.events.IDataSupplierEvents;
+import org.chromulan.system.control.model.Acquisitions;
 import org.chromulan.system.control.model.IAcquisition;
+import org.chromulan.system.control.model.IAcquisitions;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 
+@Creatable
 public class AcquisitionProcess {
 
 	@Inject
 	private IAcquisitionManager acquisitionManager;
+	private IAcquisitions acquisitions;
 	@Inject
 	private IEventBroker eventBroker;
-	private IAcquisition prepareAcqisition;
-	private IAcquisition setAcqusition;
+	private IAcquisition prepareAcquisition;
+	private IAcquisition setAcquisition;
 
 	public AcquisitionProcess() {
+		acquisitions = new Acquisitions();
+	}
+
+	public void addAcquisitions(List<IAcquisition> newAcquisitions) {
+
+		if(acquisitions.getActualAcquisition() == null) {
+			for(IAcquisition acquisition : newAcquisitions) {
+				acquisitions.addAcquisition(acquisition);
+			}
+			if(acquisitions.getActualAcquisition() != null) {
+				setAcquisition(acquisitions.getActualAcquisition());
+			}
+		} else {
+			for(IAcquisition acquisition : newAcquisitions) {
+				acquisitions.addAcquisition(acquisition);
+			}
+		}
 	}
 
 	private boolean controlUsingDevices(IAcquisition acquisition) {
@@ -47,46 +71,75 @@ public class AcquisitionProcess {
 
 	public boolean endAcquisition() {
 
-		if(setAcqusition != null) {
-			return acquisitionManager.end(setAcqusition);
+		if(setAcquisition != null) {
+			boolean b = acquisitionManager.end(setAcquisition);
+			if(b) {
+				setAcquisition = null;
+			}
+			return b;
+		} else {
+			prepareAcquisition = null;
 		}
-		return false;
+		return true;
 	}
 
-	public IAcquisition getAcqisition() {
+	public List<IAcquisition> getAcquisitions() {
 
-		return prepareAcqisition;
+		return acquisitions.getAcquisitions();
+	}
+
+	public IAcquisition getActualAcquisition() {
+
+		return acquisitions.getActualAcquisition();
 	}
 
 	public boolean isSetAcquisition() {
 
-		if(setAcqusition != null) {
+		if(setAcquisition != null) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 
+	public boolean removeAcquisition(IAcquisition acquisition) {
+
+		int number = acquisitions.getIndex(acquisition);
+		boolean remove = false;
+		if(setAcquisition == acquisition || prepareAcquisition == acquisition) {
+			if(endAcquisition()) {
+				IAcquisition newAcquisition = acquisitions.setNextAcquisitionActual();
+				acquisitions.removeAcquisition(number);
+				setAcquisition(newAcquisition);
+				remove = true;
+			}
+		} else {
+			acquisitions.removeAcquisition(number);
+			remove = true;
+		}
+		return remove;
+	}
+
 	@Inject
 	@Optional
 	private void setAcquisition(@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES) DataSupplier supplier) {
 
-		if(prepareAcqisition != null) {
-			setAcquisition(prepareAcqisition);
+		if(prepareAcquisition != null) {
+			setAcquisition(prepareAcquisition);
 		}
 	}
 
-	public int setAcquisition(IAcquisition acquisition) {
+	private int setAcquisition(IAcquisition acquisition) {
 
-		if(setAcqusition == null && acquisition != null) {
+		if(setAcquisition == null && acquisition != null) {
 			boolean b = controlUsingDevices(acquisition);
 			if(b == true) {
 				acquisitionManager.set(acquisition);
-				setAcqusition = acquisition;
-				prepareAcqisition = null;
+				setAcquisition = acquisition;
+				prepareAcquisition = null;
 				return 0;
 			} else {
-				prepareAcqisition = acquisition;
+				prepareAcquisition = acquisition;
 				eventBroker.post(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_CONTROL, acquisition.getDevicesProfile().getControlDevices());
 				return 2;
 			}
@@ -94,18 +147,28 @@ public class AcquisitionProcess {
 		return 1;
 	}
 
+	public IAcquisition setNextAcquisition() {
+
+		IAcquisition acquisition = null;
+		boolean b = endAcquisition();
+		if(b && (acquisition = acquisitions.setNextAcquisitionActual()) != null) {
+			setAcquisition(acquisition);
+		}
+		return acquisition;
+	}
+
 	public boolean startAcquisition() {
 
-		if(setAcqusition != null) {
-			return acquisitionManager.start(setAcqusition);
+		if(setAcquisition != null) {
+			return acquisitionManager.start(setAcquisition);
 		}
 		return false;
 	}
 
-	public boolean stopAcquisition() {
+	public boolean stopAcquisition(boolean changeDuration) {
 
-		if(setAcqusition != null) {
-			return acquisitionManager.stop(setAcqusition);
+		if(setAcquisition != null) {
+			return acquisitionManager.stop(setAcquisition, changeDuration);
 		}
 		return false;
 	}
