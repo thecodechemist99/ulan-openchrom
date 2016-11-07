@@ -12,10 +12,12 @@
 package org.chromulan.system.control.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
 import org.eclipse.chemclipse.swt.ui.series.IMultipleSeries;
+import org.eclipse.chemclipse.swt.ui.support.Sign;
 import org.eclipse.chemclipse.wsd.model.core.AbstractChromatogramWSD;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.chemclipse.wsd.model.core.IScanSignalWSD;
@@ -24,6 +26,7 @@ import org.eclipse.chemclipse.wsd.model.core.selection.ChromatogramSelectionWSD;
 import org.eclipse.chemclipse.wsd.model.core.support.IMarkedWavelengths;
 import org.eclipse.chemclipse.wsd.model.core.support.MarkedWavelength;
 import org.eclipse.chemclipse.wsd.model.core.support.MarkedWavelengths;
+import org.eclipse.chemclipse.wsd.swt.ui.converter.SeriesConverterWSD;
 
 public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition implements IChromatogramWSDAcquisition {
 
@@ -70,9 +73,10 @@ public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition 
 		IMultipleSeries multipleSeries = null;
 		synchronized(this) {
 			IChromatogramWSD chromatogramWSD = geChromatogramWSD();
-			new ArrayList<Integer>(selectedMarkedWavelengths.getWavelengths());
+			List<Integer> wavelengths = new ArrayList<Integer>(this.getWaveLenaght().getWavelengths());
 			try {
-				new ChromatogramSelectionWSD(chromatogramWSD, false);
+				ChromatogramSelectionWSD chromatogramSelection = new ChromatogramSelectionWSD(chromatogramWSD, false);
+				multipleSeries = SeriesConverterWSD.convertChromatogram(chromatogramSelection, wavelengths, false, Sign.POSITIVE);
 			} catch(ChromatogramIsNullException e) {
 			}
 		}

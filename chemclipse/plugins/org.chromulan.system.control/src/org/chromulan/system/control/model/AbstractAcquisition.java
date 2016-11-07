@@ -176,13 +176,16 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
-	public void stop() {
+	public void stop(boolean changeDuration) {
 
 		synchronized(this) {
 			if(recording) {
 				record = true;
 				recording = false;
-				this.devicesProfile.removeAcqusition(this);
+				Date date = new Date();
+				if(changeDuration) {
+					setDuration(date.getTime() - date.getTime());
+				}
 			}
 		}
 	}

@@ -14,7 +14,9 @@ package org.chromulan.system.control.model;
 import java.beans.PropertyChangeListener;
 import java.util.Date;
 
-public interface IAcquisition extends IAcquisitionProcess {
+import org.chromulan.system.control.device.IDevicesProfile;
+
+public interface IAcquisition {
 
 	final String PROPERTY_AUTO_STOP = "autoStop";
 	final String PROPERTY_DESCRIPTION = "description";
@@ -25,9 +27,13 @@ public interface IAcquisition extends IAcquisitionProcess {
 
 	void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
+	IAcquisitionSaver getAcquisitionSaver();
+
 	boolean getAutoStop();
 
 	String getDescription();
+
+	IDevicesProfile getDevicesProfile();
 
 	long getDuration();
 
@@ -35,15 +41,27 @@ public interface IAcquisition extends IAcquisitionProcess {
 
 	Date getStartDate();
 
+	boolean isCompleted();
+
+	boolean isRunning();
+
 	void removePropertyChangeListener(PropertyChangeListener listener);
 
 	void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+	void setAcquisitionSaver(IAcquisitionSaver saver);
 
 	void setAutoStop(boolean b);
 
 	void setDescription(String description);
 
+	void setDevicesProfile(IDevicesProfile devicesProfile);
+
 	void setDuration(long duration);
 
 	void setName(String name);
+
+	void start();
+
+	void stop(boolean changeTime);
 }
