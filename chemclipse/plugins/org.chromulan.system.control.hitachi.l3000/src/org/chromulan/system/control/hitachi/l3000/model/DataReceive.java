@@ -34,7 +34,6 @@ public class DataReceive {
 
 	public DataReceive(ControlDevice controlDevice) {
 		this.chromatogram = new ChromatogramWSDAcquisition(controlDevice.getTimeIntervalMill(), 0);
-		;
 		this.controlDevice = controlDevice;
 		this.wavelenghtInterval = controlDevice.getWavelenghtInterval();
 		this.wavelenghtRangeFrom = controlDevice.getWavelenghtRangeFrom();

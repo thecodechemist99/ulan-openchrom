@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.hitachi.l3000.model.ControlDevice;
 import org.chromulan.system.control.hitachi.l3000.model.DeviceInterface;
+import org.chromulan.system.control.hitachi.l3000.model.evens.DeviceEvents;
 import org.chromulan.system.control.hitachi.l3000.ui.control.setting.ConnectionPreferencePage;
 import org.chromulan.system.control.hitachi.l3000.ui.support.ConvertoDataComunicationTypeToNumber;
 import org.chromulan.system.control.hitachi.l3000.ui.support.ConvertoNumberToDataComunicationType;
@@ -24,7 +25,6 @@ import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorTimeInterv
 import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenghtInterval;
 import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenghtRangeFrom;
 import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenghtRangeTo;
-import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
 import org.eclipse.core.databinding.Binding;
@@ -51,8 +51,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import jssc.SerialPortException;
-
 public class DevicePart {
 
 	private Button buttonSendStart;
@@ -61,8 +59,6 @@ public class DevicePart {
 	private Combo comboOutputType;
 	@Inject
 	private Composite composite;
-	@Inject
-	private DataSupplier dataSupplier;
 	private ControlDevice device;
 	@Inject
 	private DeviceInterface deviceInterface;
@@ -77,16 +73,13 @@ public class DevicePart {
 	public DevicePart() {
 	}
 
-	private void enableWidge(boolean enabled) {
+	@Inject
+	@Optional
+	public void closeConnection(@UIEventTopic(value = DeviceEvents.TOPIC_HITACHI_L3000_CONNECTION_CLOSE) DeviceInterface deviceInterface) {
 
-		buttonSendStart.setEnabled(enabled);
-		buttonSendStop.setEnabled(enabled);
-		buttonSetParametrs.setEnabled(enabled);
-		comboOutputType.setEnabled(enabled);
-		textTimeInterval.setEnabled(enabled);
-		textWaveRangeFrom.setEnabled(enabled);
-		textWaveRangeTo.setEnabled(enabled);
-		textWaveLenghtInterva.setEnabled(enabled);
+		if(deviceInterface != null) {
+			setWidgeConnection();
+		}
 	}
 
 	private Combo getOutputType(Composite composite) {
@@ -95,6 +88,15 @@ public class DevicePart {
 		combo.add(ControlDevice.SETTING_DATA_OUTPUT_ANALOG);
 		combo.add(ControlDevice.SETTING_DATA_OUTPUT_DATA_COMMUNICATION);
 		return combo;
+	}
+
+	@Inject
+	@Optional
+	public void openConnection(@UIEventTopic(value = DeviceEvents.TOPIC_HITACHI_L3000_CONNECTION_OPEN) DeviceInterface deviceInterface) {
+
+		if(deviceInterface != null) {
+			setWidgeConnection();
+		}
 	}
 
 	@PostConstruct
@@ -157,12 +159,9 @@ public class DevicePart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				try {
-					device.sendTimeInterval();
-					device.sendWavelenghtInterval();
-					device.sendTimeInterval();
-				} catch(SerialPortException e1) {
-				}
+				deviceInterface.sendTimeInterval();
+				deviceInterface.sendWavelenghtInterval();
+				deviceInterface.sendWaveLenghtRange();
 			}
 		});
 		Button button = new Button(composite, SWT.PUSH);
@@ -193,20 +192,30 @@ public class DevicePart {
 			public void widgetSelected(SelectionEvent e) {
 
 				PreferenceManager manager = new PreferenceManager();
-				ConnectionPreferencePage settings = new ConnectionPreferencePage(device);
+				ConnectionPreferencePage settings = new ConnectionPreferencePage(deviceInterface);
 				PreferenceNode nodeBase = new PreferenceNode("Connection", settings);
 				manager.addToRoot(nodeBase);
 				PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
 				dialog.open();
-				setlabelConnection();
-				dataSupplier.updateControlDevices();
+				setWidgeConnection();
 			}
 		});
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		setWidge();
 	}
 
-	private void setlabelConnection() {
+	private void setWidge() {
+
+		IAcquisition acquisition = deviceInterface.getAcqiusition();
+		if(acquisition == null || !acquisition.isRunning()) {
+			setWidgeStopRecording();
+		} else {
+			setWidgeStartRecording();
+		}
+		setWidgeConnection();
+	}
+
+	private void setWidgeConnection() {
 
 		if(device.isConnected()) {
 			labelConnection.setText("YES");
@@ -218,13 +227,28 @@ public class DevicePart {
 		labelConnection.getParent().update();
 	}
 
-	private void setWidge() {
+	private void setWidgeStartRecording() {
 
-		IAcquisition acquisition = deviceInterface.getAcqiusition();
-		if(acquisition != null && acquisition.isRunning()) {
-			enableWidge(false);
-		}
-		setlabelConnection();
+		buttonSendStart.setEnabled(false);
+		buttonSendStop.setEnabled(false);
+		buttonSetParametrs.setEnabled(false);
+		comboOutputType.setEnabled(false);
+		textTimeInterval.setEnabled(false);
+		textWaveRangeFrom.setEnabled(false);
+		textWaveRangeTo.setEnabled(false);
+		textWaveLenghtInterva.setEnabled(false);
+	}
+
+	private void setWidgeStopRecording() {
+
+		buttonSendStart.setEnabled(true);
+		buttonSendStop.setEnabled(true);
+		buttonSetParametrs.setEnabled(true);
+		comboOutputType.setEnabled(true);
+		textTimeInterval.setEnabled(true);
+		textWaveRangeFrom.setEnabled(true);
+		textWaveRangeTo.setEnabled(true);
+		textWaveLenghtInterva.setEnabled(true);
 	}
 
 	@Inject
@@ -232,7 +256,7 @@ public class DevicePart {
 	public void startAcqusition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING) IAcquisition acquisition) {
 
 		if(acquisition != null && acquisition == deviceInterface.getAcqiusition()) {
-			enableWidge(false);
+			setWidgeStartRecording();
 		}
 	}
 
@@ -241,7 +265,7 @@ public class DevicePart {
 	public void stopAcqusition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING) IAcquisition acquisition) {
 
 		if(acquisition != null && acquisition == deviceInterface.getAcqiusition()) {
-			enableWidge(true);
+			setWidgeStopRecording();
 		}
 	}
 }

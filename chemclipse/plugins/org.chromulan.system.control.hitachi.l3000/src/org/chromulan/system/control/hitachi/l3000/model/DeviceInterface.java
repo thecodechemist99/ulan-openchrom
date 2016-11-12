@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.hitachi.l3000.model.evens.DeviceEvents;
 import org.chromulan.system.control.manager.acquisitions.IAcquisitionChangeListener;
 import org.chromulan.system.control.manager.acquisitions.IAcquisitionManager;
 import org.chromulan.system.control.manager.devices.DataSupplier;
@@ -32,6 +33,7 @@ import org.chromulan.system.control.model.SaveChromatogram;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.e4.core.services.events.IEventBroker;
 
 import jssc.SerialPortException;
 
@@ -42,6 +44,8 @@ public class DeviceInterface {
 	private ControlDevice controlDevice;
 	@Inject
 	private DataSupplier dataSupplier;
+	@Inject
+	private IEventBroker eventBroker;
 	private IAcquisitionChangeListener changeListener;
 	@Inject
 	private IAcquisitionManager manager;
@@ -99,14 +103,10 @@ public class DeviceInterface {
 
 				if(acquisition == setAcqiusition) {
 					if(controlDevice.isSendStart()) {
-						try {
-							controlDevice.sendStart();
-							controlDevice.getDatareceive().reset(true);
-						} catch(SerialPortException e) {
-							// logger.warn(e);
-						}
+						sendStart();
 					}
 					controlDevice.setPrepare(false);
+					controlDevice.getDatareceive().reset(true);
 				}
 			}
 
@@ -114,15 +114,30 @@ public class DeviceInterface {
 			public void stopAcquisition(IAcquisition acquisition) {
 
 				if(acquisition == setAcqiusition) {
+					if(controlDevice.isSendStop()) {
+						sendStop();
+					}
 					controlDevice.getDatareceive().setSaveData(false);
 				}
 			}
 		};
 	}
 
+	public boolean closeConnection() {
+
+		try {
+			controlDevice.closeSerialPort();
+			dataSupplier.updateControlDevices();
+			return true;
+		} catch(Exception e) {
+		}
+		return false;
+	}
+
 	@PreDestroy
 	public void destroy() {
 
+		closeConnection();
 		manager.removeChangeListener(changeListener);
 	}
 
@@ -134,6 +149,24 @@ public class DeviceInterface {
 	public ControlDevice getControlDevice() {
 
 		return controlDevice;
+	}
+
+	public boolean openConnection(String portName, int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter, boolean addFilter) {
+
+		try {
+			boolean b = controlDevice.openSerialPort(portName, portBaudRate, portEventParity, portDataControlSignal, portDelimiter);
+			if(b) {
+				eventBroker.post(DeviceEvents.TOPIC_HITACHI_L3000_CONNECTION_OPEN, this);
+				dataSupplier.updateControlDevices();
+			}
+			return b;
+		} catch(Exception e) {
+			try {
+				controlDevice.closeSerialPort();
+			} catch(SerialPortException e1) {
+			}
+		}
+		return false;
 	}
 
 	@PostConstruct
@@ -149,5 +182,79 @@ public class DeviceInterface {
 			dataSupplier.getControlDevices().add(controlDevice);
 		}
 		manager.addChangeListener(changeListener);
+	}
+
+	public boolean sendDataOutputType() {
+
+		try {
+			return controlDevice.sendDataOutputType();
+		} catch(Exception e) {
+			closeConnection();
+		}
+		return false;
+	}
+
+	private boolean sendStart() {
+
+		try {
+			return controlDevice.sendStart();
+		} catch(SerialPortException e) {
+			closeConnection();
+		}
+		return false;
+	}
+
+	private boolean sendStop() {
+
+		try {
+			return controlDevice.sendStop();
+		} catch(Exception e) {
+			closeConnection();
+		}
+		return false;
+	}
+
+	public boolean sendTimeInterval() {
+
+		try {
+			return controlDevice.sendTimeInterval();
+		} catch(Exception e) {
+			closeConnection();
+		}
+		return false;
+	}
+
+	public boolean sendWavelenghtInterval() {
+
+		try {
+			return controlDevice.sendWavelenghtInterval();
+		} catch(Exception e) {
+			closeConnection();
+		}
+		return false;
+	}
+
+	public boolean sendWaveLenghtRange() {
+
+		try {
+			return controlDevice.sendWaveLenghtRange();
+		} catch(Exception e) {
+			closeConnection();
+		}
+		return false;
+	}
+
+	public boolean setParameters(int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) {
+
+		try {
+			boolean b = controlDevice.setPortParameters(portBaudRate, portEventParity, portDataControlSignal, portDelimiter);
+			if(b) {
+				eventBroker.post(DeviceEvents.TOPIC_HITACHI_L3000_CONNECTION_SET_PARAMETERS, this);
+			}
+			return b;
+		} catch(Exception e) {
+			closeConnection();
+		}
+		return false;
 	}
 }

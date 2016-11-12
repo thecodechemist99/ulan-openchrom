@@ -12,6 +12,7 @@
 package org.chromulan.system.control.hitachi.l3000.ui.control.setting;
 
 import org.chromulan.system.control.hitachi.l3000.model.ControlDevice;
+import org.chromulan.system.control.hitachi.l3000.model.DeviceInterface;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -25,7 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-import jssc.SerialPortException;
 import jssc.SerialPortList;
 
 public class ConnectionPreferencePage extends PreferencePage {
@@ -37,12 +37,14 @@ public class ConnectionPreferencePage extends PreferencePage {
 	private IObservableValue delimiter;
 	private String delimiterCR = "CR";
 	private String delimiterCRLF = "CR+LF";
+	private DeviceInterface deviceInterface;
 	private IObservableValue name;
 	private IObservableValue parity;
 
-	public ConnectionPreferencePage(ControlDevice controlDevice) {
+	public ConnectionPreferencePage(DeviceInterface deviceInterface) {
 		super("Connection");
-		this.controlDevice = controlDevice;
+		this.controlDevice = deviceInterface.getControlDevice();
+		this.deviceInterface = deviceInterface;
 		this.name = new WritableValue(controlDevice.getPortName(), String.class);
 		this.boudRate = new WritableValue(Integer.toString(controlDevice.getPortBaudRate()), String.class);
 		if(controlDevice.getPortDelimeter().equals(ControlDevice.DELIMITER_CR)) {
@@ -143,24 +145,15 @@ public class ConnectionPreferencePage extends PreferencePage {
 		if(!validName) {
 			return false;
 		}
-		try {
-			if(!controlDevice.isConnected()) {
-				controlDevice.openSerialPort(name, boudRate, parity, controlSignal, delimiter);
+		if(!controlDevice.isConnected()) {
+			return deviceInterface.openConnection(name, boudRate, parity, controlSignal, delimiter, true);
+		} else {
+			if(controlDevice.getPortName().equals(name)) {
+				return deviceInterface.setParameters(boudRate, parity, controlSignal, delimiter);
 			} else {
-				if(controlDevice.getPortName().equals(name)) {
-					controlDevice.setPortParameters(boudRate, parity, controlSignal, delimiter);
-				} else {
-					controlDevice.closeSerialPort();
-					controlDevice.openSerialPort(name, boudRate, parity, controlSignal, delimiter);
-				}
+				deviceInterface.closeConnection();
+				return deviceInterface.openConnection(name, boudRate, parity, controlSignal, delimiter, true);
 			}
-		} catch(SerialPortException e) {
-			try {
-				controlDevice.closeSerialPort();
-			} catch(SerialPortException e1) {
-			}
-			return false;
 		}
-		return true;
 	}
 }
