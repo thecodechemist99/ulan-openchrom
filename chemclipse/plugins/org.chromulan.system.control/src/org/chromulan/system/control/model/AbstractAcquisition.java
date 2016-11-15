@@ -20,15 +20,24 @@ import org.chromulan.system.control.device.IDevicesProfile;
 public abstract class AbstractAcquisition implements IAcquisition {
 
 	private IAcquisitionSaver acquisitionSaver;
+	private float amount;
+	private String analysis;
 	private boolean autoStop;
+	private String column;
 	private Date date;
 	private String description;
+	private String detection;
 	private IDevicesProfile devicesProfile;
 	private long duration;
+	private Float flowRate;
+	private String flowRateUnit;
+	private String mobilPhase;
 	private String name;
 	protected PropertyChangeSupport propertyChangeSupport;
 	private boolean record;
 	private boolean recording;
+	private float temperature;
+	private String temperatureUnit;
 
 	public AbstractAcquisition() {
 		name = "";
@@ -57,15 +66,39 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
+	public Float getAmount() {
+
+		return amount;
+	}
+
+	@Override
+	public String getAnalysis() {
+
+		return analysis;
+	}
+
+	@Override
 	public boolean getAutoStop() {
 
 		return this.autoStop;
 	}
 
 	@Override
+	public String getColunm() {
+
+		return column;
+	}
+
+	@Override
 	public String getDescription() {
 
 		return description;
+	}
+
+	@Override
+	public String getDetection() {
+
+		return detection;
 	}
 
 	@Override
@@ -81,6 +114,24 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
+	public float getFlowRate() {
+
+		return flowRate;
+	}
+
+	@Override
+	public String getFlowRateUnit() {
+
+		return flowRateUnit;
+	}
+
+	@Override
+	public String getMobilPhase() {
+
+		return mobilPhase;
+	}
+
+	@Override
 	public String getName() {
 
 		return this.name;
@@ -90,6 +141,18 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	public Date getStartDate() {
 
 		return date;
+	}
+
+	@Override
+	public float getTemperature() {
+
+		return temperature;
+	}
+
+	@Override
+	public String getTemperatureUnit() {
+
+		return temperatureUnit;
 	}
 
 	@Override
@@ -123,6 +186,18 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
+	public void setAmount(Float amount) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_AMOUNT, this.amount, this.amount = amount);
+	}
+
+	@Override
+	public void setAnalysis(String analysis) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_ANALYSIS, this.analysis, this.analysis = analysis);
+	}
+
+	@Override
 	public void setAutoStop(boolean b) {
 
 		synchronized(this) {
@@ -133,9 +208,21 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
+	public void setColumn(String column) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_COLUMN, this.column, this.column = column);
+	}
+
+	@Override
 	public void setDescription(String description) {
 
 		propertyChangeSupport.firePropertyChange(PROPERTY_DESCRIPTION, this.description, this.description = description);
+	}
+
+	@Override
+	public void setDetection(String detection) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_DETECTION, this.detection, this.detection = detection);
 	}
 
 	@Override
@@ -159,9 +246,39 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
+	public void setFlowRate(float flowRate) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLOW_RATE, this.flowRate, this.flowRate = flowRate);
+	}
+
+	@Override
+	public void setFlowRateUnit(String flowRateUnit) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_FLOW_RATE_UNIT, this.flowRateUnit, this.flowRateUnit = flowRateUnit);
+	}
+
+	@Override
+	public void setMobilPhase(String mobilPhase) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_MOBIL_PHASE, this.mobilPhase, this.mobilPhase = mobilPhase);
+	}
+
+	@Override
 	public void setName(String name) {
 
 		propertyChangeSupport.firePropertyChange(PROPERTY_NAME, this.name, this.name = name);
+	}
+
+	@Override
+	public void setTemperature(float temperature) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_TEMPERATYRE, this.temperature, this.temperature = temperature);
+	}
+
+	@Override
+	public void setTemperatureUnit(String unit) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_TEMPERATURE_UNIT, this.temperatureUnit, temperatureUnit);
 	}
 
 	@Override

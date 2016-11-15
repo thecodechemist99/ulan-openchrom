@@ -3,15 +3,12 @@ package org.chromulan.system.control.device.setting;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class AbstractDeviceSetting implements IDeviceSetting {
 
 	private String deviceID;
 	private String deviceType;
-	private List<IValueChangeListener> listeners;
 	private String name;
 	private String pluginID;
 	private HashMap<String, IValue<?>> values;
@@ -19,13 +16,6 @@ public abstract class AbstractDeviceSetting implements IDeviceSetting {
 	public AbstractDeviceSetting() {
 		this.name = "";
 		this.values = new HashMap<>();
-		listeners = new ArrayList<>();
-	}
-
-	@Override
-	public void addUpdateValueListener(IValueChangeListener listener) {
-
-		listeners.add(listener);
 	}
 
 	@Override
@@ -90,14 +80,6 @@ public abstract class AbstractDeviceSetting implements IDeviceSetting {
 	public void setPlugnID(String id) {
 
 		this.pluginID = id;
-	}
-
-	@Override
-	public void updateValueListeners() {
-
-		for(IValueChangeListener listener : listeners) {
-			listener.update();
-		}
 	}
 
 	@Override

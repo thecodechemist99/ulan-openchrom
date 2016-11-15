@@ -5,8 +5,6 @@ import java.util.HashMap;
 
 public interface IDeviceSetting extends Externalizable {
 
-	void addUpdateValueListener(IValueChangeListener listener);
-
 	String getDeviceID();
 
 	String getDeviceType();
@@ -24,6 +22,4 @@ public interface IDeviceSetting extends Externalizable {
 	void setName(String name);
 
 	void setPlugnID(String id);
-
-	void updateValueListeners();
 }

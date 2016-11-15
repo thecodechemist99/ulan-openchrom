@@ -13,21 +13,32 @@ package org.chromulan.system.control.device;
 
 import java.util.List;
 
+import org.chromulan.system.control.device.setting.IDeviceSetting;
 import org.chromulan.system.control.model.IAcquisition;
 
 public interface IDevicesProfile extends IControlDevices {
 
 	void addAcquisition(IAcquisition acquisition);
 
+	void addDeviceSetting(IDeviceSetting deviceSetting);
+
 	boolean containsAcqusition();
 
 	boolean containsAcqusition(IAcquisition acquisition);
 
-	List<IAcquisition> getAcquisitio();
+	boolean containsDeviceSetting(String pluginID, String deviceID);
+
+	List<IAcquisition> getAcquisitions();
+
+	List<IDeviceSetting> getDeviceSetting();
+
+	IDeviceSetting getDeviceSetting(String pluginID, String deviceID);
 
 	String getName();
 
 	void removeAcqusition(IAcquisition acquisition);
+
+	void removeDeviceSetting(String pluginID, String deviceID);
 
 	void setName(String name);
 }

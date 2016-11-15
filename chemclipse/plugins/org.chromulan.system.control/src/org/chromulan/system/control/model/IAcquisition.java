@@ -18,10 +18,19 @@ import org.chromulan.system.control.device.IDevicesProfile;
 
 public interface IAcquisition {
 
-	final String PROPERTY_AUTO_STOP = "autoStop";
-	final String PROPERTY_DESCRIPTION = "description";
-	final String PROPERTY_DURATION = "duration";
-	final String PROPERTY_NAME = "name";
+	String PROPERTY_AMOUNT = "amount";
+	String PROPERTY_ANALYSIS = "analysis";
+	String PROPERTY_AUTO_STOP = "autoStop";
+	String PROPERTY_COLUMN = "column";
+	String PROPERTY_DESCRIPTION = "description";
+	String PROPERTY_DETECTION = "detection";
+	String PROPERTY_DURATION = "duration";
+	String PROPERTY_FLOW_RATE = "flowRate";
+	String PROPERTY_FLOW_RATE_UNIT = "flowRateUnit";
+	String PROPERTY_MOBIL_PHASE = "mobilPhase";
+	String PROPERTY_NAME = "name";
+	String PROPERTY_TEMPERATURE_UNIT = "temperatureUnit";
+	String PROPERTY_TEMPERATYRE = "temperature";
 
 	void addPropertyChangeListener(PropertyChangeListener listener);
 
@@ -29,17 +38,35 @@ public interface IAcquisition {
 
 	IAcquisitionSaver getAcquisitionSaver();
 
+	Float getAmount();
+
+	String getAnalysis();
+
 	boolean getAutoStop();
 
+	String getColunm();
+
 	String getDescription();
+
+	String getDetection();
 
 	IDevicesProfile getDevicesProfile();
 
 	long getDuration();
 
+	float getFlowRate();
+
+	String getFlowRateUnit();
+
+	String getMobilPhase();
+
 	String getName();
 
 	Date getStartDate();
+
+	float getTemperature();
+
+	String getTemperatureUnit();
 
 	boolean isCompleted();
 
@@ -51,15 +78,33 @@ public interface IAcquisition {
 
 	void setAcquisitionSaver(IAcquisitionSaver saver);
 
+	void setAmount(Float amount);
+
+	void setAnalysis(String analysis);
+
 	void setAutoStop(boolean b);
 
+	void setColumn(String column);
+
 	void setDescription(String description);
+
+	void setDetection(String detection);
 
 	void setDevicesProfile(IDevicesProfile devicesProfile);
 
 	void setDuration(long duration);
 
+	void setFlowRate(float flowRate);
+
+	void setFlowRateUnit(String flowRateUnit);
+
+	void setMobilPhase(String mobilPhase);
+
 	void setName(String name);
+
+	void setTemperature(float temperature);
+
+	void setTemperatureUnit(String unit);
 
 	void start();
 
