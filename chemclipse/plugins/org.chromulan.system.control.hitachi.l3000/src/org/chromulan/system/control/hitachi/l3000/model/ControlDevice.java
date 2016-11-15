@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.setting.DeviceSetting;
@@ -68,8 +69,6 @@ public class ControlDevice implements IControlDevice {
 	public static final String SETTING_WAVELENGHT_RANGE_TO = "wavelenght range to";
 	private boolean autoSetValue;
 	private final String COMPANY = "HITACHI";
-	private final int DATA_OUTPUT_ANALOG_VALUE = 0;
-	private final int DATA_OUTPUT_DATA_COMMUNICATION_VALUE = 1;
 	private DataReceive dataReceive;
 	private IDeviceSetting deviceSetting;
 	private boolean isPrepare;
@@ -174,7 +173,7 @@ public class ControlDevice implements IControlDevice {
 		values.put(PROPERTY_WAVELENGHT_RANGE_TO, new ValueInt(deviceSetting, PROPERTY_WAVELENGHT_RANGE_TO, SETTING_WAVELENGHT_RANGE_TO, 360, "nm"));
 		values.put(PROPERTY_SEND_START, new ValueBoolean(deviceSetting, PROPERTY_SEND_START, SETTING_SEND_START, false));
 		values.put(PROPERTY_SEND_STOP, new ValueBoolean(deviceSetting, PROPERTY_SEND_STOP, SETTING_SEND_STOP, false));
-		IValue<?>[] outPutType = new IValue<?>[]{new ValueInt(deviceSetting, PROPERTY_DATA_OUTPUT_ANALOG, SETTING_DATA_OUTPUT_ANALOG, DATA_OUTPUT_ANALOG_VALUE, "").setChangeable(false).setPrintable(false), new ValueInt(deviceSetting, PROPERTY_DATA_OUTPUT_DATA_COMMUNICATION, SETTING_DATA_OUTPUT_ANALOG, DATA_OUTPUT_DATA_COMMUNICATION_VALUE, "").setChangeable(false).setPrintable(false)};
+		IValue<?>[] outPutType = new IValue<?>[]{new ValueInt(deviceSetting, PROPERTY_DATA_OUTPUT_ANALOG, SETTING_DATA_OUTPUT_ANALOG, OUTPUT_ANALOG, "").setChangeable(false).setPrintable(false), new ValueInt(deviceSetting, PROPERTY_DATA_OUTPUT_DATA_COMMUNICATION, SETTING_DATA_OUTPUT_ANALOG, OUTPUT_DIGITAL, "").setChangeable(false).setPrintable(false)};
 		values.put(PROPERTY_OUTPUT_TYPE, new ValueEnumeration(deviceSetting, PROPERTY_OUTPUT_TYPE, SETTING_DATA_OUTPUT_TYPE, outPutType, 1));
 		return deviceSetting;
 	}
@@ -444,7 +443,71 @@ public class ControlDevice implements IControlDevice {
 	@Override
 	public void setDeviceSetting(IDeviceSetting deviceSetting) {
 
-		this.deviceSetting = deviceSetting;
+		if(deviceSetting.getDeviceID() == getDeviceID() && deviceSetting.getPluginID() == deviceSetting.getPluginID()) {
+			HashMap<String, IValue<?>> values = deviceSetting.getValues();
+			for(Entry<String, IValue<?>> entry : values.entrySet()) {
+				Object value = entry.getValue().getValue();
+				String key = entry.getKey();
+				switch(key) {
+					case PROPERTY_AUTOSET_VALUE:
+						if(value instanceof Boolean) {
+							setAutoSetValue((boolean)value);
+						}
+						break;
+					case PROPERTY_DATA_OUTPUT_ANALOG:
+						if(value instanceof String) {
+							if(entry.getValue() instanceof ValueEnumeration) {
+								ValueEnumeration enumeration = (ValueEnumeration)entry.getValue();
+								if(enumeration.getValue() instanceof ValueInt) {
+									ValueInt outputType = (ValueInt) enumeration.getValue();
+									setOutputType(outputType.getValue());	
+								}
+							}
+						}
+						break;
+					case PROPERTY_NAME:
+						if(value instanceof String) {
+							setName((String)value);
+						}
+						break;
+					case PROPERTY_OUTPUT_TYPE:
+						if(value instanceof Integer) {
+							setOutputType((int)value);
+						}
+						break;
+					case PROPERTY_SEND_START:
+						if(value instanceof Boolean) {
+							setSendStart((boolean)value);
+						}
+						break;
+					case PROPERTY_SEND_STOP:
+						if(value instanceof Boolean) {
+							setSendStop((boolean)value);
+						}
+						break;
+					case PROPERTY_TIME_INTERVAL:
+						if(value instanceof Float) {
+							setTimeInterval((float)value);
+						}
+						break;
+					case PROPERTY_WAVELENGHT_INTERVA:
+						if(value instanceof Float) {
+							setWavelenghtInterval((float)value);
+						}
+						break;
+					case PROPERTY_WAVELENGHT_RANGE_FROM:
+						if(value instanceof Integer) {
+							setWavelenghtRangeFrom((int)value);
+						}
+						break;
+					case PROPERTY_WAVELENGHT_RANGE_TO:
+						if(value instanceof Integer) {
+							setWavelenghtRangeTo((int)value);
+						}
+						break;
+				}
+			}
+		}
 	}
 
 	public void setName(String name) {
