@@ -21,14 +21,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import org.chromulan.system.control.devices.base.IUlanControlDevice;
+import org.chromulan.system.control.devices.base.IUlanControlDevices;
+import org.chromulan.system.control.devices.base.data.IDetectorData;
+import org.chromulan.system.control.devices.connection.ULanConnection;
+import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.events.IAcquisitionEvents;
-import org.chromulan.system.control.events.IULanConnectionEvents;
 import org.chromulan.system.control.lcd5000.model.Lcd5000;
 import org.chromulan.system.control.lcd5000.model.Lcd5000Data;
 import org.chromulan.system.control.model.IAcquisition;
-import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.model.data.IDetectorData;
 import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -51,7 +52,7 @@ public class Lcd5000Part {
 	private IAcquisition acquisition;
 	private Button buttonReadData;
 	private Button buttonReset;
-	private IControlDevice controlDevice;
+	private IUlanControlDevice controlDevice;
 	@Inject
 	private IEventBroker eventBroker;
 	private Lcd5000 lcd5000;
@@ -75,12 +76,11 @@ public class Lcd5000Part {
 	public void createPartControl(Composite parent) {
 
 		parent.setLayout(new GridLayout(3, false));
-		controlDevice = (IControlDevice)part.getObject();
+		controlDevice = (IUlanControlDevice)part.getObject();
 		controlDevice.addPropertyChangeListener(listener);
-		lcd5000 = new Lcd5000(controlDevice);
 		try {
-			lcd5000.connect();
-			lcd5000.start(false);
+			controlDevice.connect();
+			controlDevice.start(false);
 		} catch(IOException e1) {
 			// logger.warn(e1);
 		}
@@ -202,7 +202,7 @@ public class Lcd5000Part {
 	@Optional
 	public void setAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition analisis) {
 
-		if(this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null && analisis.getDevicesProfile().contains(controlDevice.getID())) {
+		if(this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null && IUlanControlDevices.contains(analisis.getDevicesProfile().getControlDevices(), controlDevice.getDeviceID())) {
 			this.acquisition = analisis;
 		}
 	}

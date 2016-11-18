@@ -20,6 +20,8 @@ import org.chromulan.system.control.ui.acquisition.support.ValidatorDirectory;
 import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
+import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
+import org.eclipse.chemclipse.wsd.converter.chromatogram.ChromatogramConverterWSD;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -29,7 +31,6 @@ import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -46,23 +47,21 @@ import org.eclipse.swt.widgets.Text;
 
 public class WizarPageNewAcquisitionsMain extends WizardPage {
 
-	private IObservableValue autoScan;
-	private final String DEFAULT_SUPPLIER_ID = "org.eclipse.chemclipse.xxd.converter.supplier.chemclipse";
-	private boolean defAutoScan;
-	private String defFile;
-	private String defSupplier;
+	private File defFile;
+	private ISupplier defSupplierCSD;
+	private ISupplier defSupplierMSD;
+	private ISupplier defSupplierWSD;
 	private IObservableValue file;
-	private IObservableValue supplier;
+	private IObservableValue supplierCSD;
+	private IObservableValue supplierMSD;
+	private IObservableValue supplierWSD;
 
-	public WizarPageNewAcquisitionsMain(String pageName, String title, ImageDescriptor titleImage, String defFile, String defSupplier, boolean autoScan) {
-		super(pageName, title, titleImage);
+	public WizarPageNewAcquisitionsMain(String pageName, File defFile, ISupplier defSupplierCSD, ISupplier defSupplierWSD, ISupplier defSupplierMSD) {
+		super(pageName, null, null);
 		this.defFile = defFile;
-		this.defSupplier = defSupplier;
-		this.defAutoScan = autoScan;
-	}
-
-	public WizarPageNewAcquisitionsMain(String pageName, String defFile, String defSupplier, boolean autoScan) {
-		this(pageName, null, null, defFile, defSupplier, autoScan);
+		this.defSupplierCSD = defSupplierCSD;
+		this.defSupplierWSD = defSupplierWSD;
+		this.defSupplierMSD = defSupplierMSD;
 	}
 
 	@Override
@@ -73,7 +72,7 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 		WizardPageSupport.create(this, dbc);
 		setPageComplete(false);
 		Label label = new Label(composite, SWT.None);
-		label.setText("Type File");
+		label.setText("Type File CSD");
 		ComboViewer combo = new ComboViewer(composite, SWT.READ_ONLY);
 		ChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
 		List<ISupplier> suppliers = support.getExportSupplier();
@@ -91,12 +90,55 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 			}
 		});
 		combo.setInput(suppliers);
-		ISupplier defaultSupplier = getDefaultSupplier(suppliers);
-		supplier = new WritableValue(defaultSupplier, ISupplier.class);
+		supplierCSD = new WritableValue(defSupplierCSD, ISupplier.class);
 		IViewerObservableValue observeCombo = ViewerProperties.singleSelection().observe(combo);
-		dbc.bindValue(observeCombo, supplier);
+		dbc.bindValue(observeCombo, supplierCSD);
+		label = new Label(composite, SWT.None);
+		label.setText("Type File MSD");
+		combo = new ComboViewer(composite, SWT.READ_ONLY);
+		support = ChromatogramConverterMSD.getChromatogramConverterSupport();
+		suppliers = support.getExportSupplier();
+		combo.setContentProvider(ArrayContentProvider.getInstance());
+		combo.setLabelProvider(new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+
+				if(element instanceof ISupplier) {
+					ISupplier supplier = (ISupplier)element;
+					return supplier.getFilterName();
+				}
+				return "";
+			}
+		});
+		combo.setInput(suppliers);
+		supplierMSD = new WritableValue(defSupplierMSD, ISupplier.class);
+		observeCombo = ViewerProperties.singleSelection().observe(combo);
+		dbc.bindValue(observeCombo, supplierMSD);
+		label = new Label(composite, SWT.None);
+		label.setText("Type File WSD");
+		combo = new ComboViewer(composite, SWT.READ_ONLY);
+		support = ChromatogramConverterWSD.getChromatogramConverterSupport();
+		suppliers = support.getExportSupplier();
+		combo.setContentProvider(ArrayContentProvider.getInstance());
+		combo.setLabelProvider(new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+
+				if(element instanceof ISupplier) {
+					ISupplier supplier = (ISupplier)element;
+					return supplier.getFilterName();
+				}
+				return "";
+			}
+		});
+		combo.setInput(suppliers);
+		supplierWSD = new WritableValue(defSupplierWSD, ISupplier.class);
+		observeCombo = ViewerProperties.singleSelection().observe(combo);
+		dbc.bindValue(observeCombo, supplierWSD);
 		if(defFile != null) {
-			file = new WritableValue(new File(defFile), File.class);
+			file = new WritableValue(defFile, File.class);
 		} else {
 			file = new WritableValue(null, File.class);
 		}
@@ -125,37 +167,8 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 			}
 		});
 		label = new Label(composite, SWT.None);
-		label.setText("Scan for devices at startup");
-		Button buttonAutoScan = new Button(composite, SWT.CHECK);
-		autoScan = new WritableValue(defAutoScan, Boolean.class);
-		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoScan), autoScan);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		setControl(composite);
-	}
-
-	public boolean getAutoScan() {
-
-		return (Boolean)autoScan.getValue();
-	}
-
-	private ISupplier getDefaultSupplier(List<ISupplier> suppliers) {
-
-		if(suppliers == null || suppliers.isEmpty()) {
-			return null;
-		}
-		if(defSupplier != null) {
-			for(ISupplier supplier : suppliers) {
-				if(supplier.getId().equals(defSupplier)) {
-					return supplier;
-				}
-			}
-		}
-		for(ISupplier supplier : suppliers) {
-			if(supplier.getId().equals(DEFAULT_SUPPLIER_ID)) {
-				return supplier;
-			}
-		}
-		return suppliers.get(0);
 	}
 
 	public File getFile() {
@@ -163,8 +176,18 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 		return (File)file.getValue();
 	}
 
-	public ISupplier getSupplier() {
+	public ISupplier getSupplierCSD() {
 
-		return (ISupplier)supplier.getValue();
+		return (ISupplier)supplierCSD.getValue();
+	}
+
+	public ISupplier getSupplierMSD() {
+
+		return (ISupplier)supplierMSD.getValue();
+	}
+
+	public ISupplier getSupplierWSD() {
+
+		return (ISupplier)supplierWSD.getValue();
 	}
 }

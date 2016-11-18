@@ -50,8 +50,6 @@ public class AcquisitionSettingsPreferencePage extends PreferencePage {
 		label.setText("Name of acquisition");
 		this.textName = new Text(composite, SWT.BORDER);
 		label = new Label(composite, SWT.None);
-		label.setText("Auto Continue");
-		label = new Label(composite, SWT.None);
 		label.setText("Auto Stop");
 		buttonAutoStop = new Button(composite, SWT.CHECK);
 		label = new Label(composite, SWT.None);
@@ -103,7 +101,10 @@ public class AcquisitionSettingsPreferencePage extends PreferencePage {
 
 	private void setErrors() {
 
-		if(acquisition.isCompleted()) {
+		if(acquisition.isRunning()) {
+			textDuration.setEnabled(false);
+			buttonAutoStop.setEnabled(false);
+		} else if(acquisition.isCompleted()) {
 			setErrorMessage("Can not change acquisition because Anaysis has been recorded");
 			disableEdition();
 		}

@@ -13,9 +13,10 @@ package org.chromulan.system.control.lcd5000.addons;
 
 import javax.inject.Inject;
 
-import org.chromulan.system.control.events.IControlDeviceEvents;
-import org.chromulan.system.control.model.DeviceType;
-import org.chromulan.system.control.model.IControlDevice;
+import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.devices.base.DeviceType;
+import org.chromulan.system.control.devices.base.IUlanControlDevice;
+import org.chromulan.system.control.devices.events.IControlDeviceEvents;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -38,23 +39,26 @@ public class ConnectDevice {
 
 	@Inject
 	@Optional
-	public void connectDevice(@UIEventTopic(value = IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT) IControlDevice device) {
+	public void connectDevice(@UIEventTopic(value = IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT) IControlDevice controlDevice) {
 
-		if(device == null) {
+		IUlanControlDevice device;
+		if(controlDevice instanceof IUlanControlDevice) {
+			device = (IUlanControlDevice)controlDevice;
+		} else {
 			return;
 		}
-		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.devicesSetting", application);
+		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.devices.partstack.devicesSetting", application);
 		if(stack == null) {
 			return;
 		}
 		for(String nameDevice : supportedDevices) {
 			if(device.getDeviceDescription().getModulType().toLowerCase().equals(nameDevice)) {
 				device.setDeviceType(DeviceType.DETECTOR);
-				if(modelService.find(device.getID(), application) == null) {
+				if(modelService.find(device.getDeviceID(), application) == null) {
 					MPart part = MBasicFactory.INSTANCE.createPart();
-					part.setLabel(device.getID());
+					part.setLabel(device.getDeviceID());
 					part.setObject(device);
-					part.setElementId(device.getID());
+					part.setElementId(device.getDeviceID());
 					part.setCloseable(false);
 					part.setIconURI("platform:/plugin/org.chromulan.system.control.lcd5000/icons/16x16/devices.gif");
 					part.setContributionURI("bundleclass://org.chromulan.system.control.lcd5000/org.chromulan.system.control.lcd5000.parts.Lcd5000Part");

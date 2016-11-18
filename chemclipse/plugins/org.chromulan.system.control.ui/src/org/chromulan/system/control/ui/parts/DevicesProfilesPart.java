@@ -17,13 +17,12 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.data.DataSupplier;
+import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.device.IDevicesProfile;
 import org.chromulan.system.control.events.IAcquisitionEvents;
-import org.chromulan.system.control.events.IDataSupplierEvents;
+import org.chromulan.system.control.manager.devices.DataSupplier;
+import org.chromulan.system.control.manager.events.IDataSupplierEvents;
 import org.chromulan.system.control.model.IAcquisition;
-import org.chromulan.system.control.model.IControlDevices;
-import org.chromulan.system.control.model.IDevicesProfile;
-import org.chromulan.system.control.model.IDevicesProfiles;
 import org.chromulan.system.control.ui.devices.support.ProfileDialog;
 import org.chromulan.system.control.ui.wizard.WizardNewDevicesProfile;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -51,7 +50,7 @@ public class DevicesProfilesPart {
 	private DataSupplier dataSupplier;
 	@Inject
 	private Display display;
-	private IDevicesProfiles profiles;
+	private List<IDevicesProfile> profiles;
 	private Table tableProfiles;
 
 	public DevicesProfilesPart() {
@@ -69,9 +68,9 @@ public class DevicesProfilesPart {
 
 	private void addProfile() {
 
-		IControlDevices devices = getControlDevice();
+		List<IControlDevice> devices = getControlDevice();
 		if(devices != null) {
-			WizardNewDevicesProfile wizard = new WizardNewDevicesProfile(devices, profiles);
+			WizardNewDevicesProfile wizard = new WizardNewDevicesProfile(devices);
 			WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), wizard);
 			if(wizardDialog.open() == Window.OK) {
 				profiles.add(wizard.getDevicesProfile());
@@ -139,7 +138,7 @@ public class DevicesProfilesPart {
 		dialog.open();
 	}
 
-	private IControlDevices getControlDevice() {
+	private List<IControlDevice> getControlDevice() {
 
 		return dataSupplier.getControlDevices();
 	}
@@ -147,7 +146,7 @@ public class DevicesProfilesPart {
 	private void redrawTable() {
 
 		tableProfiles.removeAll();
-		for(IDevicesProfile iDevicesProfile : profiles.getAll()) {
+		for(IDevicesProfile iDevicesProfile : profiles) {
 			TableItem item = new TableItem(tableProfiles, SWT.None);
 			item.setText(iDevicesProfile.getName());
 			item.setData(iDevicesProfile);
@@ -165,7 +164,7 @@ public class DevicesProfilesPart {
 
 	private void removeProfile(int number) {
 
-		profiles.getAll().remove(number);
+		profiles.remove(number);
 		redrawTable();
 	}
 

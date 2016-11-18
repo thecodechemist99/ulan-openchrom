@@ -12,7 +12,7 @@
 package org.chromulan.system.control.ui.acquisition.support;
 
 import org.chromulan.system.control.model.IAcquisition;
-import org.chromulan.system.control.model.IAcquisitions;
+import org.chromulan.system.control.ui.acquisitions.AcquisitionProcess;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class AcquisitionsTable {
 
-	private IAcquisitions acquisitions;
+	private AcquisitionProcess acquisitionProcess;
 	private boolean containsFilterName;
 	private String filterName;
 	private ObservableListContentProvider viewContentProvider;
@@ -91,7 +91,7 @@ public class AcquisitionsTable {
 			public void update(ViewerCell cell) {
 
 				IAcquisition acquisition = (IAcquisition)cell.getElement();
-				if(acquisitions.isActualAcquisition(acquisition)) {
+				if(acquisitionProcess.getActualAcquisition() == acquisition) {
 					cell.setText("Actual");
 					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
 				} else if(acquisition.isCompleted()) {
@@ -112,8 +112,8 @@ public class AcquisitionsTable {
 			public void update(ViewerCell cell) {
 
 				Object element = cell.getElement();
-				boolean value = (boolean)attributeMaps[0].get(element);
-				cell.setText(value == true ? "Yes" : "No"); //$NON-NLS-1$
+				IAcquisition acquisition = (IAcquisition)element;
+				cell.setText(acquisition.getAutoStop() == true ? "Yes" : "No"); //$NON-NLS-1$
 			}
 		});
 		// column for the interval
@@ -149,9 +149,9 @@ public class AcquisitionsTable {
 
 	public void displayActualAcquisition() {
 
-		IAcquisition acquisition = acquisitions.getActualAcquisition();
-		if(acquisitions != null) {
-			int index = acquisitions.getIndex(acquisition);
+		IAcquisition acquisition = acquisitionProcess.getActualAcquisition();
+		if(acquisition != null) {
+			int index = acquisitionProcess.getAcquisitions().indexOf(acquisition);
 			if(index != -1) {
 				viewer.getTable().setTopIndex(index);
 				viewer.getTable().setSelection(index);
@@ -160,11 +160,6 @@ public class AcquisitionsTable {
 				return;
 			}
 		}
-	}
-
-	public IAcquisitions getAnalyse() {
-
-		return acquisitions;
 	}
 
 	public TableViewer getViewer() {
@@ -181,9 +176,9 @@ public class AcquisitionsTable {
 
 	public void selectActualAcquisition() {
 
-		IAcquisition acquisition = acquisitions.getActualAcquisition();
+		IAcquisition acquisition = acquisitionProcess.getActualAcquisition();
 		if(acquisition != null) {
-			int num = acquisitions.getIndex(acquisition);
+			int num = acquisitionProcess.getAcquisitions().indexOf(acquisition);
 			if(num != -1) {
 				viewer.getTable().deselectAll();
 				viewer.getTable().setTopIndex(num);
@@ -191,9 +186,9 @@ public class AcquisitionsTable {
 		}
 	}
 
-	public void setAcquisitions(IAcquisitions acquisitions) {
+	public void setAcquisitions(AcquisitionProcess acquisitions) {
 
-		this.acquisitions = acquisitions;
+		this.acquisitionProcess = acquisitions;
 		viewer.setInput(new WritableList(acquisitions.getAcquisitions(), IAcquisition.class));
 	}
 }

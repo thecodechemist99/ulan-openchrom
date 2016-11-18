@@ -13,9 +13,6 @@ package org.chromulan.system.control.ui.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -23,58 +20,24 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.chromulan.system.control.data.DataSupplier;
 import org.chromulan.system.control.events.IAcquisitionEvents;
-import org.chromulan.system.control.events.IControlDevicesEvents;
-import org.chromulan.system.control.events.IDataSupplierEvents;
-import org.chromulan.system.control.events.IULanConnectionEvents;
-import org.chromulan.system.control.model.AcquisitionCSD;
-import org.chromulan.system.control.model.AcquisitionCSDSaver;
-import org.chromulan.system.control.model.AcquisitionsCSD;
-import org.chromulan.system.control.model.ChromatogramCSDMaker;
+import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.chromulan.system.control.model.IAcquisition;
-import org.chromulan.system.control.model.IAcquisitionCSD;
-import org.chromulan.system.control.model.IAcquisitionSaver;
-import org.chromulan.system.control.model.IAcquisitionsCSD;
-import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.IDevicesProfile;
-import org.chromulan.system.control.model.ULanConnection;
-import org.chromulan.system.control.model.data.IDetectorData;
-import org.chromulan.system.control.preferences.PreferenceSupplier;
-import org.chromulan.system.control.ui.acquisition.support.AcquisitionCDSSavePreferencePage;
-import org.chromulan.system.control.ui.acquisition.support.AcquisitionSettingsPreferencePage;
 import org.chromulan.system.control.ui.acquisition.support.AcquisitionsTable;
-import org.chromulan.system.control.ui.acquisition.support.ChromatogramFilesDialog;
 import org.chromulan.system.control.ui.acquisition.support.LabelAcquisitionDuration;
-import org.chromulan.system.control.ui.devices.support.ProfilePreferencePage;
-import org.chromulan.system.control.ui.wizard.WizardNewAcquisition;
-import org.chromulan.system.control.ui.wizard.WizardNewAcquisitions;
-import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
-import org.eclipse.chemclipse.converter.core.ISupplier;
-import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
-import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
+import org.chromulan.system.control.ui.acquisitions.AcquisitionProcess;
+import org.chromulan.system.control.ui.acquisitions.AcquisitionsAdministator;
 import org.eclipse.chemclipse.model.core.IChromatogramOverview;
-import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
-import org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -92,14 +55,6 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.osgi.service.prefs.BackingStoreException;
-
-import net.sourceforge.ulan.base.CompletionHandler;
-import net.sourceforge.ulan.base.IULanCommunication;
-import net.sourceforge.ulan.base.IULanCommunication.IFilt;
-import net.sourceforge.ulan.base.ULanCommunicationInterface;
-import net.sourceforge.ulan.base.ULanHandle;
-import net.sourceforge.ulan.base.ULanMsg;
 
 @SuppressWarnings("restriction")
 public class AcquisitionsPart {
@@ -109,9 +64,12 @@ public class AcquisitionsPart {
 		@Override
 		public void run() {
 
-			IAcquisition acquisition = AcquisitionsPart.this.acquisition;
-			if(acquisition == null || acquisition.isCompleted()) {
+			IAcquisition acquisition = acquisitionProcess.getActualAcquisition();
+			if(acquisition == null) {
 				return;
+			}
+			if(acquisition.isCompleted()) {
+				progressBarTimeRemain.setSelection(progressBarTimeRemain.getMaximum());
 			}
 			if(acquisition.getStartDate() != null) {
 				acquisitionInterval.setTime(System.currentTimeMillis() - acquisition.getStartDate().getTime());
@@ -119,7 +77,6 @@ public class AcquisitionsPart {
 			if(acquisition.getAutoStop()) {
 				long time = acquisition.getStartDate().getTime() + acquisition.getDuration() - System.currentTimeMillis();
 				if(time < 0) {
-					stopRecording();
 					progressBarTimeRemain.setSelection(progressBarTimeRemain.getMaximum());
 					return;
 				} else {
@@ -132,12 +89,10 @@ public class AcquisitionsPart {
 
 	public final static String ID_COMMAND_SEARCH = "org.chromulan.system.control.ui.command.acquisitions.search";
 	public final static String ID_PARAMETER_SEARCH_NAME = "name";
-	public static final String PREFERENCE_AUTOSCAN = "autoScan";
-	public static final String PREFERENCE_FILE = "file";
-	public static final String PREFERENCE_SUPPLIER = "supplier";
-	private IAcquisitionCSD acquisition;
 	private LabelAcquisitionDuration acquisitionInterval;
-	private IAcquisitionsCSD acquisitions;
+	@Inject
+	private AcquisitionProcess acquisitionProcess;
+	private AcquisitionsAdministator acquisitionsAdministator;
 	private AcquisitionsTable acquisitionsTable;
 	@Inject
 	private MApplication application;
@@ -153,12 +108,7 @@ public class AcquisitionsPart {
 	@Inject
 	private Display display;
 	@Inject
-	private IEventBroker eventBroker;
-	private File file;
-	private IFilt<Void> filtStartRecording;
-	@Inject
 	private EHandlerService handlerService;
-	private boolean isSetAcquisition;
 	private Label lableNameAcquisition;
 	@Inject
 	private EModelService modelService;
@@ -166,155 +116,35 @@ public class AcquisitionsPart {
 	private Composite parent;
 	@Inject
 	private EPartService partService;
-	@Inject
-	private MPerspective perspective;
 	private ProgressBar progressBarTimeRemain;
-	private ISupplier supplier;
 	private Table tableActualAcquisition;
 	private ActualyationTimeRecording timeRecording;
 
 	public AcquisitionsPart() {
-		acquisition = null;
 		timeRecording = new ActualyationTimeRecording();
-		IULanCommunication com = new ULanCommunicationInterface();
-		filtStartRecording = com.addFilt(ULanHandle.CMD_LCDMRK, null, new CompletionHandler<ULanMsg, Void>() {
-
-			@Override
-			public void completed(ULanMsg arg0, Void arg1) {
-
-				display.asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-
-						startRecording();
-					}
-				});
-			}
-
-			@Override
-			public void failed(Exception arg0, Void arg1) {
-
-			}
-		});
 		dataAcquisitionChange = new PropertyChangeListener() {
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 
-				setTable();
+				setTable((IAcquisition)evt.getSource());
 			}
 		};
+		acquisitionsAdministator = new AcquisitionsAdministator();
 	}
 
-	private void acquisitionSettings() {
+	private void addAcquisitions(List<IAcquisition> newAcquisitions) {
 
-		int index = acquisitionsTable.getViewer().getTable().getSelectionIndex();
-		if(index != -1) {
-			if(index < acquisitions.getNumberAcquisition()) {
-				IAcquisitionCSD acquisition = (IAcquisitionCSD)acquisitions.getAcquisition(index);
-				if(!acquisition.isCompleted()) {
-					PreferenceManager manager = new PreferenceManager();
-					AcquisitionSettingsPreferencePage settings = new AcquisitionSettingsPreferencePage(acquisition);
-					ProfilePreferencePage page = new ProfilePreferencePage(acquisition.getDevicesProfile());
-					AcquisitionCDSSavePreferencePage save = new AcquisitionCDSSavePreferencePage(acquisition);
-					PreferenceNode nodeBase = new PreferenceNode("Main", settings);
-					PreferenceNode nodeProfile = new PreferenceNode("Devices", page);
-					PreferenceNode nodeSave = new PreferenceNode("Save", save);
-					manager.addToRoot(nodeBase);
-					manager.addToRoot(nodeProfile);
-					manager.addToRoot(nodeSave);
-					PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
-					dialog.open();
-				} else {
-					ChromatogramFilesDialog dialog = new ChromatogramFilesDialog(parent.getShell(), acquisition.getAcquisitionSaver());
-					if(dialog.open() == Window.OK) {
-						List<IChromatogramExportConverterProcessingInfo> chromatogramFiles = dialog.getChromatogramExportConverterProcessingInfos();
-						ChromatogramEditorSupport support = new ChromatogramEditorSupport();
-						for(IChromatogramExportConverterProcessingInfo chromatogramFile : chromatogramFiles) {
-							try {
-								support.openEditor(chromatogramFile.getFile(), modelService, application, partService);
-							} catch(TypeCastException e) {
-								// TODO: logger.warn(e);
-							}
-						}
-					}
-					;
-				}
-			}
-		}
-	}
-
-	private void addAcquisition(IAcquisitionCSD acquisition) {
-
-		if(acquisitions.getActualAcquisition() == null) {
-			acquisitions.addAcquisition(acquisition);
-			setAcquisition(acquisition);
-		} else {
-			acquisitions.addAcquisition(acquisition);
+		acquisitionProcess.addAcquisitions(newAcquisitions);
+		if(acquisitionProcess.getActualAcquisition() != null) {
+			buttonEnd.setEnabled(true);
 		}
 		redrawTable();
-	}
-
-	private boolean controlAcquisition(IAcquisition acquisition) {
-
-		return controlUsingDevices(acquisition.getDevicesProfile()) && controlConnection();
-	}
-
-	private boolean controlConnection() {
-
-		return ULanCommunicationInterface.isOpen();
-	}
-
-	private boolean controlUsingDevices(IDevicesProfile profile) {
-
-		for(IControlDevice device : profile.getControlDevices()) {
-			if(!device.isConnected()) {
-				return false;
-			}
-			MPart part = partService.findPart(device.getID());
-			if(part == null) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private void createAcquisition() {
-
-		WizardNewAcquisition newAcquisitionWizard = new WizardNewAcquisition(getDevicesProfile());
-		newAcquisitionWizard.getModel().folder.setValue(file);
-		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAcquisitionWizard);
-		if(wizardDialog.open() == Window.OK) {
-			int numberAcquisition = (Integer)newAcquisitionWizard.getModel().numberofAcquisitions.getValue();
-			for(int i = 1; i <= numberAcquisition; i++) {
-				IAcquisitionCSD acquisition = new AcquisitionCSD();
-				String name = getNameAcquisition((String)newAcquisitionWizard.getModel().name.getValue(), i, numberAcquisition);
-				acquisition.setName(name);
-				acquisition.setAutoStop((Boolean)newAcquisitionWizard.getModel().autoStop.getValue());
-				acquisition.setDuration((Long)newAcquisitionWizard.getModel().duration.getValue());
-				acquisition.setDevicesProfile((IDevicesProfile)newAcquisitionWizard.getModel().devicesProfile.getValue());
-				acquisition.setDescription((String)newAcquisitionWizard.getModel().description.getValue());
-				IAcquisitionSaver saver = new AcquisitionCSDSaver();
-				saver.setFile(file);
-				saver.setSuplier(supplier);
-				acquisition.setAcquisitionSaver(saver);
-				addAcquisition(acquisition);
-			}
-		}
 	}
 
 	@PostConstruct
 	public void createAcquisitionsArea() {
 
-		if(ULanCommunicationInterface.isOpen()) {
-			try {
-				filtStartRecording.activateFilt();
-			} catch(IOException e1) {
-				// TODO: exception logger.warn(e1);
-			}
-		}
-		this.acquisitions = new AcquisitionsCSD();
 		Composite composite = new Composite(parent, SWT.None);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
@@ -322,7 +152,7 @@ public class AcquisitionsPart {
 		GridData gridData;
 		final Composite tableComposite = new Composite(composite, SWT.None);
 		acquisitionsTable = new AcquisitionsTable(tableComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		acquisitionsTable.setAcquisitions(acquisitions);
+		acquisitionsTable.setAcquisitions(acquisitionProcess);
 		tableComposite.setLayout(new FillLayout());
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		gridData.horizontalSpan = 2;
@@ -334,7 +164,8 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				createAcquisition();
+				List<IAcquisition> newAcquisitions = acquisitionsAdministator.createAcqusitions(dataSupplier.getDevicesProfiles(), display);
+				addAcquisitions(newAcquisitions);
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, true, false);
@@ -356,7 +187,11 @@ public class AcquisitionsPart {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 
-				acquisitionSettings();
+				IStructuredSelection thisSelection = (IStructuredSelection)event.getSelection();
+				if(thisSelection.getFirstElement() instanceof IAcquisition) {
+					IAcquisition acquisition = (IAcquisition)thisSelection.getFirstElement();
+					acquisitionsAdministator.acquisitionSettings(acquisition, display, modelService, application, partService);
+				}
 			}
 		});
 		acquisitionsTable.getViewer().getTable().addKeyListener(new KeyAdapter() {
@@ -385,13 +220,14 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				setDefaultParametersWizard();
+				if(acquisitionsAdministator.setDefaultParametersWizard(display)) {
+					setAcquisitionManagerButtons(true);
+				}
 			}
 		});
 		buttonStartMeasurement.setLayoutData(gridData);
 		initializationHandler();
 		initializationButtons();
-		setDefaultParameters(PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_FILE, null), PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER, null), PreferenceSupplier.INSTANCE().getPreferences().getBoolean(PREFERENCE_AUTOSCAN, true));
 	}
 
 	private void createActualAcquisitionControl(Composite composite) {
@@ -409,8 +245,14 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				endAcquisition();
-				setAcquisition((IAcquisitionCSD)acquisitions.setNextAcquisitionActual());
+				boolean b = acquisitionProcess.endAcquisition();
+				if(b) {
+					IAcquisition acquisition = acquisitionProcess.setNextAcquisition();
+					redrawTable();
+					if(acquisition == null) {
+						buttonEnd.setEnabled(false);
+					}
+				}
 			}
 		});
 		gridData = new GridData(GridData.END, GridData.FILL, false, false);
@@ -422,7 +264,7 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				startRecording();
+				acquisitionProcess.startAcquisition();
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, false, false);
@@ -434,7 +276,7 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				stopRecording();
+				acquisitionProcess.stopAcquisition(true);
 			}
 		});
 		gridData = new GridData(GridData.FILL, GridData.FILL, false, false);
@@ -460,46 +302,24 @@ public class AcquisitionsPart {
 		progressBarTimeRemain.setLayoutData(gridData);
 	}
 
-	private synchronized void endAcquisition() {
+	@Inject
+	@Optional
+	public void endAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition acquisition) {
 
-		if((acquisition != null) && (isSetAcquisition) && (!acquisition.isRunning())) {
+		if(acquisition != null && acquisition == this.acquisitionProcess.getActualAcquisition()) {
 			acquisition.removePropertyChangeListener(dataAcquisitionChange);
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(false);
-			buttonEnd.setEnabled(false);
-			eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END, acquisition);
-			isSetAcquisition = false;
-			acquisition = null;
-			perspective.getContext().remove(IAcquisition.class);
-		}
-		acquisitionInterval.setTime(0);
-		tableActualAcquisition.removeAll();
-		lableNameAcquisition.setText("");
-		progressBarTimeRemain.setSelection(0);
-	}
-
-	private List<IDevicesProfile> getDevicesProfile() {
-
-		return dataSupplier.getDevicesProfiles().getAll();
-	}
-
-	private String getNameAcquisition(String name, int numberOfAcquisition, int maxNumber) {
-
-		if(name != null && !name.isEmpty() && maxNumber > 0) {
-			if(maxNumber == 1) {
-				return name;
+			acquisitionInterval.setTime(0);
+			tableActualAcquisition.removeAll();
+			lableNameAcquisition.setText("");
+			progressBarTimeRemain.setSelection(0);
+			acquisitionProcess.setNextAcquisition();
+			if(acquisitionProcess.getActualAcquisition() != null) {
+				buttonEnd.setEnabled(false);
 			} else {
-				int maxNumDigits = (int)(Math.log10(maxNumber) + 1);
-				int actulNumDigits = (int)(Math.log10(numberOfAcquisition) + 1);
-				StringBuilder builder = new StringBuilder(name);
-				for(int i = 0; i < maxNumDigits - actulNumDigits; i++) {
-					builder.append('0');
-				}
-				builder.append(numberOfAcquisition);
-				return builder.toString();
+				buttonEnd.setEnabled(true);
 			}
-		} else {
-			return name;
 		}
 	}
 
@@ -509,8 +329,7 @@ public class AcquisitionsPart {
 		buttonStop.setEnabled(false);
 		buttonEnd.setEnabled(false);
 		progressBarTimeRemain.setEnabled(false);
-		buttonAddAcquisition.setEnabled(false);
-		buttonActualAcquisition.setEnabled(false);
+		setAcquisitionManagerButtons(acquisitionsAdministator.isDefParametersSet());
 	}
 
 	private void initializationHandler() {
@@ -529,21 +348,9 @@ public class AcquisitionsPart {
 		});
 	}
 
-	@Inject
-	@Optional
-	public void openCommunicationEvent(@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
-
-		try {
-			filtStartRecording.activateFilt();
-		} catch(IOException e) {
-			// TODO: exception
-		}
-	}
-
 	@PreDestroy
 	public void preDestroy() {
 
-		filtStartRecording.deactivateFilt();
 		display.timerExec(-1, timeRecording);
 	}
 
@@ -552,24 +359,15 @@ public class AcquisitionsPart {
 		acquisitionsTable.getViewer().refresh();
 	}
 
-	private void removeAcquisition(IAcquisition acquisition) {
+	private boolean removeAcquisition(IAcquisition acquisition) {
 
-		int number = acquisitions.getIndex(acquisition);
-		if(acquisitions.isActualAcquisition(acquisition)) {
-			if(!acquisition.isRunning()) {
-				if(isSetAcquisition) {
-					endAcquisition();
-				}
-				acquisitions.setNextAcquisitionActual();
-				acquisitions.removeAcquisition(number);
-				setAcquisition((IAcquisitionCSD)acquisitions.getActualAcquisition());
-			} else {
-				// TODO: alert
-			}
+		boolean b = acquisitionProcess.removeAcquisition(acquisition);
+		if(acquisitionProcess.getActualAcquisition() != null) {
+			buttonEnd.setEnabled(true);
 		} else {
-			acquisitions.removeAcquisition(number);
+			buttonEnd.setEnabled(false);
 		}
-		redrawTable();
+		return b;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -578,109 +376,36 @@ public class AcquisitionsPart {
 		IStructuredSelection selection = (IStructuredSelection)acquisitionsTable.getViewer().getSelection();
 		List<IAcquisition> selections = selection.toList();
 		for(IAcquisition acquisition : selections) {
-			removeAcquisition(acquisition);
-		}
-	}
-
-	private void saveAcquisition() {
-
-		IAcquisitionSaver saver = acquisition.getAcquisitionSaver();
-		ChromatogramCSDMaker maker = new ChromatogramCSDMaker(acquisition);
-		for(IControlDevice device : acquisition.getDevicesProfile().getControlDevices()) {
-			MPart part = partService.findPart(device.getID());
-			if(part != null && part.getContext() != null && part.getTransientData().containsKey(IDetectorData.DETECTORS_DATA)) {
-				Object detectorsData = part.getTransientData().get(IDetectorData.DETECTORS_DATA);
-				if(detectorsData instanceof List) {
-					List<?> detectorDataList = (List<?>)detectorsData;
-					for(Iterator<?> iterator = detectorDataList.iterator(); iterator.hasNext();) {
-						Object detectorDataObject = iterator.next();
-						if(detectorDataObject instanceof IDetectorData) {
-							IDetectorData detectorData = (IDetectorData)detectorDataObject;
-							maker.addDetectorData(detectorData);
-						}
-					}
-				}
-			}
-		}
-		saver.save(new NullProgressMonitor(), maker);
-	}
-
-	@Inject
-	@Optional
-	public void setAcquisition(@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES) DataSupplier supplier) {
-
-		if(this.acquisition != null && !this.isSetAcquisition && controlAcquisition(acquisition)) {
-			setAcquisition(acquisition);
-		}
-	}
-
-	private void setAcquisition(IAcquisitionCSD acquisition) {
-
-		if(acquisition != null && !isSetAcquisition && !acquisition.isCompleted()) {
-			eventBroker.send(IControlDevicesEvents.TOPIC_CONTROL_DEVICES_ULAN_CONTROL, acquisition.getDevicesProfile().getControlDevices());
-			this.acquisition = acquisition;
-			acquisition.addPropertyChangeListener(dataAcquisitionChange);
-			setTable();
-			if(controlAcquisition(acquisition)) {
-				eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET, acquisition);
-				isSetAcquisition = true;
-				perspective.getContext().set(IAcquisition.class, acquisition);
-				buttonStart.setEnabled(true);
-				buttonStop.setEnabled(false);
-				buttonEnd.setEnabled(true);
-			} else {
-				buttonStart.setEnabled(false);
-				buttonStop.setEnabled(false);
-				buttonEnd.setEnabled(true);
+			if(!removeAcquisition(acquisition)) {
+				return;
 			}
 		}
 		redrawTable();
 	}
 
-	private void setDefaultParameters(String path, String supplier, boolean autoScan) {
+	@Inject
+	@Optional
+	public void setAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition acquisition) {
 
-		PreferenceSupplier.INSTANCE().getPreferences().putBoolean(PREFERENCE_AUTOSCAN, autoScan);
-		if(path != null) {
-			this.file = new File(path);
-			PreferenceSupplier.INSTANCE().getPreferences().put(PREFERENCE_FILE, path);
-		}
-		if(supplier != null) {
-			ChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
-			List<ISupplier> suppliers = support.getExportSupplier();
-			for(ISupplier iSupplier : suppliers) {
-				if(iSupplier.getId().equals(supplier)) {
-					this.supplier = iSupplier;
-					PreferenceSupplier.INSTANCE().getPreferences().put(PREFERENCE_SUPPLIER, supplier);
-					try {
-						PreferenceSupplier.INSTANCE().getPreferences().flush();
-					} catch(BackingStoreException e) {
-						// TODO logger.warn(e);
-					}
-					buttonActualAcquisition.setEnabled(true);
-					buttonAddAcquisition.setEnabled(true);
-					return;
-				}
-			}
+		if(acquisition != null && this.acquisitionProcess.getActualAcquisition() == acquisition) {
+			buttonStart.setEnabled(true);
+			buttonStop.setEnabled(false);
+			buttonEnd.setEnabled(true);
+			acquisition.addPropertyChangeListener(dataAcquisitionChange);
+			setTable(acquisition);
+			redrawTable();
 		}
 	}
 
-	private void setDefaultParametersWizard() {
+	private void setAcquisitionManagerButtons(boolean allow) {
 
-		WizardNewAcquisitions newAcquisitionWizard = null;
-		if(file != null && supplier != null) {
-			newAcquisitionWizard = new WizardNewAcquisitions(file.getAbsolutePath(), supplier.getId(), PreferenceSupplier.INSTANCE().getPreferences().getBoolean(PREFERENCE_AUTOSCAN, true));
-		} else {
-			newAcquisitionWizard = new WizardNewAcquisitions(null, null, PreferenceSupplier.INSTANCE().getPreferences().getBoolean(PREFERENCE_AUTOSCAN, true));
-		}
-		WizardDialog wizardDialog = new WizardDialog(display.getActiveShell(), newAcquisitionWizard);
-		if(wizardDialog.open() == Window.OK) {
-			setDefaultParameters(newAcquisitionWizard.getFile().getAbsolutePath(), newAcquisitionWizard.getSupplier().getId(), newAcquisitionWizard.getAutoScan());
-		}
+		buttonActualAcquisition.setEnabled(allow);
+		buttonAddAcquisition.setEnabled(allow);
 	}
 
-	private void setTable() {
+	private void setTable(IAcquisition acquisition) {
 
-		if(this.acquisition != null) {
+		if(acquisition != null) {
 			tableActualAcquisition.removeAll();
 			lableNameAcquisition.setText(acquisition.getName());
 			TableItem tableItem = new TableItem(tableActualAcquisition, SWT.NONE);
@@ -700,11 +425,11 @@ public class AcquisitionsPart {
 		}
 	}
 
-	private void startRecording() {
+	@Inject
+	@Optional
+	public void startRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING) IAcquisition acquisition) {
 
-		if((acquisition != null) && isSetAcquisition && !acquisition.isRunning() && !acquisition.isCompleted()) {
-			acquisition.start();
-			eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING, acquisition);
+		if(acquisition != null && this.acquisitionProcess.getActualAcquisition() == acquisition) {
 			display.asyncExec(timeRecording);
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(true);
@@ -712,15 +437,12 @@ public class AcquisitionsPart {
 		}
 	}
 
-	private void stopRecording() {
+	@Inject
+	@Optional
+	public void stopRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING) IAcquisition acquisition) {
 
-		if((acquisition != null) && isSetAcquisition && acquisition.isRunning()) {
-			acquisition.stop();
-			eventBroker.send(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING, acquisition);
+		if(acquisition != null && this.acquisitionProcess.getActualAcquisition() == acquisition) {
 			display.timerExec(-1, timeRecording);
-			saveAcquisition();
-			endAcquisition();
-			setAcquisition((IAcquisitionCSD)acquisitions.setNextAcquisitionActual());
 		}
 	}
 }

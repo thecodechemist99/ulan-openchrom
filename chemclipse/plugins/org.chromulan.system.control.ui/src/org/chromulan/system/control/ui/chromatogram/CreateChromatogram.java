@@ -14,6 +14,7 @@ package org.chromulan.system.control.ui.chromatogram;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.model.IChromatogramCSDAcquisition;
+import org.chromulan.system.control.model.IChromatogramWSDAcquisition;
 import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -34,7 +35,7 @@ public class CreateChromatogram {
 
 	@Inject
 	@Optional
-	public void displayChromatogam(@UIEventTopic(value = IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IChromatogramCSDAcquisition chromatogram) {
+	public void displayChromatogamCSD(@UIEventTopic(value = IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IChromatogramCSDAcquisition chromatogram) {
 
 		if(chromatogram == null) {
 			return;
@@ -43,7 +44,25 @@ public class CreateChromatogram {
 		if(stack == null) {
 			return;
 		}
-		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramRecording");
+		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramCSDRecording");
+		part.setLabel(chromatogram.getName());
+		part.setObject(chromatogram);
+		stack.getChildren().add(part);
+		partService.activate(part);
+	}
+
+	@Inject
+	@Optional
+	public void displayChromatogamCSD(@UIEventTopic(value = IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY) IChromatogramWSDAcquisition chromatogram) {
+
+		if(chromatogram == null) {
+			return;
+		}
+		MPartStack stack = (MPartStack)modelService.find("org.chromulan.system.control.ui.partstack.2", application);
+		if(stack == null) {
+			return;
+		}
+		MPart part = partService.createPart("org.chromulan.system.control.ui.ChromatogramWSDRecording");
 		part.setLabel(chromatogram.getName());
 		part.setObject(chromatogram);
 		stack.getChildren().add(part);

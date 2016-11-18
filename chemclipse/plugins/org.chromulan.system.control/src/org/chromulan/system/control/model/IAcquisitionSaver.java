@@ -20,10 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IAcquisitionSaver {
 
-	static File setOriginalFileName(File name, ISupplier supplier) {
-
-		return null;
-	}
+	IAcquisition getAcquisition();
 
 	File getFile();
 
@@ -31,9 +28,11 @@ public interface IAcquisitionSaver {
 
 	ISupplier getSupplier();
 
-	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, IChromatogramMaker maker);
+	List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<SaveChromatogram> chromatograms);
+
+	void setAcquisition(IAcquisition acquisition);
 
 	void setFile(File file);
 
-	void setSuplier(ISupplier suplier);
+	void setSupplier(ISupplier supplier);
 }

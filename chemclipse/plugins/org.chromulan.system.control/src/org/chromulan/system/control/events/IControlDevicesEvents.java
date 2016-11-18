@@ -13,6 +13,5 @@ package org.chromulan.system.control.events;
 
 public interface IControlDevicesEvents {
 
-	// String TOPIC_CONTROL_DEVICES_ULAN_AVAILABLE = "controlDevices/ulan/available";
-	String TOPIC_CONTROL_DEVICES_ULAN_CONTROL = "controlDevices/ulan/control";
+	String TOPIC_CONTROL_DEVICES_CONTROL = "controlDevices/control";
 }

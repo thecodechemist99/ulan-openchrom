@@ -12,16 +12,17 @@
 package org.chromulan.system.control.devices.handlers;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.data.DataSupplier;
-import org.chromulan.system.control.events.IControlDeviceEvents;
-import org.chromulan.system.control.events.IULanConnectionEvents;
-import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.IControlDevices;
-import org.chromulan.system.control.model.ULanConnection;
+import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.devices.base.IUlanControlDevice;
+import org.chromulan.system.control.devices.connection.ULanConnection;
+import org.chromulan.system.control.devices.events.IControlDeviceEvents;
+import org.chromulan.system.control.devices.events.IULanConnectionEvents;
+import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -42,7 +43,7 @@ public class CloseConnection {
 	private ULanConnection connection;
 	@Inject
 	private DataSupplier dataSupplier;
-	private IControlDevices devices;
+	private List<IControlDevice> devices;
 	@Inject
 	private Display display;
 	@Inject
@@ -65,9 +66,10 @@ public class CloseConnection {
 
 	private void closeConnection() {
 
-		for(IControlDevice device : devices.getControlDevices()) {
-			device.setConnected(false);
-			eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
+		for(IControlDevice device : devices) {
+			if(device instanceof IUlanControlDevice) {
+				eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
+			}
 		}
 		dataSupplier.updateControlDevices();
 		try {

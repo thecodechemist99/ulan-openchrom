@@ -29,6 +29,13 @@ http://www.eclipse.org/legal/epl-v10.html
          unpack="false"/>
 
    <plugin
+         id="org.chromulan.system.control.devices"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.chromulan.system.control.net"
          download-size="0"
          install-size="0"
@@ -43,21 +50,14 @@ http://www.eclipse.org/legal/epl-v10.html
          unpack="false"/>
 
    <plugin
-         id="org.chromulan.system.control.ulad3x"
+         id="org.chromulan.system.control.manager"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.chromulan.system.control.lcd5000"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.chromulan.system.control.devices"
+         id="org.chromulan.system.control.hitachi.l3000"
          download-size="0"
          install-size="0"
          version="0.0.0"

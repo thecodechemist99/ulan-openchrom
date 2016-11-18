@@ -13,12 +13,13 @@ package org.chromulan.system.control.ui.wizard;
 
 import java.io.File;
 
-import org.chromulan.system.control.model.IDevicesProfile;
+import org.chromulan.system.control.device.IDevicesProfile;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 
 public class WizardModelAcquisition {
 
+	public IObservableValue acquisitionType;
 	public IObservableValue autoStop;
 	public IObservableValue description;
 	public IObservableValue devicesProfile;
@@ -35,5 +36,6 @@ public class WizardModelAcquisition {
 		numberofAcquisitions = new WritableValue(1, Integer.class);
 		devicesProfile = new WritableValue(null, IDevicesProfile.class);
 		description = new WritableValue("", String.class);
+		acquisitionType = new WritableValue(null, Class.class);
 	}
 }

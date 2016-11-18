@@ -6,16 +6,8 @@
     <elements xsi:type="advanced:Perspective" xmi:id="_5ACA0LtVEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.perspective.chromulan" label="CHROMuLAN" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/perspective.png">
       <children xsi:type="basic:PartSashContainer" xmi:id="_WwDUALtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partsashcontainer.1" containerData="7000" horizontal="true">
         <children xsi:type="basic:PartSashContainer" xmi:id="_jzMtYLiSEeWGP7Beybk6cQ" elementId="org.chromulan.system.control.ui.partsashcontainer.0" containerData="30">
-          <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.0" containerData="2500" selectedElement="_JUqo0GzSEeWhB_dhmOjHpg">
+          <children xsi:type="basic:PartStack" xmi:id="_e3D3YLtWEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.main" containerData="2500" selectedElement="_JUqo0GzSEeWhB_dhmOjHpg">
             <children xsi:type="basic:Part" xmi:id="_JUqo0GzSEeWhB_dhmOjHpg" elementId="org.chromulan.system.control.ui.part.acquisitions" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AcquisitionsPart" label="Acquisitions" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/acquisitions.gif"/>
-            <children xsi:type="basic:CompositePart" xmi:id="_PFTlMLiWEeWGP7Beybk6cQ" elementId="org.chromulan.system.control.ui.compositepart.0" label="Devices" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/devices.gif">
-              <children xsi:type="basic:PartStack" xmi:id="_96cWgLsYEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.partstack.1" containerData="">
-                <children xsi:type="advanced:Placeholder" xmi:id="_T2cUwLsOEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.placeholder.1" ref="_6EKToEyaEeWRzKmWon3PLg"/>
-              </children>
-              <children xsi:type="basic:PartStack" xmi:id="_GZ8y0LtXEeSOd4rPaPqFeA" elementId="org.chromulan.system.control.ui.partstack.devicesSetting" containerData="">
-                <tags>NoAutoCollapse</tags>
-              </children>
-            </children>
             <children xsi:type="advanced:Placeholder" xmi:id="_ejd4ILsOEeWd-qMKCNBDEQ" elementId="org.chromulan.system.control.ui.placeholder.2" ref="_OtmA0I1JEeWfqJmgycqKzw"/>
           </children>
         </children>
@@ -40,13 +32,12 @@
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ioKeYEtJEeWFBNjUJiIrKw" featurename="addons" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="application:Addon" xmi:id="_nP10IEtJEeWFBNjUJiIrKw" elementId="org.chromulan.system.control.ui.addon.diplayChromatogram" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.CreateChromatogram"/>
-    <elements xsi:type="application:Addon" xmi:id="_werVcO-QEeWUNPO0cihOyQ" elementId="org.chromulan.system.control.ui.addon.0" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.addons.AutoScanNet"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_z-d2AHZCEeWkxZUZTkqg1A" featurename="category" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="commands:Category" xmi:id="_IDBJcHZDEeWkxZUZTkqg1A" elementId="org.chromulan.system.control.ui.category.chromatogramoverview" name="ChromatogramDisplay"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_OPlIsHgMEeWkxZUZTkqg1A" featurename="descriptors" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
-    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_EsgscHgLEeWkxZUZTkqg1A" elementId="org.chromulan.system.control.ui.ChromatogramRecording" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/signal_monitor.gif" allowMultiple="true" closeable="true" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramViewer">
+    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_EsgscHgLEeWkxZUZTkqg1A" elementId="org.chromulan.system.control.ui.ChromatogramCSDRecording" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/signal_monitor.gif" allowMultiple="true" closeable="true" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramCSDViewer">
       <tags>removeOnHide</tags>
       <toolbar xmi:id="_ctMbsHojEeWegb6SmdMD8w" elementId="org.chromulan.system.control.ui.toolbar.0">
         <children xsi:type="menu:HandledToolItem" xmi:id="_KuJ2EHqNEeWiEtziNwDfPA" elementId="org.chromulan.system.control.ui.handledtoolitem.0" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/updates.gif" selected="true" type="Check" command="_mWfs0HilEeWB3ebT_GT_3Q"/>
@@ -55,9 +46,16 @@
         <children xsi:type="menu:HandledToolItem" xmi:id="_U6HqgJKZEeW1lIunxr5KXg" elementId="org.chromulan.system.control.ui.handledtoolitem.3" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/settings.gif" command="_NY044HimEeWB3ebT_GT_3Q"/>
       </toolbar>
     </elements>
+    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_GYoVYJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.ChromatogramWSDRecording" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/signal_monitor.gif" closeable="true" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.chromatogram.ChromatogramWSDViewer">
+      <toolbar xmi:id="_hfM6EJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.toolbar.1">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_8qSyYJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.handledtoolitem.4" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/updates.gif" selected="true" type="Check" command="_mWfs0HilEeWB3ebT_GT_3Q"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_9SASoJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.handledtoolitem.5" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/ion.gif" selected="true" type="Radio" command="_4HfJkHiiEeWB3ebT_GT_3Q"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_9u2msJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.handledtoolitem.6" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/massSpectrum.gif" type="Radio" command="_jP3OIHgYEeWB3ebT_GT_3Q"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_-IP-IJg0Eea1zu8BPlBq7g" elementId="org.chromulan.system.control.ui.handledtoolitem.7" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/settings.gif" command="_NY044HimEeWB3ebT_GT_3Q"/>
+      </toolbar>
+    </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_PniEULsOEeWd-qMKCNBDEQ" featurename="sharedElements" parentElementId="org.eclipse.chemclipse.rcp.app.ui.trimmedwindow.main">
-    <elements xsi:type="basic:Part" xmi:id="_6EKToEyaEeWRzKmWon3PLg" elementId="org.chromulan.system.control.ui.part.availableDevices" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.AvailableDevicesPart" label="Available Devices" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/devices.gif" closeable="true"/>
     <elements xsi:type="basic:Part" xmi:id="_OtmA0I1JEeWfqJmgycqKzw" elementId="org.chromulan.system.control.ui.part.devicesProfiles" contributionURI="bundleclass://org.chromulan.system.control.ui/org.chromulan.system.control.ui.parts.DevicesProfilesPart" label="Devices Profiles" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/available_devices.gif"/>
   </fragments>
 </fragment:ModelFragments>

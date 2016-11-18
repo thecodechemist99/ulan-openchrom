@@ -11,17 +11,18 @@
  *******************************************************************************/
 package org.chromulan.system.control.lcd5000.model;
 
-import org.chromulan.system.control.model.IControlDevice;
-import org.chromulan.system.control.model.data.IDetectorData;
+import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.devices.base.IUlanControlDevice;
+import org.chromulan.system.control.devices.base.data.IDetectorData;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public class Lcd5000Data implements IDetectorData {
 
-	private IControlDevice controlDevice;
+	private IUlanControlDevice controlDevice;
 	private String description;
 	private IChromatogram chromatogram;
 
-	public Lcd5000Data(IControlDevice controlDevice) {
+	public Lcd5000Data(IUlanControlDevice controlDevice) {
 		super();
 		this.controlDevice = controlDevice;
 	}

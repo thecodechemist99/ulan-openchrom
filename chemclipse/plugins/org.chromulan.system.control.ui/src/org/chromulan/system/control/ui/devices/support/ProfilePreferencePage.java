@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.devices.support;
 
-import org.chromulan.system.control.model.IDevicesProfile;
+import org.chromulan.system.control.device.IDevicesProfile;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -48,7 +48,7 @@ public class ProfilePreferencePage extends PreferencePage {
 		textName.setEnabled(false);
 		Composite compositeTable = new Composite(composite, SWT.None);
 		compositeTable.setLayout(new FillLayout());
-		DevicesTable table = new DevicesTable(compositeTable, SWT.HIDE_SELECTION | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, false);
+		DevicesTable table = new DevicesTable(compositeTable, SWT.HIDE_SELECTION | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		table.setDevices(profile);
 		return composite;
 	}
