@@ -21,6 +21,18 @@ import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExp
 
 public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 
+	static String adjustNameFile(String name) {
+
+		if(name == null) {
+			return "CHROMATOGRAM";
+		}
+		String newName = name.trim();
+		if(newName.isEmpty()) {
+			return "CHROMATOGRAM";
+		}
+		return newName.replaceAll("[\\*/\\\\!\\|:?<>]", "_").replaceAll("(%22)", "_");
+	}
+
 	private IAcquisition acquisition;
 	private File file;
 	private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos;
@@ -79,6 +91,7 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 		String allName = null;
 		String name = null;
 		fileExtension = fileExtension.toLowerCase();
+		namefile = adjustNameFile(namefile);
 		if(namefile.length() > fileExtension.length()) {
 			String nameSuffix = namefile.substring(namefile.length() - fileExtension.length(), namefile.length()).toLowerCase();
 			if(!nameSuffix.equals(fileExtension)) {
@@ -101,7 +114,7 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 			newName = allName;
 			names.put(allName, 1);
 		}
-		return new File(file + File.separator + newName);
+		return new File(file + File.separator + adjustNameFile(acquisition.getName()) + File.separator + newName);
 	}
 
 	@Override

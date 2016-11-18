@@ -65,8 +65,11 @@ public class AcquisitionsPart {
 		public void run() {
 
 			IAcquisition acquisition = acquisitionProcess.getActualAcquisition();
-			if(acquisition == null || acquisition.isCompleted()) {
+			if(acquisition == null) {
 				return;
+			}
+			if(acquisition.isCompleted()) {
+				progressBarTimeRemain.setSelection(progressBarTimeRemain.getMaximum());
 			}
 			if(acquisition.getStartDate() != null) {
 				acquisitionInterval.setTime(System.currentTimeMillis() - acquisition.getStartDate().getTime());

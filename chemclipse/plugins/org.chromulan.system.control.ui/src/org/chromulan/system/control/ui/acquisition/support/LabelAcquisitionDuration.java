@@ -11,30 +11,25 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.acquisition.support;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class LabelAcquisitionDuration {
 
 	private Label label;
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
 	private long time;
 
 	public LabelAcquisitionDuration(Composite composite, int style) {
 		label = new Label(composite, style);
-		label.setText("00:00:00");
-	}
-
-	private StringBuilder addzerro(long i, StringBuilder ss) {
-
-		if(i == 0) {
-			ss.append("00");
-		} else if(i < 10) {
-			ss.append("0");
-			ss.append(Long.toString(i));
-		} else {
-			ss.append(Long.toString(i));
-		}
-		return ss;
+		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		Date date = new Date(0);
+		String dateFormatted = simpleDateFormat.format(date);
+		label.setText(dateFormatted);
 	}
 
 	public Label getLabel() {
@@ -49,15 +44,9 @@ public class LabelAcquisitionDuration {
 
 	public void setTime(long time) {
 
-		long secondes = (time / 1000) % 60;
-		long minutes = (time / 60000) % 60;
-		long hours = (time / 3600000) % 60;
-		StringBuilder ss = new StringBuilder();
-		ss = addzerro(hours, ss);
-		ss.append(":");
-		ss = addzerro(minutes, ss);
-		ss.append(":");
-		ss = addzerro(secondes, ss);
-		label.setText(ss.toString());
+		Date date = new Date(time);
+		this.time = time;
+		String dateFormatted = simpleDateFormat.format(date);
+		label.setText(dateFormatted);
 	}
 }

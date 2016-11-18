@@ -12,7 +12,9 @@
 package org.chromulan.system.control.manager.acquisitions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -39,12 +41,11 @@ public class IAcquisitionManager {
 
 	@Inject
 	private IEventBroker eventBroker;
-	private ScheduledThreadPoolExecutor executor;
-	private List<IAcquisitionChangeListener> changeListeners;
+	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(100);
+	private List<IAcquisitionChangeListener> changeListeners = new ArrayList<>();;
+	private HashMap<IAcquisition, ScheduledFuture<?>> scheduleStopAcquisition = new HashMap<>();
 
 	public IAcquisitionManager() {
-		changeListeners = new ArrayList<>();
-		executor = new ScheduledThreadPoolExecutor(100);
 	}
 
 	public void addChangeListener(IAcquisitionChangeListener changeListener) {
@@ -58,7 +59,7 @@ public class IAcquisitionManager {
 
 		if(acquisition != null && !acquisition.isRunning()) {
 			endAcqustion(acquisition);
-			return false;
+			return true;
 		} else {
 			return false;
 		}
@@ -160,14 +161,20 @@ public class IAcquisitionManager {
 					listener.startAcquisition(acquisition);
 				}
 				if(acquisition.getAutoStop()) {
-					executor.schedule(new Runnable() {
+					final ScheduledFuture<?> future = executor.schedule(new Runnable() {
 
 						@Override
 						public void run() {
 
-							stop(acquisition, false);
+							synchronized(changeListeners) {
+								ScheduledFuture<?> future = scheduleStopAcquisition.get(acquisition);
+								if(!future.isCancelled()) {
+									stopAndProcessAcquisition(acquisition, false);
+								}
+							}
 						}
 					}, acquisition.getDuration(), TimeUnit.MILLISECONDS);
+					scheduleStopAcquisition.put(acquisition, future);
 				}
 				eventBroker.post(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING, acquisition);
 				return true;
@@ -179,6 +186,10 @@ public class IAcquisitionManager {
 
 	public boolean stop(IAcquisition acquisition, boolean changeDuaration) {
 
+		ScheduledFuture<?> future = scheduleStopAcquisition.get(acquisition);
+		if(future != null) {
+			future.cancel(false);
+		}
 		return stopAndProcessAcquisition(acquisition, changeDuaration);
 	}
 

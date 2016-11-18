@@ -33,14 +33,13 @@ public class AcquisitionProcess {
 
 	@Inject
 	private IAcquisitionManager acquisitionManager;
-	private IAcquisitions acquisitions;
+	private IAcquisitions acquisitions = new Acquisitions();;
 	@Inject
 	private IEventBroker eventBroker;
 	private IAcquisition prepareAcquisition;
 	private IAcquisition setAcquisition;
 
 	public AcquisitionProcess() {
-		acquisitions = new Acquisitions();
 	}
 
 	public void addAcquisitions(List<IAcquisition> newAcquisitions) {
@@ -168,7 +167,11 @@ public class AcquisitionProcess {
 	public boolean stopAcquisition(boolean changeDuration) {
 
 		if(setAcquisition != null) {
-			return acquisitionManager.stop(setAcquisition, changeDuration);
+			boolean b = acquisitionManager.stop(setAcquisition, changeDuration);
+			if(b) {
+				setAcquisition = null;
+			}
+			return b;
 		}
 		return false;
 	}
