@@ -16,6 +16,7 @@ import java.beans.PropertyChangeListener;
 import org.chromulan.system.control.device.IControlDevice;
 
 import net.sourceforge.ulan.base.DeviceDescription;
+import net.sourceforge.ulan.base.IULanDevice;
 
 public interface IUlanControlDevice extends IControlDevice {
 
@@ -36,13 +37,15 @@ public interface IUlanControlDevice extends IControlDevice {
 	@Override
 	String getName();
 
+	IULanDevice getUlanDevice();
+
 	void removePropertyChangeListener(PropertyChangeListener listener);
 
 	void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
-	void setConnected(boolean b);
-
 	void setDeviceType(DeviceType deviceType);
+
+	void setModel(String model);
 
 	void setName(String name);
 

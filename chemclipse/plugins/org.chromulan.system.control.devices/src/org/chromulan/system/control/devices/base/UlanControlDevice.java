@@ -16,43 +16,45 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.nio.channels.ClosedChannelException;
 
 import org.chromulan.system.control.device.setting.DeviceSetting;
 import org.chromulan.system.control.device.setting.IDeviceSetting;
 import org.chromulan.system.control.devices.Activator;
 
 import net.sourceforge.ulan.base.DeviceDescription;
+import net.sourceforge.ulan.base.IULanDevice;
+import net.sourceforge.ulan.base.ULanCommunicationInterface;
+import net.sourceforge.ulan.base.ULanDevice;
 
-public class UlanControlDevice implements IUlanControlDevice {
+public abstract class UlanControlDevice implements IUlanControlDevice {
+
+	public static String getDeviceID(DeviceDescription description) {
+
+		return description.getModulType() + "_" + Long.toString(description.getAdr());
+	}
 
 	private final String COMPANY = "PiKRON";
 	private DeviceDescription description;
+	private IULanDevice device;
 	private IDeviceSetting deviceSetting;
 	private DeviceType deviceType;
-	private boolean isConnected;
 	private boolean isPrepared;
-	private final String MODEL = "ULAD32";
+	private String model;
 	private String name;
-	protected PropertyChangeSupport propertyChangeSupport;
+	protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 	public UlanControlDevice() {
-		this.propertyChangeSupport = new PropertyChangeSupport(this);
-		this.deviceType = DeviceType.UNKNOWEN;
-		this.deviceSetting = new DeviceSetting();
 	}
 
-	public UlanControlDevice(DeviceDescription description, boolean isConnected) {
-		this();
+	public UlanControlDevice(DeviceType deviceType, DeviceDescription description, boolean isConnected) {
+		this.device = new ULanDevice(description);
 		this.description = description;
 		this.name = description.getModulType();
-		this.isConnected = isConnected;
-		this.isPrepared = true;
-		this.deviceSetting = new DeviceSetting(getPluginID(), this.name, this.name, getDeviceID());
-	}
-
-	public UlanControlDevice(DeviceDescription description, boolean isConnected, boolean isPrepared) {
-		this(description, isConnected);
-		this.isPrepared = isPrepared;
+		this.isPrepared = false;
+		this.deviceType = deviceType;
+		this.model = description.getModulType();
+		this.deviceSetting = new DeviceSetting(Activator.PLUGIN_ID, description.getModulType(), description.getModulType(), getDeviceID(description));
 	}
 
 	@Override
@@ -67,6 +69,10 @@ public class UlanControlDevice implements IUlanControlDevice {
 		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 	}
 
+	public abstract void connect() throws ClosedChannelException, IOException;
+
+	public abstract void disConnect();
+
 	@Override
 	public String getCompany() {
 
@@ -76,7 +82,7 @@ public class UlanControlDevice implements IUlanControlDevice {
 	@Override
 	public String getDescription() {
 
-		return getDeviceType() + " " + getDeviceDescription().getAdr() + " " + getDeviceDescription().getDescription();
+		return getDeviceDescription().getAdr() + " " + getDeviceDescription().getDescription();
 	}
 
 	@Override
@@ -88,7 +94,7 @@ public class UlanControlDevice implements IUlanControlDevice {
 	@Override
 	public String getDeviceID() {
 
-		return description.getModulType() + "_" + Long.toString(description.getAdr());
+		return getDeviceID(description);
 	}
 
 	@Override
@@ -112,7 +118,7 @@ public class UlanControlDevice implements IUlanControlDevice {
 	@Override
 	public String getModel() {
 
-		return MODEL;
+		return model;
 	}
 
 	@Override
@@ -128,9 +134,15 @@ public class UlanControlDevice implements IUlanControlDevice {
 	}
 
 	@Override
+	public IULanDevice getUlanDevice() {
+
+		return device;
+	}
+
+	@Override
 	public boolean isConnected() {
 
-		return isConnected;
+		return ULanCommunicationInterface.isOpen();
 	}
 
 	@Override
@@ -146,8 +158,10 @@ public class UlanControlDevice implements IUlanControlDevice {
 		this.deviceType = DeviceType.valueOf((String)in.readObject());
 		long adr = in.readLong();
 		String description = (String)in.readObject();
-		this.description = new DeviceDescription(adr, description);
 		this.deviceSetting = (IDeviceSetting)in.readObject();
+		this.description = new DeviceDescription(adr, description);
+		this.device = new ULanDevice(this.description);
+		this.isPrepared = false;
 	}
 
 	@Override
@@ -163,21 +177,15 @@ public class UlanControlDevice implements IUlanControlDevice {
 	}
 
 	@Override
-	public void setConnected(boolean b) {
-
-		isConnected = b;
-	}
-
-	@Override
-	public void setDeviceSetting(IDeviceSetting deviceSetting) {
-
-		this.deviceSetting = deviceSetting;
-	}
-
-	@Override
 	public void setDeviceType(DeviceType deviceType) {
 
 		propertyChangeSupport.firePropertyChange(PROPERTY_DEVICE_TYPE, this.deviceType, this.deviceType = deviceType);
+	}
+
+	@Override
+	public void setModel(String model) {
+
+		this.model = model;
 	}
 
 	@Override

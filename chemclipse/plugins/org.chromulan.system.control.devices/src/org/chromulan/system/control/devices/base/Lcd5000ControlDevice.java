@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Jan Holy.
+ * Copyright (c) 2016 Jan Holy.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,11 +9,19 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.devices.base.data;
+package org.chromulan.system.control.devices.base;
 
-import org.chromulan.system.control.device.IControlDevice;
+import net.sourceforge.ulan.base.DeviceDescription;
 
-public interface IDeviceData extends IAcquisitionData {
+public class Lcd5000ControlDevice extends DetectorULanControlDevice {
 
-	IControlDevice getControlDevice();
+	public final static int DEFAULT_SCAN_INTERVAL = 40;
+
+	public Lcd5000ControlDevice() {
+		super();
+	}
+
+	public Lcd5000ControlDevice(DeviceDescription description, boolean isConnected) {
+		super(description, isConnected, DEFAULT_SCAN_INTERVAL);
+	}
 }

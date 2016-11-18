@@ -16,6 +16,7 @@ import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.chromulan.system.control.devices.base.UlanDevicesManager;
 import org.chromulan.system.control.devices.handlers.ScanNet;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
@@ -34,6 +35,8 @@ public class AutoScanNet {
 	private ECommandService commandService;
 	@Inject
 	private EHandlerService handlerService;
+	@Inject
+	private UlanDevicesManager manager;
 	private boolean startScan;
 
 	@PostConstruct
@@ -64,6 +67,7 @@ public class AutoScanNet {
 		if((newValue instanceof MPerspective)) {
 			MPerspective perspective = (MPerspective)newValue;
 			if(perspective.getElementId().startsWith("org.chromulan.system.control.ui.perspective.chromulan")) {
+				manager.addSaveDevices();
 				startScan();
 			}
 		}

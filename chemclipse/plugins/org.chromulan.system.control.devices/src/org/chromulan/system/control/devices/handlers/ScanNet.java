@@ -13,22 +13,20 @@ package org.chromulan.system.control.devices.handlers;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import javax.inject.Inject;
 
-import org.chromulan.system.control.device.IControlDevice;
-import org.chromulan.system.control.devices.base.IUlanControlDevice;
-import org.chromulan.system.control.devices.base.IUlanControlDevices;
-import org.chromulan.system.control.devices.base.UlanDevicesStore;
+import org.chromulan.system.control.devices.base.UlanDevicesManager;
 import org.chromulan.system.control.devices.connection.ULanConnection;
-import org.chromulan.system.control.devices.events.IControlDeviceEvents;
 import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.devices.supports.UlanScanNetRunnable;
-import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
+
+import net.sourceforge.ulan.base.DeviceDescription;
 
 public class ScanNet {
 
@@ -36,9 +34,9 @@ public class ScanNet {
 	@Inject
 	private ULanConnection connection;
 	@Inject
-	private DataSupplier dataSupplier;
-	@Inject
 	private IEventBroker eventBroker;
+	@Inject
+	private UlanDevicesManager manager;
 
 	@Execute
 	private void execute() {
@@ -50,40 +48,16 @@ public class ScanNet {
 			UlanScanNetRunnable runnable = new UlanScanNetRunnable();
 			try {
 				dialog.run(true, false, runnable);
-				UlanDevicesStore devices = runnable.getDevices();
-				setDevices(devices);
-			} catch(InvocationTargetException e) {
-				// /logger.warn(e);
+				List<DeviceDescription> descriptions = runnable.getDevices();
+				manager.updateConnection(descriptions);
 			} catch(InterruptedException e) {
 				// logger.warn(e);
 			}
-		} catch(IOException e) {
-			// TODO:Exception
-		}
-	}
-
-	private void setDevices(UlanDevicesStore devices) {
-
-		for(IUlanControlDevice device : devices.getControlDevices()) {
-			if(device instanceof IUlanControlDevice) {
-				IUlanControlDevice ulanDevice = device;
-				if(IUlanControlDevices.contains(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID())) {
-					IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID()).setConnected(true);
-				} else {
-					IUlanControlDevices.add(this.dataSupplier.getControlDevices(), ulanDevice);
-				}
-				eventBroker.post(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_CONNECT, IUlanControlDevices.getControlDevice(this.dataSupplier.getControlDevices(), ulanDevice.getDeviceID()));
+		} catch(IOException | InvocationTargetException e) {
+			try {
+				connection.close();
+			} catch(Exception e2) {
 			}
 		}
-		for(IControlDevice device : this.dataSupplier.getControlDevices()) {
-			if(device instanceof IUlanControlDevice) {
-				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
-				if(!devices.contains(ulanDevice.getDeviceID())) {
-					ulanDevice.setConnected(false);
-					eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, ulanDevice);
-				}
-			}
-		}
-		dataSupplier.updateControlDevices();
 	}
 }

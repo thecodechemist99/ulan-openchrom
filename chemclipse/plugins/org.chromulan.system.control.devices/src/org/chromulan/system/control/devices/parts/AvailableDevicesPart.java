@@ -12,16 +12,12 @@
  *******************************************************************************/
 package org.chromulan.system.control.devices.parts;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.device.IControlDevice;
-import org.chromulan.system.control.devices.base.IUlanControlDevice;
-import org.chromulan.system.control.devices.base.IUlanControlDevices;
+import org.chromulan.system.control.devices.base.UlanDevicesManager;
 import org.chromulan.system.control.devices.connection.ULanConnection;
 import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.devices.handlers.ScanNet;
@@ -53,34 +49,21 @@ public class AvailableDevicesPart {
 	private ECommandService commandService;
 	@Inject
 	private ULanConnection connection;
-	@Inject
-	private DataSupplier dataSupplier;
-	private List<IControlDevice> devices;
 	private DevicesTable deviceTable;
 	@Inject
 	private Display display;
 	@Inject
 	private EHandlerService handlerService;
 	private Label labelConnection;
+	@Inject
+	private UlanDevicesManager manager;
 
 	public AvailableDevicesPart() {
-		devices = new ArrayList<>();
-	}
-
-	public void addDevice(DataSupplier dataSupplier) {
-
-		List<IControlDevice> globalDevices = dataSupplier.getControlDevices();
-		for(IControlDevice iControlDevice : globalDevices) {
-			if(iControlDevice instanceof IUlanControlDevice) {
-				IUlanControlDevices.add(devices, (IUlanControlDevice)iControlDevice);
-			}
-		}
 	}
 
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 
-		addDevice(dataSupplier);
 		Composite composite = new Composite(parent, SWT.None);
 		GridLayout gridLayout = new GridLayout(1, false);
 		composite.setLayout(gridLayout);
@@ -92,8 +75,8 @@ public class AvailableDevicesPart {
 		Composite tableComposit = new Composite(composite, SWT.None);
 		tableComposit.setLayoutData(gridData);
 		tableComposit.setLayout(new FillLayout());
-		deviceTable = new DevicesTable(tableComposit, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, true);
-		deviceTable.setDevices(devices);
+		deviceTable = new DevicesTable(tableComposit, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, false);
+		deviceTable.setDevices(manager.getDevices());
 		deviceTable.setEditableName(true);
 		buttonRefreshDevices = new Button(composite, SWT.PUSH);
 		buttonRefreshDevices.setText("Scan Net");
@@ -150,10 +133,6 @@ public class AvailableDevicesPart {
 	@Optional
 	public void updateDevices(@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES) DataSupplier dataSupplier) {
 
-		if(dataSupplier == null) {
-			return;
-		}
-		addDevice(dataSupplier);
 		rewriteTable();
 	}
 

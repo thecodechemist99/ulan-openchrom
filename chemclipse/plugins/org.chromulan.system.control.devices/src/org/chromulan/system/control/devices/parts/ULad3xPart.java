@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Jan Holy.
+ * Copyright (c) 2016 Jan Holy.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,28 +9,20 @@
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
-package org.chromulan.system.control.ulad3x.parts;
+package org.chromulan.system.control.devices.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.chromulan.system.control.devices.base.IUlanControlDevice;
+import org.chromulan.system.control.devices.base.DetectorControler;
 import org.chromulan.system.control.devices.base.IUlanControlDevices;
-import org.chromulan.system.control.devices.base.data.IDetectorData;
-import org.chromulan.system.control.devices.connection.ULanConnection;
-import org.chromulan.system.control.devices.events.IULanConnectionEvents;
 import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
-import org.chromulan.system.control.ulad3x.model.ULad3x;
-import org.chromulan.system.control.ulad3x.model.ULad3xData;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -52,14 +44,13 @@ public class ULad3xPart {
 	private IAcquisition acquisition;
 	private Button buttonReadData;
 	private Button buttonReset;
-	private IUlanControlDevice controlDevice;
+	private DetectorControler controlDevice;
 	@Inject
 	private IEventBroker eventBroker;
 	private PropertyChangeListener listener;
 	@Inject
 	private MPart part;
 	private Table table;
-	private ULad3x uLad3x;
 
 	public ULad3xPart() {
 		listener = new PropertyChangeListener() {
@@ -76,15 +67,8 @@ public class ULad3xPart {
 	public void createPartControl(Composite parent) {
 
 		parent.setLayout(new GridLayout(3, false));
-		controlDevice = (IUlanControlDevice)part.getObject();
-		controlDevice.addPropertyChangeListener(listener);
-		uLad3x = new ULad3x(controlDevice);
-		try {
-			uLad3x.connect();
-			uLad3x.start(false);
-		} catch(IOException e1) {
-			// logger.warn(e1);
-		}
+		controlDevice = (DetectorControler)part.getObject();
+		controlDevice.getControlDevice().addPropertyChangeListener(listener);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 0);
 		table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		table.setLayoutData(gridData);
@@ -105,8 +89,7 @@ public class ULad3xPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				uLad3x.getChromatogramRecording().setName(controlDevice.getName());
-				eventBroker.post(IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY, uLad3x.getChromatogramRecording());
+				eventBroker.post(IAcquisitionUIEvents.TOPIC_ACQUISITION_CHROMULAN_UI_CHROMATOGRAM_DISPLAY, controlDevice.getControlDevice().getChromatogramRecording());
 			}
 		});
 		buttonReadData = new Button(parent, SWT.CHECK);
@@ -116,14 +99,14 @@ public class ULad3xPart {
 			public void widgetSelected(SelectionEvent e) {
 
 				if(buttonReadData.getSelection()) {
-					uLad3x.start(false);
+					controlDevice.getControlDevice().setBeeingRecored(true);
 				} else {
-					uLad3x.stop();
+					controlDevice.getControlDevice().setBeeingRecored(false);
 				}
 			}
 		});
 		buttonReadData.setText("read data");
-		if(uLad3x.isBeeingRecored()) {
+		if(controlDevice.getControlDevice().isBeeingRecored()) {
 			buttonReadData.setSelection(true);
 		} else {
 			buttonReadData.setSelection(false);
@@ -135,7 +118,7 @@ public class ULad3xPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				uLad3x.newAcquisition();
+				controlDevice.resetChromatogramData();
 			}
 		});
 		redrawTable();
@@ -147,21 +130,10 @@ public class ULad3xPart {
 		buttonReset.setEnabled(enabled);
 	}
 
-	@Inject
-	@Optional
-	public void openConnection(@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
-
-		try {
-			uLad3x.connect();
-		} catch(IOException e) {
-			// TODO: logger.warn(e);
-		}
-	}
-
 	@PreDestroy
 	public void preDestroy() {
 
-		controlDevice.removePropertyChangeListener(listener);
+		controlDevice.getControlDevice().removePropertyChangeListener(listener);
 	}
 
 	private void redrawTable() {
@@ -169,19 +141,19 @@ public class ULad3xPart {
 		table.removeAll();
 		TableItem tableItem = new TableItem(table, SWT.NONE);
 		tableItem.setText(0, "Name");
-		tableItem.setText(1, controlDevice.getName());
+		tableItem.setText(1, controlDevice.getControlDevice().getName());
 		tableItem = new TableItem(table, SWT.NONE);
 		tableItem.setText(0, "Device type");
-		tableItem.setText(1, controlDevice.getDeviceType().toString());
+		tableItem.setText(1, controlDevice.getControlDevice().getDeviceType().toString());
 		tableItem = new TableItem(table, SWT.NONE);
 		tableItem.setText(0, "Device description");
-		tableItem.setText(1, controlDevice.getDeviceDescription().getDescription());
+		tableItem.setText(1, controlDevice.getControlDevice().getDescription());
 		tableItem = new TableItem(table, SWT.NONE);
 		tableItem.setText(0, "Scan Interval (milliseconds)");
-		tableItem.setText(1, Integer.toString(uLad3x.getScanInterva()));
+		tableItem.setText(1, Integer.toString(controlDevice.getControlDevice().getScanInterval()));
 		tableItem = new TableItem(table, SWT.NONE);
 		tableItem.setText(0, "Scan Delay (milliseconds)");
-		tableItem.setText(1, Integer.toString(uLad3x.getScanDelay()));
+		tableItem.setText(1, Integer.toString(controlDevice.getControlDevice().getScanDelay()));
 	}
 
 	@Inject
@@ -189,13 +161,8 @@ public class ULad3xPart {
 	public void removeAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition analisis) {
 
 		if(this.acquisition == analisis) {
-			part.getTransientData().remove(IDetectorData.DETECTORS_DATA);
 			enableButton(true);
 			this.acquisition = null;
-			if(analisis.isCompleted()) {
-				uLad3x.newAcquisition();
-				uLad3x.start(false);
-			}
 		}
 	}
 
@@ -203,7 +170,7 @@ public class ULad3xPart {
 	@Optional
 	public void setAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_SET) IAcquisition analisis) {
 
-		if(this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null && IUlanControlDevices.contains(analisis.getDevicesProfile().getControlDevices(), controlDevice.getDeviceID())) {
+		if(this.acquisition == null && analisis != null && analisis.getDevicesProfile() != null && IUlanControlDevices.contains(analisis.getDevicesProfile().getControlDevices(), controlDevice.getControlDevice().getDeviceID())) {
 			this.acquisition = analisis;
 		}
 	}
@@ -213,24 +180,8 @@ public class ULad3xPart {
 	public void startRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING) IAcquisition acquisition) {
 
 		if(this.acquisition != null && this.acquisition == acquisition) {
-			uLad3x.start(true);
 			buttonReadData.setSelection(true);
 			enableButton(false);
-		}
-	}
-
-	@Inject
-	@Optional
-	public void stopRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING) IAcquisition acquisition) {
-
-		if(this.acquisition != null && this.acquisition == acquisition) {
-			uLad3x.stop();
-			ULad3xData data = new ULad3xData(controlDevice);
-			data.setDescription("");
-			data.setChromatogram(uLad3x.getChromatogramRecording().getChromatogram());
-			List<IDetectorData> list = new LinkedList<IDetectorData>();
-			list.add(data);
-			part.getTransientData().put(IDetectorData.DETECTORS_DATA, list);
 		}
 	}
 }

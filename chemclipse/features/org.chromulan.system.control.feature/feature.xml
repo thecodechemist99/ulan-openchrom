@@ -36,13 +36,6 @@ http://www.eclipse.org/legal/epl-v10.html
          unpack="false"/>
 
    <plugin
-         id="org.chromulan.system.control.lcd5000"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.chromulan.system.control.net"
          download-size="0"
          install-size="0"
@@ -51,13 +44,6 @@ http://www.eclipse.org/legal/epl-v10.html
 
    <plugin
          id="org.chromulan.system.control.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.chromulan.system.control.ulad3x"
          download-size="0"
          install-size="0"
          version="0.0.0"

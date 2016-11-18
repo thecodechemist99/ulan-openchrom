@@ -68,8 +68,6 @@ public class CloseConnection {
 
 		for(IControlDevice device : devices) {
 			if(device instanceof IUlanControlDevice) {
-				IUlanControlDevice ulanDevice = (IUlanControlDevice)device;
-				ulanDevice.setConnected(false);
 				eventBroker.send(IControlDeviceEvents.TOPIC_CONTROL_DEVICE_ULAN_DISCONNECT, device);
 			}
 		}

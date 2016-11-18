@@ -36,7 +36,6 @@ public class OpenConnection {
 		try {
 			openConection();
 		} catch(HandleHasNotBeenInitializedException | IOException e) {
-			// TODO Auto-generated catch block
 		}
 	}
 

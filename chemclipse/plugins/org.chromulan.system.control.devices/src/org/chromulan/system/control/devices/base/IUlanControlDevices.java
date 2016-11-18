@@ -15,20 +15,20 @@ import java.util.List;
 
 import org.chromulan.system.control.device.IControlDevice;
 
-public interface IUlanControlDevices {
+public class IUlanControlDevices {
 
-	static boolean add(List<IControlDevice> controlDevices, IUlanControlDevice device) {
+	public static boolean add(List<IControlDevice> controlDevices, IUlanControlDevice device) {
 
-		if(null == containsDevice(controlDevices, device.getDeviceID())) {
+		if(null == getControlDevice(controlDevices, device.getDeviceID())) {
 			controlDevices.add(device);
 			return true;
 		}
 		return false;
 	}
 
-	static boolean contains(List<IControlDevice> controlDevices, String id) {
+	public static boolean contains(List<? extends IControlDevice> controlDevices, String id) {
 
-		IControlDevice device = containsDevice(controlDevices, id);
+		IControlDevice device = getControlDevice(controlDevices, id);
 		if(device == null) {
 			return false;
 		} else {
@@ -36,17 +36,7 @@ public interface IUlanControlDevices {
 		}
 	}
 
-	static IUlanControlDevice containsDevice(List<IControlDevice> controlDevices, String id) {
-
-		for(IControlDevice device : controlDevices) {
-			if(device instanceof IUlanControlDevice) {
-				return (IUlanControlDevice)device;
-			}
-		}
-		return null;
-	}
-
-	static IUlanControlDevice getControlDevice(List<IControlDevice> controlDevices, String id) {
+	public static IUlanControlDevice getControlDevice(List<? extends IControlDevice> controlDevices, String id) {
 
 		for(IControlDevice device : controlDevices) {
 			if(device instanceof IUlanControlDevice) {
@@ -59,9 +49,9 @@ public interface IUlanControlDevices {
 		return null;
 	}
 
-	static boolean remove(List<IControlDevice> controlDevices, String id) {
+	public static boolean remove(List<? extends IControlDevice> controlDevices, String id) {
 
-		IControlDevice device = containsDevice(controlDevices, id);
+		IControlDevice device = getControlDevice(controlDevices, id);
 		if(device != null) {
 			controlDevices.remove(device);
 			return true;
