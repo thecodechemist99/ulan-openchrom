@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_F_zI4O6yEeWVifVGtO1usQ">
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:basic_1="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_F_zI4O6yEeWVifVGtO1usQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_IHtQkO6yEeWVifVGtO1usQ" featurename="handlers" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
     <elements xsi:type="commands:Handler" xmi:id="_3h_woO6zEeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.handler.0" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.handlers.OpenConnection" command="_DU2ToO60EeWVifVGtO1usQ"/>
     <elements xsi:type="commands:Handler" xmi:id="_RMrmIO60EeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.handler.1" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.handlers.CloseConnection" command="_HcvWEO60EeWVifVGtO1usQ"/>
@@ -9,5 +9,22 @@
     <elements xsi:type="commands:Command" xmi:id="_DU2ToO60EeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.command.openconnection" commandName="Open connection"/>
     <elements xsi:type="commands:Command" xmi:id="_HcvWEO60EeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.command.closeconnection" commandName="Close connection"/>
     <elements xsi:type="commands:Command" xmi:id="_LR0KMO60EeWVifVGtO1usQ" elementId="org.chromulan.system.control.devices.command.scannet" commandName="Scan net"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_6uQS4IWxEea5JaGqgknRSg" featurename="addons" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="application:Addon" xmi:id="_KrdWcIWyEea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.addon.0" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.addons.AutoScanNet"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_PvH5EIW8Eea5JaGqgknRSg" featurename="children" parentElementId="org.chromulan.system.control.ui.partstack.main">
+    <elements xsi:type="basic:CompositePart" xmi:id="_kMqUQIW8Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.compositepart.ulandevices" label="Ulan Devices">
+      <children xsi:type="basic:PartStack" xmi:id="_lZ8mwIW8Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.partstack.0">
+        <children xsi:type="basic:Part" xmi:id="_cQ47EIW9Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.part.avaiabledevices" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.parts.AvailableDevicesPart" label="Avaiable Devices"/>
+      </children>
+      <children xsi:type="basic:PartStack" xmi:id="_mE194IW8Eea5JaGqgknRSg" elementId="org.chromulan.system.control.devices.partstack.devicesSetting">
+        <tags>NoAutoCollapse</tags>
+      </children>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_yJTjYKzOEea6M7FwCfRR2A" featurename="descriptors" parentElementId="org.eclipse.chemclipse.rcp.ide.application">
+    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_40dz0KzOEea6M7FwCfRR2A" elementId="org.chromulan.system.control.devices.partdescriptor.ulad3x" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/acquisitions.gif" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.parts.ULad3xPart"/>
+    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_59USQKzOEea6M7FwCfRR2A" elementId="org.chromulan.system.control.devices.partdescriptor.lcd5000" iconURI="platform:/plugin/org.chromulan.system.control.ui/icons/16x16/acquisitions.gif" contributionURI="bundleclass://org.chromulan.system.control.devices/org.chromulan.system.control.devices.parts.Lcd5000Part"/>
   </fragments>
 </fragment:ModelFragments>

@@ -30,6 +30,7 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 
 		synchronized(this) {
 			chromatogram.addScan(scan);
+			System.out.println("Scan number:" + " rention time " + scan.getRetentionTime());
 		}
 	}
 
@@ -39,7 +40,6 @@ public abstract class AbstractChromatogramAcquisition implements IChromatogramAc
 		synchronized(this) {
 			int number = chromatogram.getNumberOfScans();
 			scan.setRetentionTime(chromatogram.getScanDelay() + chromatogram.getScanInterval() * (number));
-			scan.setScanNumber(number + 1);
 			chromatogram.addScan(scan);
 		}
 	}
