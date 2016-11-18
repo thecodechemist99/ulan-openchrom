@@ -26,7 +26,6 @@ import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenght
 import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenghtRangeFrom;
 import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenghtRangeTo;
 import org.chromulan.system.control.model.IAcquisition;
-import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;

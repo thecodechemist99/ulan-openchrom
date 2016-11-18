@@ -459,8 +459,8 @@ public class ControlDevice implements IControlDevice {
 							if(entry.getValue() instanceof ValueEnumeration) {
 								ValueEnumeration enumeration = (ValueEnumeration)entry.getValue();
 								if(enumeration.getValue() instanceof ValueInt) {
-									ValueInt outputType = (ValueInt) enumeration.getValue();
-									setOutputType(outputType.getValue());	
+									ValueInt outputType = (ValueInt)enumeration.getValue();
+									setOutputType(outputType.getValue());
 								}
 							}
 						}
