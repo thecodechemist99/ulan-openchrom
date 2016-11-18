@@ -22,6 +22,7 @@ import org.chromulan.system.control.devices.base.DetectorControler;
 import org.chromulan.system.control.devices.base.IUlanControlDevices;
 import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.model.IAcquisition;
+import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
