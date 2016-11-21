@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.events.IAcquisitionEvents;
+import org.chromulan.system.control.events.IAcquisitionUIEvents;
 import org.chromulan.system.control.hitachi.l3000.model.ControlDevice;
 import org.chromulan.system.control.hitachi.l3000.model.DeviceInterface;
 import org.chromulan.system.control.hitachi.l3000.model.evens.DeviceEvents;
@@ -26,7 +27,6 @@ import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenght
 import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenghtRangeFrom;
 import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenghtRangeTo;
 import org.chromulan.system.control.model.IAcquisition;
-import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;

@@ -13,9 +13,9 @@ package org.chromulan.system.control.ui.chromatogram;
 
 import javax.inject.Inject;
 
+import org.chromulan.system.control.events.IAcquisitionUIEvents;
 import org.chromulan.system.control.model.IChromatogramCSDAcquisition;
 import org.chromulan.system.control.model.IChromatogramWSDAcquisition;
-import org.chromulan.system.control.ui.events.IAcquisitionUIEvents;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;

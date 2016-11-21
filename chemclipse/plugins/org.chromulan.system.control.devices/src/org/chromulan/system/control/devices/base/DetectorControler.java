@@ -34,6 +34,8 @@ import net.sourceforge.ulan.base.ULanMsg;
 
 public class DetectorControler {
 
+	@Inject
+	private ULanConnection connection;
 	private DetectorULanControlDevice controlDevice;
 	private IFilt<Void> filtStartRecording;
 	@Inject
@@ -64,11 +66,13 @@ public class DetectorControler {
 	public void openConnection(@UIEventTopic(value = IULanConnectionEvents.TOPIC_CONNECTION_ULAN_OPEN) ULanConnection connection) {
 
 		try {
-			if(!(setAcquisition != null && setAcquisition.isRunning())) {
-				resetChromatogramData();
+			if(connection != null && connection.isOpen()) {
+				if(!(setAcquisition != null && setAcquisition.isRunning())) {
+					resetChromatogramData();
+				}
+				controlDevice.connect();
+				filtStartRecording.activateFilt();
 			}
-			controlDevice.connect();
-			filtStartRecording.activateFilt();
 		} catch(IOException e) {
 			// TODO: logger.warn(e);
 		}
@@ -131,6 +135,9 @@ public class DetectorControler {
 			}
 		});
 		controlDevice.setPrepared(true);
+		if(connection.isOpen()) {
+			openConnection(connection);
+		}
 	}
 
 	public void resetChromatogramData() {

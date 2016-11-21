@@ -9,22 +9,16 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.chemclipse.support.ui;bundle-version="0.8.0",
  org.chromulan.system.control;bundle-version="1.2.0",
+ org.chromulan.system.control.manager;bundle-version="1.2.0", 
  org.eclipse.chemclipse.logging;bundle-version="0.8.0",
  org.eclipse.chemclipse.support;bundle-version="0.8.0",
- org.eclipse.chemclipse.ux.extension.ui;bundle-version="0.8.0",
- org.eclipse.equinox.common,
- org.eclipse.swt,
- org.eclipse.core.commands,
- org.eclipse.jface,
- org.eclipse.chemclipse.converter,
- org.eclipse.ui.workbench,
- org.eclipse.osgi.services
+ org.eclipse.chemclipse.ux.extension.ui;bundle-version="0.8.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: org.chromulan.system.control.manager.acquisitions,
- org.chromulan.system.control.manager.devices,
- org.chromulan.system.control.manager.events,
+Import-Package:  org.eclipse.chemclipse.converter.chromatogram,
+ org.eclipse.chemclipse.converter.core,
  org.eclipse.chemclipse.converter.processing,
+ org.eclipse.chemclipse.converter.processing.chromatogram,
  org.eclipse.chemclipse.csd.converter.chromatogram,
  org.eclipse.chemclipse.csd.model.core,
  org.eclipse.chemclipse.csd.model.implementation,
@@ -83,4 +77,3 @@ Import-Package: org.chromulan.system.control.manager.acquisitions,
  org.eclipse.jface.databinding.wizard,
  org.eclipse.ui.dialogs,
  org.swtchart
-Export-Package: org.chromulan.system.control.ui.events

@@ -11,19 +11,12 @@ Require-Bundle: org.eclipse.ui,
  org.chromulan.system.control;bundle-version="1.2.0",
  org.eclipse.chemclipse.logging;bundle-version="0.7.0",
  org.eclipse.chemclipse.support;bundle-version="0.7.0",
- org.eclipse.jface,
- org.chromulan.system.control,
- org.chromulan.system.control.ui,
- org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150407-1430"
+ org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150407-1430",
+ org.chromulan.system.control.manager;bundle-version="1.2.0",
+ org.chromulan.system.control.ui;bundle-version="1.2.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: org.chromulan.system.control.manager.acquisitions,
- org.chromulan.system.control.manager.devices,
- org.chromulan.system.control.manager.devices.supplier,
- org.chromulan.system.control.manager.events,
- org.chromulan.system.control.model,
- org.chromulan.system.control.ui.events,
- org.eclipse.chemclipse.csd.model.core,
+Import-Package: org.eclipse.chemclipse.csd.model.core,
  org.eclipse.chemclipse.model.core,
  org.eclipse.chemclipse.wsd.model.core,
  org.eclipse.core.databinding,
