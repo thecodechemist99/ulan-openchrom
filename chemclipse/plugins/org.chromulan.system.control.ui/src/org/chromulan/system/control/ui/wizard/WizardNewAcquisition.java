@@ -22,7 +22,8 @@ public class WizardNewAcquisition extends Wizard {
 	private WizardNewAcquisitionType page0;
 	private WizardNewAcquisitionProfile page1;
 	private WizardNewAcquisitionMain page2;
-	private WizardNewAcquisitionMultiple page3;
+	private WizardNewAcquisitionMiscData page3;
+	private WizardNewAcquisitionMultiple page4;
 
 	public WizardNewAcquisition(List<IDevicesProfile> devicesProfil) {
 		super();
@@ -32,7 +33,8 @@ public class WizardNewAcquisition extends Wizard {
 		page0 = new WizardNewAcquisitionType();
 		page1 = new WizardNewAcquisitionProfile(devicesProfil);
 		page2 = new WizardNewAcquisitionMain();
-		page3 = new WizardNewAcquisitionMultiple();
+		page3 = new WizardNewAcquisitionMiscData();
+		page4 = new WizardNewAcquisitionMultiple();
 	}
 
 	@Override
@@ -42,6 +44,7 @@ public class WizardNewAcquisition extends Wizard {
 		addPage(page1);
 		addPage(page2);
 		addPage(page3);
+		addPage(page4);
 	}
 
 	public WizardModelAcquisition getModel() {

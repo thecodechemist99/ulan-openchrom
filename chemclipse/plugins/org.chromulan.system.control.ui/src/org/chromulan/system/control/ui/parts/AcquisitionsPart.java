@@ -245,14 +245,7 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				boolean b = acquisitionProcess.endAcquisition();
-				if(b) {
-					IAcquisition acquisition = acquisitionProcess.setNextAcquisition();
-					redrawTable();
-					if(acquisition == null) {
-						buttonEnd.setEnabled(false);
-					}
-				}
+				acquisitionProcess.endAcquisition();
 			}
 		});
 		gridData = new GridData(GridData.END, GridData.FILL, false, false);
@@ -315,6 +308,7 @@ public class AcquisitionsPart {
 			lableNameAcquisition.setText("");
 			progressBarTimeRemain.setSelection(0);
 			acquisitionProcess.setNextAcquisition();
+			redrawTable();
 			if(acquisitionProcess.getActualAcquisition() != null) {
 				buttonEnd.setEnabled(false);
 			} else {

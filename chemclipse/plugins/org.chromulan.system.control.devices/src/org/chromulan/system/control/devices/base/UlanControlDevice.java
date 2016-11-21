@@ -110,7 +110,7 @@ public abstract class UlanControlDevice implements IUlanControlDevice {
 	}
 
 	@Override
-	public int getFlg() {
+	public long getFlg() {
 
 		return FLG_SUPPORT_CSD_CHROMATOGRAM;
 	}

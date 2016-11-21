@@ -30,6 +30,8 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -86,7 +88,13 @@ public class WizardNewAcquisitionProfile extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.None);
+		Composite rootComposite = new Composite(parent, SWT.None);
+		rootComposite.setLayout(new FillLayout());
+		ScrolledComposite scrollComposite = new ScrolledComposite(rootComposite, SWT.BORDER | SWT.V_SCROLL);
+		scrollComposite.setExpandHorizontal(true);
+		scrollComposite.setExpandVertical(true);
+		Composite composite = new Composite(scrollComposite, SWT.None);
+		scrollComposite.setContent(composite);
 		DataBindingContext dbc = new DataBindingContext();
 		WizardPageSupport.create(this, dbc);
 		WizardModelAcquisition model = ((WizardNewAcquisition)getWizard()).getModel();
@@ -102,7 +110,8 @@ public class WizardNewAcquisitionProfile extends WizardPage {
 		}
 		dbc.bindValue(selectedRadioButtonObservable, model.devicesProfile, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorDevicesProfile()), null);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
-		setControl(composite);
+		scrollComposite.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		setControl(rootComposite);
 	}
 
 	@Override

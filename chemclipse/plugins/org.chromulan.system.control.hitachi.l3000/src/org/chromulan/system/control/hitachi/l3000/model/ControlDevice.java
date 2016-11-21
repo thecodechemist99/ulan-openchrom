@@ -211,7 +211,7 @@ public class ControlDevice implements IControlDevice {
 	}
 
 	@Override
-	public int getFlg() {
+	public long getFlg() {
 
 		return FLG_SUPPORT_CSD_CHROMATOGRAM;
 	}

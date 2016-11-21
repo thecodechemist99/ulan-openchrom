@@ -152,14 +152,26 @@ public class AcquisitionsAdministator {
 		if(wizardDialog.open() == Window.OK) {
 			int numberAcquisition = (Integer)newAcquisitionWizard.getModel().numberofAcquisitions.getValue();
 			for(int i = 1; i <= numberAcquisition; i++) {
-				IAcquisition acquisition = createAcqusition(newAcquisitionWizard.getModel());
+				WizardModelAcquisition model = newAcquisitionWizard.getModel();
+				IAcquisition acquisition = createAcqusition(model);
 				if(acquisition != null) {
-					String name = getNameAcquisition((String)newAcquisitionWizard.getModel().name.getValue(), i, numberAcquisition);
+					String name = getNameAcquisition((String)model.name.getValue(), i, numberAcquisition);
 					acquisition.setName(name);
-					acquisition.setAutoStop((Boolean)newAcquisitionWizard.getModel().autoStop.getValue());
-					acquisition.setDuration((Long)newAcquisitionWizard.getModel().duration.getValue());
-					acquisition.setDevicesProfile((IDevicesProfile)newAcquisitionWizard.getModel().devicesProfile.getValue());
-					acquisition.setDescription((String)newAcquisitionWizard.getModel().description.getValue());
+					acquisition.setAutoStop((Boolean)model.autoStop.getValue());
+					acquisition.setDuration((Long)model.duration.getValue());
+					acquisition.setDevicesProfile((IDevicesProfile)model.devicesProfile.getValue());
+					acquisition.setDescription((String)model.description.getValue());
+					acquisition.setAmount((Float)model.amount.getValue());
+					acquisition.setAnalysis((String)model.analysis.getValue());
+					acquisition.setColumn((String)model.column.getValue());
+					acquisition.setDetection((String)model.detection.getValue());
+					acquisition.setFlowRate((Float)model.flowRate.getValue());
+					acquisition.setFlowRateUnit((String)model.flowRateUnit.getValue());
+					acquisition.setMobilPhase((String)model.mobilPhase.getValue());
+					acquisition.setTemperature((Float)model.temperature.getValue());
+					acquisition.setTemperatureUnit((String)model.temperatureUnit.getValue());
+					acquisition.setISTDAmount((Float)model.ISTDAmount.getValue());
+					acquisition.setInjectionVolume((Float)model.injectionVolume.getValue());
 					acquisitions.add(acquisition);
 				}
 			}

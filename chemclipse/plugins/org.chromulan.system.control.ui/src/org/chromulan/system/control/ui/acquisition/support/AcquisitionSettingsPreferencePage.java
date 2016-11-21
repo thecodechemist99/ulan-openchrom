@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.chromulan.system.control.ui.acquisition.support;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.chromulan.system.control.model.IAcquisition;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -20,8 +23,11 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -30,83 +36,143 @@ import org.eclipse.swt.widgets.Text;
 public class AcquisitionSettingsPreferencePage extends PreferencePage {
 
 	private IAcquisition acquisition;
-	private Button buttonAutoStop;
+	private List<Control> controls;
 	private DataBindingContext dbc;
-	private Text textDescription;
-	private Text textDuration;
-	private Text textName;
 
 	public AcquisitionSettingsPreferencePage(IAcquisition acquisition) {
 		super("Main");
 		this.acquisition = acquisition;
 		this.dbc = new DataBindingContext();
+		this.controls = new ArrayList<>(20);
 	}
 
 	@Override
 	protected Control createContents(Composite parent) {
 
-		Composite composite = new Composite(parent, SWT.NONE);
+		PreferencePageSupport.create(this, dbc);
+		Composite rootComposite = new Composite(parent, SWT.None);
+		rootComposite.setLayout(new FillLayout());
+		ScrolledComposite scrollComposite = new ScrolledComposite(rootComposite, SWT.BORDER | SWT.V_SCROLL);
+		scrollComposite.setExpandHorizontal(true);
+		scrollComposite.setExpandVertical(true);
+		Composite composite = new Composite(scrollComposite, SWT.None);
+		scrollComposite.setContent(composite);
 		Label label = new Label(composite, SWT.None);
-		label.setText("Name of acquisition");
-		this.textName = new Text(composite, SWT.BORDER);
+		label.setText("Name");
+		Text text = new Text(composite, SWT.BORDER);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_NAME).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterConvertValidator(new ValidatorName()), null);
 		label = new Label(composite, SWT.None);
 		label.setText("Auto Stop");
-		buttonAutoStop = new Button(composite, SWT.CHECK);
+		Button button = new Button(composite, SWT.CHECK);
+		controls.add(button);
+		dbc.bindValue(WidgetProperties.selection().observe(button), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_AUTO_STOP).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
 		label = new Label(composite, SWT.None);
 		label.setText("Duration (min)");
-		textDuration = new Text(composite, SWT.BORDER);
+		text = new Text(composite, SWT.BORDER);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_DURATION).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterConvertValidator(new ValidatorDuration()).setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
 		label = new Label(composite, SWT.None);
 		label.setText("Description");
-		textDescription = new Text(composite, SWT.MULTI | SWT.V_SCROLL);
+		text = new Text(composite, SWT.MULTI | SWT.V_SCROLL);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_DESCRIPTION).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
 		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gridData.heightHint = 3 * textDescription.getLineHeight();
-		textDescription.setLayoutData(gridData);
-		PreferencePageSupport.create(this, dbc);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textName), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_NAME).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterGetValidator(new ValidatorName()), null);
-		dbc.bindValue(WidgetProperties.selection().observe(buttonAutoStop), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_AUTO_STOP).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textDuration), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_DURATION).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterConvertValidator(new ValidatorDuration()).setConverter(new MinutesToMilliseconds()), new UpdateValueStrategy().setConverter(new MillisecondsToMinutes()));
-		dbc.bindValue(WidgetProperties.enabled().observe(textDuration), WidgetProperties.selection().observe(buttonAutoStop));
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(textDescription), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_DESCRIPTION).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		gridData.heightHint = 3 * text.getLineHeight();
+		text.setLayoutData(gridData);
+		label = new Label(composite, SWT.None);
+		label.setText("Analysis");
+		text = new Text(composite, SWT.None);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_ANALYSIS).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("Amount");
+		text = new Text(composite, SWT.None);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_AMOUNT).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("ISTD Amount");
+		text = new Text(composite, SWT.None);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_ISTD_AMOUNT).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("Inj.Volume");
+		text = new Text(composite, SWT.None);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_INJECTION_VOLUME).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("column");
+		text = new Text(composite, SWT.None);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_COLUMN).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("mobil phase");
+		text = new Text(composite, SWT.None);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_MOBIL_PHASE).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("Flow rate");
+		text = new Text(composite, SWT.None);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_FLOW_RATE).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("Flow rate unit");
+		Combo combo = new Combo(composite, SWT.READ_ONLY);
+		combo.add(IAcquisition.FLOW_RATE_UNIT_ML_MIN);
+		combo.add(IAcquisition.FLOW_RATE_UNIT_UL_MIN);
+		controls.add(combo);
+		dbc.bindValue(WidgetProperties.selection().observe(combo), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_FLOW_RATE_UNIT).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("Detection");
+		text = new Text(composite, SWT.None);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_DETECTION).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("Temperature");
+		text = new Text(composite, SWT.None);
+		controls.add(text);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_TEMPERATURE).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
+		label = new Label(composite, SWT.None);
+		label.setText("Temperature unit");
+		combo = new Combo(composite, SWT.READ_ONLY);
+		combo.add(IAcquisition.TEMPERATURE_UNIT_C);
+		combo.add(IAcquisition.TEMPERATURE_UNIT_F);
+		combo.add(IAcquisition.TEMPERATURE_UNIT_K);
+		controls.add(combo);
+		dbc.bindValue(WidgetProperties.selection().observe(combo), BeanProperties.value(IAcquisition.class, IAcquisition.PROPERTY_TEMPERATURE_UNIT).observe(acquisition), new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT), null);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
-		return composite;
-	}
-
-	private void disableEdition() {
-
-		textName.setEnabled(false);
-		textDuration.setEnabled(false);
-		buttonAutoStop.setEnabled(false);
-		textDescription.setEnabled(false);
+		scrollComposite.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
+		setControl();
+		return rootComposite;
 	}
 
 	@Override
 	protected void performDefaults() {
 
 		dbc.updateTargets();
-		setErrors();
 	}
 
 	@Override
 	public boolean performOk() {
 
-		if(acquisition.isCompleted()) {
-			performDefaults();
-			setErrors();
-			return false;
-		} else {
-			dbc.updateModels();
-			return true;
-		}
+		return setControl();
 	}
 
-	private void setErrors() {
+	public boolean setControl() {
 
-		if(acquisition.isRunning()) {
-			textDuration.setEnabled(false);
-			buttonAutoStop.setEnabled(false);
-		} else if(acquisition.isCompleted()) {
-			setErrorMessage("Can not change acquisition because Anaysis has been recorded");
-			disableEdition();
+		synchronized(acquisition) {
+			if(acquisition.isCompleted() || acquisition.isRunning()) {
+				dbc.updateTargets();
+				setErrorMessage("Can not change acquisition because Anaysis has been recorded or is recording");
+				for(Control control : controls) {
+					control.setEnabled(false);
+				}
+				return false;
+			} else {
+				dbc.updateModels();
+				return true;
+			}
 		}
 	}
 }

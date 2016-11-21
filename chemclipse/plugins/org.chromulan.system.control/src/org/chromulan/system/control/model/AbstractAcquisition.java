@@ -20,7 +20,7 @@ import org.chromulan.system.control.device.IDevicesProfile;
 public abstract class AbstractAcquisition implements IAcquisition {
 
 	private IAcquisitionSaver acquisitionSaver;
-	private float amount;
+	private Float amount;
 	private String analysis;
 	private boolean autoStop;
 	private String column;
@@ -31,12 +31,14 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	private long duration;
 	private Float flowRate;
 	private String flowRateUnit;
+	private Float injectionVolume;
+	private Float ISTDAmount;
 	private String mobilPhase;
 	private String name;
 	protected PropertyChangeSupport propertyChangeSupport;
 	private boolean record;
 	private boolean recording;
-	private float temperature;
+	private Float temperature;
 	private String temperatureUnit;
 
 	public AbstractAcquisition() {
@@ -84,7 +86,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
-	public String getColunm() {
+	public String getColumn() {
 
 		return column;
 	}
@@ -114,7 +116,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
-	public float getFlowRate() {
+	public Float getFlowRate() {
 
 		return flowRate;
 	}
@@ -123,6 +125,18 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	public String getFlowRateUnit() {
 
 		return flowRateUnit;
+	}
+
+	@Override
+	public Float getInjectionVolume() {
+
+		return injectionVolume;
+	}
+
+	@Override
+	public Float getISTDAmount() {
+
+		return ISTDAmount;
 	}
 
 	@Override
@@ -144,7 +158,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
-	public float getTemperature() {
+	public Float getTemperature() {
 
 		return temperature;
 	}
@@ -246,7 +260,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
-	public void setFlowRate(float flowRate) {
+	public void setFlowRate(Float flowRate) {
 
 		propertyChangeSupport.firePropertyChange(PROPERTY_FLOW_RATE, this.flowRate, this.flowRate = flowRate);
 	}
@@ -255,6 +269,18 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	public void setFlowRateUnit(String flowRateUnit) {
 
 		propertyChangeSupport.firePropertyChange(PROPERTY_FLOW_RATE_UNIT, this.flowRateUnit, this.flowRateUnit = flowRateUnit);
+	}
+
+	@Override
+	public void setInjectionVolume(Float injectionVolume) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_INJECTION_VOLUME, this.injectionVolume, this.injectionVolume = injectionVolume);
+	}
+
+	@Override
+	public void setISTDAmount(Float ISTDAmount) {
+
+		propertyChangeSupport.firePropertyChange(PROPERTY_ISTD_AMOUNT, this.ISTDAmount, this.ISTDAmount = ISTDAmount);
 	}
 
 	@Override
@@ -270,15 +296,15 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	}
 
 	@Override
-	public void setTemperature(float temperature) {
+	public void setTemperature(Float temperature) {
 
-		propertyChangeSupport.firePropertyChange(PROPERTY_TEMPERATYRE, this.temperature, this.temperature = temperature);
+		propertyChangeSupport.firePropertyChange(PROPERTY_TEMPERATURE, this.temperature, this.temperature = temperature);
 	}
 
 	@Override
-	public void setTemperatureUnit(String unit) {
+	public void setTemperatureUnit(String temperatureUnit) {
 
-		propertyChangeSupport.firePropertyChange(PROPERTY_TEMPERATURE_UNIT, this.temperatureUnit, temperatureUnit);
+		propertyChangeSupport.firePropertyChange(PROPERTY_TEMPERATURE_UNIT, this.temperatureUnit, this.temperatureUnit = temperatureUnit);
 	}
 
 	@Override

@@ -18,6 +18,8 @@ import org.chromulan.system.control.device.IDevicesProfile;
 
 public interface IAcquisition {
 
+	String FLOW_RATE_UNIT_ML_MIN = "ml/min";
+	String FLOW_RATE_UNIT_UL_MIN = "ul/min";
 	String PROPERTY_AMOUNT = "amount";
 	String PROPERTY_ANALYSIS = "analysis";
 	String PROPERTY_AUTO_STOP = "autoStop";
@@ -27,10 +29,15 @@ public interface IAcquisition {
 	String PROPERTY_DURATION = "duration";
 	String PROPERTY_FLOW_RATE = "flowRate";
 	String PROPERTY_FLOW_RATE_UNIT = "flowRateUnit";
+	String PROPERTY_INJECTION_VOLUME = "injectionVolume";
+	String PROPERTY_ISTD_AMOUNT = "ISTDAmount";
 	String PROPERTY_MOBIL_PHASE = "mobilPhase";
 	String PROPERTY_NAME = "name";
+	String PROPERTY_TEMPERATURE = "temperature";
 	String PROPERTY_TEMPERATURE_UNIT = "temperatureUnit";
-	String PROPERTY_TEMPERATYRE = "temperature";
+	String TEMPERATURE_UNIT_C = "Celsius";
+	String TEMPERATURE_UNIT_F = "Fahrenheit";
+	String TEMPERATURE_UNIT_K = "Kelvin";
 
 	void addPropertyChangeListener(PropertyChangeListener listener);
 
@@ -44,7 +51,7 @@ public interface IAcquisition {
 
 	boolean getAutoStop();
 
-	String getColunm();
+	String getColumn();
 
 	String getDescription();
 
@@ -54,9 +61,13 @@ public interface IAcquisition {
 
 	long getDuration();
 
-	float getFlowRate();
+	Float getFlowRate();
 
 	String getFlowRateUnit();
+
+	Float getInjectionVolume();
+
+	Float getISTDAmount();
 
 	String getMobilPhase();
 
@@ -64,7 +75,7 @@ public interface IAcquisition {
 
 	Date getStartDate();
 
-	float getTemperature();
+	Float getTemperature();
 
 	String getTemperatureUnit();
 
@@ -94,15 +105,19 @@ public interface IAcquisition {
 
 	void setDuration(long duration);
 
-	void setFlowRate(float flowRate);
+	void setFlowRate(Float flowRate);
 
 	void setFlowRateUnit(String flowRateUnit);
+
+	void setInjectionVolume(Float injectionVolume);
+
+	void setISTDAmount(Float ISTDAmount);
 
 	void setMobilPhase(String mobilPhase);
 
 	void setName(String name);
 
-	void setTemperature(float temperature);
+	void setTemperature(Float temperature);
 
 	void setTemperatureUnit(String unit);
 
