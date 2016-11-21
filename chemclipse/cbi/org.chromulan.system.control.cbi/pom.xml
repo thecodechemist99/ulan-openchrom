@@ -61,13 +61,13 @@
   -->
   <modules>
     <module>../../plugins/org.chromulan.system.control</module>
+    <module>../../plugins/org.chromulan.system.control.devices</module>
+    <module>../../plugins/org.chromulan.system.control.hitachi.l3000</module>
+    <module>../../plugins/org.chromulan.system.control.manager</module>
+    <module>../../plugins/org.chromulan.system.control.net</module>
     <module>../../plugins/org.chromulan.system.control.ui</module>
     <module>../../features/org.chromulan.system.control.feature</module>
-    <module>../../plugins/org.chromulan.system.control.ulad3x</module>
     <!--<module>../../plugins/org.chromulan.system.control.fragment.test</module>-->
     <module>../../sites/org.chromulan.system.control.updateSite</module>
-    <module>../../plugins/org.chromulan.system.control.net</module>
-    <module>../../plugins/org.chromulan.system.control.devices</module>
-    <module>../../plugins/org.chromulan.system.control.lcd5000</module>
   </modules>
 </project>
