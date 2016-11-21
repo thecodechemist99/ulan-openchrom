@@ -61,23 +61,19 @@ public class AcquisitionsAdministator {
 	public static final String PREFERENCE_SUPPLIER_MSD = "supplierMSD";
 	public static final String PREFERENCE_SUPPLIER_TYPE = "supplierTYPE";
 	public static final String PREFERENCE_SUPPLIER_WSD = "supplierWSD";
-	private Class<? extends IAcquisition> defClassAcquisition;
+	private String defClassAcquisition;
 	private File defFile;
 	private ISupplier defSupplierCSD;
 	private ISupplier defSupplierMSD;
 	private ISupplier defSupplierWSD;
 
 	public AcquisitionsAdministator() {
-		Class<? extends IAcquisition> defClass = IAcquisitionCSD.class;
+		String defClass = IAcquisitionCSD.class.getName();
 		String filePath = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_FILE, null);
 		String supplierCSD = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_CSD, null);
 		String supplierMSD = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_MSD, null);
 		String supplierWSD = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_WSD, null);
-		try {
-			defClassAcquisition = (Class<? extends IAcquisition>)Class.forName(PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_WSD, defClass.getName()));
-		} catch(ClassNotFoundException e) {
-			defClassAcquisition = defClass;
-		}
+		defClassAcquisition = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_WSD, defClass);
 		setDefaultParameters(filePath, supplierCSD, supplierMSD, supplierWSD);
 	}
 
@@ -114,7 +110,7 @@ public class AcquisitionsAdministator {
 
 	private IAcquisition createAcqusition(WizardModelAcquisition model) {
 
-		if(model.acquisitionType.getValue().equals(IAcquisitionCSD.class)) {
+		if(model.acquisitionType.getValue().equals(IAcquisitionCSD.class.getName())) {
 			IAcquisitionCSD acquisition = new AcquisitionCSD();
 			saveDefChromatogramType(IAcquisitionCSD.class);
 			IAcquisitionSaver saver = new AcquisitionCSDSaver(acquisition);
@@ -122,7 +118,7 @@ public class AcquisitionsAdministator {
 			saver.setFile((File)model.folder.getValue());
 			acquisition.setAcquisitionSaver(saver);
 			return acquisition;
-		} else if(model.acquisitionType.getValue().equals(IAcquisitionMSD.class)) {
+		} else if(model.acquisitionType.getValue().equals(IAcquisitionMSD.class.getName())) {
 			IAcquisitionMSD acquisition = new AcquisitionMSD();
 			saveDefChromatogramType(IAcquisitionMSD.class);
 			IAcquisitionSaver saver = new AcquisitionMSDSaver(acquisition);
@@ -130,7 +126,7 @@ public class AcquisitionsAdministator {
 			saver.setFile((File)model.folder.getValue());
 			acquisition.setAcquisitionSaver(saver);
 			return acquisition;
-		} else if(model.acquisitionType.getValue().equals(IAcquisitionWSD.class)) {
+		} else if(model.acquisitionType.getValue().equals(IAcquisitionWSD.class.getName())) {
 			IAcquisitionWSD acquisition = new AcquisitionWSD();
 			saveDefChromatogramType(IAcquisitionWSD.class);
 			IAcquisitionSaver saver = new AcquisitionWSDSaver(acquisition);

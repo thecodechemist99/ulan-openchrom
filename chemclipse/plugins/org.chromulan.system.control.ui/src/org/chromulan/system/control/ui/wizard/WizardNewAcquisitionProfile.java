@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.IDevicesProfile;
-import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.model.IAcquisitionCSD;
 import org.chromulan.system.control.model.IAcquisitionMSD;
 import org.chromulan.system.control.model.IAcquisitionWSD;
@@ -59,22 +58,22 @@ public class WizardNewAcquisitionProfile extends WizardPage {
 	private boolean controlProfile(IDevicesProfile profile) {
 
 		WizardModelAcquisition model = ((WizardNewAcquisition)getWizard()).getModel();
-		Class<? extends IAcquisition> classAcquistion = (Class<? extends IAcquisition>)model.acquisitionType.getValue();
-		if((IAcquisitionCSD.class.isAssignableFrom(classAcquistion))) {
+		String classAcquistion = (String)model.acquisitionType.getValue();
+		if((IAcquisitionCSD.class.getName().equals(classAcquistion))) {
 			for(IControlDevice device : profile.getControlDevices()) {
 				if((device.getFlg() & IControlDevice.FLG_SUPPORT_CSD_CHROMATOGRAM) == 0) {
 					return false;
 				}
 			}
 			return true;
-		} else if((IAcquisitionMSD.class.isAssignableFrom(classAcquistion))) {
+		} else if((IAcquisitionMSD.class.getName().equals(classAcquistion))) {
 			for(IControlDevice device : profile.getControlDevices()) {
 				if((device.getFlg() & IControlDevice.FLG_SUPPORT_MSD_CHROMATOGRAM) == 0) {
 					return false;
 				}
 			}
 			return true;
-		} else if((IAcquisitionWSD.class.isAssignableFrom(classAcquistion))) {
+		} else if((IAcquisitionWSD.class.getName().equals(classAcquistion))) {
 			for(IControlDevice device : profile.getControlDevices()) {
 				if((device.getFlg() & IControlDevice.FLG_SUPPORT_WSD_CHROMATOGRAM) == 0) {
 					return false;

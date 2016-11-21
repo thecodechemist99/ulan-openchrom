@@ -48,13 +48,13 @@ public class WizardNewAcquisitionType extends WizardPage {
 		SelectObservableValue selectedRadioButtonObservable = new SelectObservableValue();
 		Button button = new Button(group, SWT.RADIO);
 		button.setText("Acquisitin CSD");
-		selectedRadioButtonObservable.addOption(IAcquisitionCSD.class, WidgetProperties.selection().observe(button));
+		selectedRadioButtonObservable.addOption(IAcquisitionCSD.class.getName(), WidgetProperties.selection().observe(button));
 		button = new Button(group, SWT.RADIO);
 		button.setText("Acquisitin MSD");
-		selectedRadioButtonObservable.addOption(IAcquisitionMSD.class, WidgetProperties.selection().observe(button));
+		selectedRadioButtonObservable.addOption(IAcquisitionMSD.class.getName(), WidgetProperties.selection().observe(button));
 		button = new Button(group, SWT.RADIO);
 		button.setText("Acquisitin WSD");
-		selectedRadioButtonObservable.addOption(IAcquisitionWSD.class, WidgetProperties.selection().observe(button));
+		selectedRadioButtonObservable.addOption(IAcquisitionWSD.class.getName(), WidgetProperties.selection().observe(button));
 		dbc.bindValue(selectedRadioButtonObservable, model.acquisitionType, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorDevicesProfile()), null);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		setControl(composite);

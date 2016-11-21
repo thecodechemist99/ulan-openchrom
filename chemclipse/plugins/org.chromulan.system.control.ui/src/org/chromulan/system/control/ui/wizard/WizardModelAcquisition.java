@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 
 public class WizardModelAcquisition {
 
-	public IObservableValue acquisitionType = new WritableValue(null, Class.class);
+	public IObservableValue acquisitionType = new WritableValue(null, String.class);
 	public IObservableValue amount = new WritableValue(null, Float.class);
 	public IObservableValue analysis = new WritableValue(null, String.class);
 	public IObservableValue autoStop = new WritableValue(true, Boolean.class);

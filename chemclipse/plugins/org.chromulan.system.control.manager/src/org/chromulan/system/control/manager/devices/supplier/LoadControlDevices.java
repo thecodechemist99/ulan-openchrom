@@ -78,6 +78,7 @@ public class LoadControlDevices {
 		return profiles;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<IDeviceSetting> loadSettings(ObjectInputStream in, IConfigurationElement[] elements) throws IOException, ClassNotFoundException, CoreException {
 
 		return (List<IDeviceSetting>)in.readObject();
