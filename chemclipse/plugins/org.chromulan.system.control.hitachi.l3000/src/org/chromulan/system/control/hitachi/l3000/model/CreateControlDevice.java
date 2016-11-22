@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 
 import org.chromulan.system.control.device.IControlDevice;
-import org.chromulan.system.control.manager.devices.supplier.ICreateControlDevice;
+import org.chromulan.system.control.manager.devices.ICreateControlDevice;
 
 public class CreateControlDevice implements ICreateControlDevice {
 

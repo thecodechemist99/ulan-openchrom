@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.IDevicesProfile;
 import org.chromulan.system.control.device.setting.IDeviceSetting;
-import org.chromulan.system.control.manager.devices.supplier.DeviceSupplier;
+import org.chromulan.system.control.manager.devices.support.DataStore;
 import org.chromulan.system.control.manager.events.IDataSupplierEvents;
 import org.chromulan.system.control.preferences.PreferenceSupplier;
 import org.eclipse.core.runtime.CoreException;
@@ -106,7 +106,7 @@ public class DataSupplier {
 	@PostConstruct
 	public void postConstruct() {
 
-		IConfigurationElement[] elements = registry.getConfigurationElementsFor(DeviceSupplier.ID);
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor(ICreateControlDevice.ID);
 		File file = getFile();
 		if(file != null && file.exists()) {
 			try {

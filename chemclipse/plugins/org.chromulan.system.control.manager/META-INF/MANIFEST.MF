@@ -19,5 +19,4 @@ Import-Package: org.eclipse.chemclipse.converter.processing.chromatogram,
  org.eclipse.e4.core.services.events
 Export-Package: org.chromulan.system.control.manager.acquisitions,
  org.chromulan.system.control.manager.devices,
- org.chromulan.system.control.manager.devices.supplier,
  org.chromulan.system.control.manager.events
