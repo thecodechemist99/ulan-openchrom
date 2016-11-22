@@ -7,32 +7,22 @@ Bundle-Activator: org.chromulan.system.control.hitachi.l3000.Activator
 Bundle-Vendor: CHROMuLAN
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.chemclipse.support.ui;bundle-version="0.7.0",
  org.chromulan.system.control;bundle-version="1.2.0",
- org.eclipse.chemclipse.logging;bundle-version="0.7.0",
- org.eclipse.chemclipse.support;bundle-version="0.7.0",
  org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150407-1430",
  org.chromulan.system.control.manager;bundle-version="1.2.0",
- org.chromulan.system.control.ui;bundle-version="1.2.0"
+ org.chromulan.system.control.ui;bundle-version="1.2.0",
+ org.eclipse.chemclipse.wsd.model;bundle-version="0.8.0",
+ org.eclipse.chemclipse.csd.model;bundle-version="0.8.0",
+ org.eclipse.chemclipse.model;bundle-version="0.8.0",
+ org.eclipse.e4.core.di.annotations,
+ org.eclipse.e4.core.services,
+ org.eclipse.e4.ui.di,
+ org.eclipse.core.databinding,
+ org.eclipse.core.databinding.property,
+ org.eclipse.jface.databinding,
+ org.eclipse.core.databinding.beans
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.chemclipse.csd.model.core,
- org.eclipse.chemclipse.model.core,
- org.eclipse.chemclipse.wsd.model.core,
- org.eclipse.core.databinding,
- org.eclipse.core.databinding.beans,
- org.eclipse.core.databinding.conversion,
- org.eclipse.core.databinding.observable,
- org.eclipse.core.databinding.observable.value,
- org.eclipse.core.databinding.property,
- org.eclipse.core.databinding.property.value,
- org.eclipse.core.databinding.validation,
- org.eclipse.core.internal.databinding.conversion,
- org.eclipse.e4.core.di.annotations,
- org.eclipse.e4.core.services.events,
- org.eclipse.e4.ui.di,
- org.eclipse.jface.databinding.fieldassist,
- org.eclipse.jface.databinding.swt
 Bundle-ClassPath: lib/jSSC-2.8.0-Release/jssc.jar,
  .
 
