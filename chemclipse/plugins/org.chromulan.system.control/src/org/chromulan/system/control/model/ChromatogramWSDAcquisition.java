@@ -73,7 +73,7 @@ public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition 
 		IMultipleSeries multipleSeries = null;
 		synchronized(this) {
 			IChromatogramWSD chromatogramWSD = geChromatogramWSD();
-			List<Integer> wavelengths = new ArrayList<Integer>(this.getWaveLenaght().getWavelengths());
+			List<Double> wavelengths = new ArrayList<Double>(this.getWaveLenaght().getWavelengths());
 			try {
 				ChromatogramSelectionWSD chromatogramSelection = new ChromatogramSelectionWSD(chromatogramWSD, false);
 				multipleSeries = SeriesConverterWSD.convertChromatogram(chromatogramSelection, wavelengths, false, Sign.POSITIVE);

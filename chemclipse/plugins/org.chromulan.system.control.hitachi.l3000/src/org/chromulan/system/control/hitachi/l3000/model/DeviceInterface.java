@@ -70,8 +70,8 @@ public class DeviceInterface {
 				if(acquisition == setAcqiusition) {
 					IChromatogramWSD chromatogramWSD = controlDevice.getDatareceive().getChromatogram().geChromatogramWSD();
 					if(acquisition instanceof IAcquisitionCSD) {
-						HashMap<Integer, IChromatogramCSD> newChrom = IChromatogramWSDAcquisition.chromatogramWSDtoCSD(chromatogramWSD);
-						for(Entry<Integer, IChromatogramCSD> chromSet : newChrom.entrySet()) {
+						HashMap<Double, IChromatogramCSD> newChrom = IChromatogramWSDAcquisition.chromatogramWSDtoCSD(chromatogramWSD);
+						for(Entry<Double, IChromatogramCSD> chromSet : newChrom.entrySet()) {
 							IChromatogramCSD chromatogramCSD = chromSet.getValue();
 							chromatograms.add(new SaveChromatogram(chromatogramCSD, acquisition.getName() + " " + chromSet.getKey().toString()));
 						}

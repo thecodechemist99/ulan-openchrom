@@ -25,16 +25,16 @@ import org.eclipse.chemclipse.wsd.model.core.support.IMarkedWavelengths;
 
 public interface IChromatogramWSDAcquisition extends IChromatogramAcquisition {
 
-	static HashMap<Integer, IChromatogramCSD> chromatogramWSDtoCSD(IChromatogramWSD chromatogramWSD) {
+	static HashMap<Double, IChromatogramCSD> chromatogramWSDtoCSD(IChromatogramWSD chromatogramWSD) {
 
-		HashMap<Integer, IChromatogramCSD> chromatogramCSDs = new HashMap<>();
+		HashMap<Double, IChromatogramCSD> chromatogramCSDs = new HashMap<>();
 		int scanDelay = chromatogramWSD.getScanDelay();
 		int scanInterval = chromatogramWSD.getScanInterval();
 		Iterator<IScan> iteratorScans = chromatogramWSD.getScans().stream().iterator();
 		while(iteratorScans.hasNext()) {
 			IScanWSD scan = (IScanWSD)iteratorScans.next();
 			for(IScanSignalWSD signal : scan.getScanSignals()) {
-				int waveLength = signal.getWavelength();
+				double waveLength = signal.getWavelength();
 				float abundance = signal.getAbundance();
 				int retentionTime = scan.getRetentionTime();
 				if(!chromatogramCSDs.containsKey(waveLength)) {
