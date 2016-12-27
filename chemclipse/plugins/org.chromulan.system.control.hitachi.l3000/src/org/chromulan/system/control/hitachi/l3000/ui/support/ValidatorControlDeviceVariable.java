@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * PC - initial API and implementation
+ * Jan Holy - initial API and implementation
  *******************************************************************************/
 package org.chromulan.system.control.hitachi.l3000.ui.support;
 
