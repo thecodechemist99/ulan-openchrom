@@ -72,21 +72,20 @@ public class DeviceInterface {
 						HashMap<Double, IChromatogramCSD> newChrom = IChromatogramWSDAcquisition.chromatogramWSDtoCSD(chromatogramWSD);
 						for(Entry<Double, IChromatogramCSD> chromSet : newChrom.entrySet()) {
 							IChromatogramCSD chromatogramCSD = chromSet.getValue();
-							SaveChromatogram saveChromatogram =new SaveChromatogram(chromatogramCSD, acquisition.getName() + " " + chromSet.getKey().toString(),controlDevice.getName());
+							SaveChromatogram saveChromatogram = new SaveChromatogram(chromatogramCSD, acquisition.getName() + " " + chromSet.getKey().toString(), controlDevice.getName());
 							saveChromatogram.addDevicePropertie(ControlDevice.SETTING_TIME_INTERVAL, Integer.toString(controlDevice.getTimeIntervalMill()) + "ms");
-							saveChromatogram.addDevicePropertie("wave lenght",chromSet.getKey().toString()+"nm");
+							saveChromatogram.addDevicePropertie("wave lenght", chromSet.getKey().toString() + "nm");
 							chromatograms.add(saveChromatogram);
 						}
 					}
 					if(acquisition instanceof IChromatogramWSD) {
-						SaveChromatogram saveChromatogram = new SaveChromatogram(chromatogramWSD, acquisition.getName(),controlDevice.getName());
+						SaveChromatogram saveChromatogram = new SaveChromatogram(chromatogramWSD, acquisition.getName(), controlDevice.getName());
 						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_TIME_INTERVAL, Integer.toString(controlDevice.getTimeIntervalMill()) + "ms");
-						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_WAVELENGHT_INTERVAL, Float.toString(controlDevice.getWavelenghtInterval())+"nm");
-						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_WAVELENGHT_RANGE_FROM, Float.toString(controlDevice.getWavelenghtRangeFrom())+"nm");
-						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_WAVELENGHT_RANGE_TO, Float.toString(controlDevice.getWavelenghtRangeTo())+"nm");
+						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_WAVELENGHT_INTERVAL, Float.toString(controlDevice.getWavelenghtInterval()) + "nm");
+						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_WAVELENGHT_RANGE_FROM, Float.toString(controlDevice.getWavelenghtRangeFrom()) + "nm");
+						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_WAVELENGHT_RANGE_TO, Float.toString(controlDevice.getWavelenghtRangeTo()) + "nm");
 						chromatograms.add(saveChromatogram);
 					}
-				
 				}
 				return chromatograms;
 			}

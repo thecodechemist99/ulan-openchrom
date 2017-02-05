@@ -67,15 +67,15 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 		return chromatogramExportConverterProcessingInfos;
 	}
 
-	protected void namesRemove() {
-
-		names.clear();
-	}
-
 	@Override
 	public ISupplier getSupplier() {
 
 		return supplier;
+	}
+
+	protected void namesRemove() {
+
+		names.clear();
 	}
 
 	@Override

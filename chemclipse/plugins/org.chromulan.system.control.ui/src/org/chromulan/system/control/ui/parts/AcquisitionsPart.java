@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+@SuppressWarnings("restriction")
 public class AcquisitionsPart {
 
 	private class ActualyationTimeRecording implements Runnable {

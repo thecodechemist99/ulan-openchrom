@@ -27,6 +27,7 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.preference.PreferencePageSupport;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
@@ -51,13 +52,15 @@ public class AcquisitionSavePreferencePage extends PreferencePage {
 	private Button buttonSelectDirectory;
 	private DataBindingContext dbc;
 	private Text directory;
-	private IObservableValue file;
-	private IObservableValue supplier;
+	private IObservableValue<File> file;
+	private IObservableValue<ISupplier> supplier;
 	private List<ISupplier> suppliers;
 
 	public AcquisitionSavePreferencePage(IAcquisition acquisition) {
 		super("Save");
 		setAcquisition(acquisition);
+		file = new WritableValue<>(acquisition.getAcquisitionSaver().getFile(), File.class);
+		supplier = new WritableValue<>(acquisition.getAcquisitionSaver().getSupplier(), ISupplier.class);
 	}
 
 	@Override
@@ -88,7 +91,7 @@ public class AcquisitionSavePreferencePage extends PreferencePage {
 		buttonSelectDirectory = new Button(composite, SWT.PUSH);
 		buttonSelectDirectory.setText("Browse..");
 		directory = new Text(composite, SWT.BEGINNING | SWT.BORDER);
-		IObservableValue observeDirectory = WidgetProperties.text(SWT.Modify).observe(directory);
+		ISWTObservableValue  observeDirectory = WidgetProperties.text(SWT.Modify).observe(directory);
 		dbc.bindValue(observeDirectory, file, new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterConvertValidator(new ValidatorDirectory()).setConverter(new StringToFile()), new UpdateValueStrategy().setConverter(new FileToString()));
 		buttonSelectDirectory.addSelectionListener(new SelectionAdapter() {
 
@@ -142,8 +145,8 @@ public class AcquisitionSavePreferencePage extends PreferencePage {
 		} else if(acquisition instanceof IAcquisitionWSD) {
 			this.suppliers = ChromatogramConverterWSD.getChromatogramConverterSupport().getSupplier();
 		}
-		file = new WritableValue(acquisition.getAcquisitionSaver().getFile(), File.class);
-		supplier = new WritableValue(acquisition.getAcquisitionSaver().getSupplier(), ISupplier.class);
+		file.setValue(acquisition.getAcquisitionSaver().getFile());
+		supplier.setValue(acquisition.getAcquisitionSaver().getSupplier());
 		this.dbc = new DataBindingContext();
 	}
 

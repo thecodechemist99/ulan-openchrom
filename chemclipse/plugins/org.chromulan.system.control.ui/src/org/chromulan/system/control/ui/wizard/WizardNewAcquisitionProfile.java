@@ -58,7 +58,7 @@ public class WizardNewAcquisitionProfile extends WizardPage {
 	private boolean controlProfile(IDevicesProfile profile) {
 
 		WizardModelAcquisition model = ((WizardNewAcquisition)getWizard()).getModel();
-		String classAcquistion = (String)model.acquisitionType.getValue();
+		String classAcquistion = model.acquisitionType.getValue();
 		if((IAcquisitionCSD.class.getName().equals(classAcquistion))) {
 			for(IControlDevice device : profile.getControlDevices()) {
 				if((device.getFlg() & IControlDevice.FLG_SUPPORT_CSD_CHROMATOGRAM) == 0) {
@@ -101,7 +101,7 @@ public class WizardNewAcquisitionProfile extends WizardPage {
 		group.setText("Devices Profile");
 		GridLayoutFactory.fillDefaults().applyTo(group);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(group);
-		SelectObservableValue selectedRadioButtonObservable = new SelectObservableValue();
+		SelectObservableValue<IDevicesProfile> selectedRadioButtonObservable = new SelectObservableValue<>();
 		for(IDevicesProfile profile : devicesProfil) {
 			Button button = new Button(group, SWT.RADIO);
 			button.setText(profile.getName());
@@ -118,7 +118,7 @@ public class WizardNewAcquisitionProfile extends WizardPage {
 
 		setErrorMessage(null);
 		WizardModelAcquisition model = ((WizardNewAcquisition)getWizard()).getModel();
-		IDevicesProfile profile = (IDevicesProfile)model.devicesProfile.getValue();
+		IDevicesProfile profile = model.devicesProfile.getValue();
 		if(profile != null) {
 			if(!controlProfile(profile)) {
 				setErrorMessage("Device in profile does not support this type acquisition");

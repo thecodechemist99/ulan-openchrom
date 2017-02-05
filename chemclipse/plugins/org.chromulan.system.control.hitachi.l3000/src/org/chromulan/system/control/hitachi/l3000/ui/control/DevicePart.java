@@ -104,13 +104,13 @@ public class DevicePart {
 
 		device = deviceInterface.getControlDevice();
 		DataBindingContext dbc = new DataBindingContext();
-		IObservableValue propertyOutputType = BeanProperties.value(ControlDevice.PROPERTY_OUTPUT_TYPE, Integer.class).observe(device);
-		IObservableValue propertyTimeInterval = BeanProperties.value(ControlDevice.PROPERTY_TIME_INTERVAL, Float.class).observe(device);
-		IObservableValue propertyWavelenghtInterval = BeanProperties.value(ControlDevice.PROPERTY_WAVELENGHT_INTERVA, Float.class).observe(device);
-		IObservableValue propertyWavelenghtRangeFrom = BeanProperties.value(ControlDevice.PROPERTY_WAVELENGHT_RANGE_FROM, Integer.class).observe(device);
-		IObservableValue propertyWavelenghtRangeTo = BeanProperties.value(ControlDevice.PROPERTY_WAVELENGHT_RANGE_TO, Integer.class).observe(device);
-		IObservableValue propertySendStart = BeanProperties.value(ControlDevice.PROPERTY_SEND_START, Boolean.class).observe(device);
-		IObservableValue propertySendStop = BeanProperties.value(ControlDevice.PROPERTY_SEND_STOP, Boolean.class).observe(device);
+		IObservableValue<Integer> propertyOutputType = BeanProperties.value(ControlDevice.PROPERTY_OUTPUT_TYPE, Integer.class).observe(device);
+		IObservableValue<Float> propertyTimeInterval = BeanProperties.value(ControlDevice.PROPERTY_TIME_INTERVAL, Float.class).observe(device);
+		IObservableValue<Float> propertyWavelenghtInterval = BeanProperties.value(ControlDevice.PROPERTY_WAVELENGHT_INTERVA, Float.class).observe(device);
+		IObservableValue<Integer> propertyWavelenghtRangeFrom = BeanProperties.value(ControlDevice.PROPERTY_WAVELENGHT_RANGE_FROM, Integer.class).observe(device);
+		IObservableValue<Integer> propertyWavelenghtRangeTo = BeanProperties.value(ControlDevice.PROPERTY_WAVELENGHT_RANGE_TO, Integer.class).observe(device);
+		IObservableValue<Boolean> propertySendStart = BeanProperties.value(ControlDevice.PROPERTY_SEND_START, Boolean.class).observe(device);
+		IObservableValue<Boolean> propertySendStop = BeanProperties.value(ControlDevice.PROPERTY_SEND_STOP, Boolean.class).observe(device);
 		BeanProperties.value(ControlDevice.PROPERTY_AUTOSET_VALUE, Boolean.class).observe(device);
 		Label label = new Label(composite, SWT.None);
 		label.setText("Device connected");

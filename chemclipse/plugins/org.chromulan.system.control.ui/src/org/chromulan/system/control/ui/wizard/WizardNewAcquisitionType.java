@@ -45,7 +45,7 @@ public class WizardNewAcquisitionType extends WizardPage {
 		group.setText("Acquisition Type");
 		GridLayoutFactory.fillDefaults().applyTo(group);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(group);
-		SelectObservableValue selectedRadioButtonObservable = new SelectObservableValue();
+		SelectObservableValue<String> selectedRadioButtonObservable = new SelectObservableValue<>();
 		Button button = new Button(group, SWT.RADIO);
 		button.setText("Acquisitin CSD");
 		selectedRadioButtonObservable.addOption(IAcquisitionCSD.class.getName(), WidgetProperties.selection().observe(button));

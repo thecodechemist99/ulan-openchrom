@@ -21,10 +21,10 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.preference.PreferencePageSupport;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -53,11 +53,11 @@ public class ChromatogramPreferencePage extends PreferencePage {
 		PreferencePageSupport.create(this, dbc);
 		Label label = new Label(composite, SWT.None);
 		label.setText("Interval (min)");
-		Text textInterval = new Text(composite, SWT.None);	
+		Text textInterval = new Text(composite, SWT.None);
 		setDBCInterval(WidgetProperties.text(SWT.Modify).observe(textInterval), interval);
 		label = new Label(composite, SWT.None);
 		label.setText("Minimal Y adjust Intensity");
-		Text textIntensity = new Text(composite, SWT.None);	
+		Text textIntensity = new Text(composite, SWT.None);
 		setDBCAutoMinYAdjustIntensity(WidgetProperties.text(SWT.Modify).observe(textIntensity), minYAdjustIntensity);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		return composite;
@@ -70,6 +70,7 @@ public class ChromatogramPreferencePage extends PreferencePage {
 		interval.setValue(chromatogramOverviewUI.getInterval());
 	}
 
+	@Override
 	public boolean performOk() {
 
 		chromatogramOverviewUI.setMinYAdjustIntensity(minYAdjustIntensity.getValue());
@@ -77,7 +78,7 @@ public class ChromatogramPreferencePage extends PreferencePage {
 		return true;
 	}
 
-	private void setDBCAutoMinYAdjustIntensity(IObservableValue targetObservableValue, IObservableValue modelObservableValue) {
+	private void setDBCAutoMinYAdjustIntensity(ISWTObservableValue targetObservableValue, IObservableValue<Double> modelObservableValue) {
 
 		IValidator validator = new IValidator() {
 
@@ -127,7 +128,7 @@ public class ChromatogramPreferencePage extends PreferencePage {
 		dbc.bindValue(targetObservableValue, modelObservableValue, new UpdateValueStrategy().setAfterConvertValidator(validator).setConverter(stringToDouble), new UpdateValueStrategy().setConverter(doubleToString));
 	}
 
-	private void setDBCInterval(IObservableValue targetObservableValue, IObservableValue modelObservableValue) {
+	private void setDBCInterval(ISWTObservableValue targetObservableValue, IObservableValue<Double> modelObservableValue) {
 
 		Converter stringToDouble = new Converter(String.class, Double.class) {
 

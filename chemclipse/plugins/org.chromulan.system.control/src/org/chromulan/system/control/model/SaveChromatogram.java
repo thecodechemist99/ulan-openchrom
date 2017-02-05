@@ -17,16 +17,30 @@ import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public class SaveChromatogram {
 
+	private HashMap<String, String> deviceProperties;
 	private IChromatogram chromatogram;
 	private String name;
 	private String nameDevice;
-	private HashMap<String, String> deviceProperties;
 
-
-	public SaveChromatogram(IChromatogram chromatogram, String name,String nameDevice) {
+	public SaveChromatogram(IChromatogram chromatogram, String name, String nameDevice) {
 		this.chromatogram = chromatogram;
 		this.name = name;
 		this.nameDevice = nameDevice;
+	}
+
+	public boolean addDevicePropertie(String name, String value) {
+
+		String ss = deviceProperties.put(name, value);
+		if(ss == null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public HashMap<String, String> getDeviceProperties() {
+
+		return deviceProperties;
 	}
 
 	public IChromatogram getChromatogram() {
@@ -38,29 +52,7 @@ public class SaveChromatogram {
 
 		return name;
 	}
-	
-	
-	public boolean addDevicePropertie(String name,String value)
-	{
-		String ss = deviceProperties.put(name, value);
-		if(ss == null)
-			return true;
-		else 
-			return false;
-	}
-	
-	
-	public HashMap<String, String> getDeviceProperties() {
 
-		return deviceProperties;
-	}
-	
-	public void setNameDevice(String nameDevice) {
-
-		this.nameDevice = nameDevice;
-	}
-	
-	
 	public String getNameDevice() {
 
 		return nameDevice;
@@ -74,5 +66,10 @@ public class SaveChromatogram {
 	public void setName(String name) {
 
 		this.name = name;
+	}
+
+	public void setNameDevice(String nameDevice) {
+
+		this.nameDevice = nameDevice;
 	}
 }

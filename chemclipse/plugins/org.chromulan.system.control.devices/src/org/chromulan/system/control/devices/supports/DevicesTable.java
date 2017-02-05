@@ -168,7 +168,7 @@ public class DevicesTable {
 
 	public void setDevices(List<IUlanControlDevice> devices) {
 
-		viewer.setInput(new WritableList(devices, IUlanControlDevice.class));
+		viewer.setInput(new WritableList<>(devices, IUlanControlDevice.class));
 		this.devices = devices;
 	}
 

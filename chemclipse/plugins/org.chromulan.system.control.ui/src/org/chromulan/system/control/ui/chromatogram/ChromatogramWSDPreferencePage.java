@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Jan Holy - initial API and implementation
  *******************************************************************************/
@@ -30,8 +30,8 @@ import org.eclipse.swt.widgets.Control;
 
 public class ChromatogramWSDPreferencePage extends PreferencePage {
 
-	private ChromatogramWSDOverviewUI chromatogramWSDOverviewUI;
 	private IObservableMap<Double, Boolean> attributesMap;
+	private ChromatogramWSDOverviewUI chromatogramWSDOverviewUI;
 
 	public ChromatogramWSDPreferencePage(ChromatogramWSDOverviewUI chromatogramWSDOverviewUI) {
 		super("Select Wave lenght");
@@ -61,11 +61,10 @@ public class ChromatogramWSDPreferencePage extends PreferencePage {
 
 	@Override
 	public boolean performOk() {
-		if(!attributesMap.containsValue(true))
-		{
+
+		if(!attributesMap.containsValue(true)) {
 			return false;
 		}
-		
 		Iterator<Entry<Double, Boolean>> iterator = attributesMap.entrySet().iterator();
 		Map<Double, Boolean> map = chromatogramWSDOverviewUI.getChromatogramWSD().getSelectedWaveLengths();
 		while(iterator.hasNext()) {

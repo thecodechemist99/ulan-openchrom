@@ -88,7 +88,7 @@ public class DevicesTable {
 
 	public void setDevices(IControlDevices devices) {
 
-		viewer.setInput(new WritableList(devices.getControlDevices(), IControlDevice.class));
+		viewer.setInput(new WritableList<>(devices.getControlDevices(), IControlDevice.class));
 		this.devices = devices;
 	}
 }

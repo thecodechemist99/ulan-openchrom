@@ -12,7 +12,6 @@
 package org.chromulan.system.control.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,26 @@ public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition 
 	public ChromatogramWSDAcquisition(int interval, int delay) {
 		super(interval, delay);
 		selectedWavelengths = new ConcurrentHashMap<>();
+	}
+
+	@Override
+	public void addScan(IScan scan) {
+
+		super.addScan(scan);
+		if(setWavelenght) {
+			resetWaveLengths();
+			setWavelenght = false;
+		}
+	}
+
+	@Override
+	public void addScanAutoSet(IScan scan) {
+
+		super.addScanAutoSet(scan);
+		if(setWavelenght) {
+			resetWaveLengths();
+			setWavelenght = false;
+		}
 	}
 
 	@Override
@@ -82,7 +101,7 @@ public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition 
 			synchronized(selectedWavelengths) {
 				Iterator<Entry<Double, Boolean>> iterator = selectedWavelengths.entrySet().iterator();
 				while(iterator.hasNext()) {
-					Map.Entry<Double, Boolean> entry = (Map.Entry<Double, Boolean>)iterator.next();
+					Map.Entry<Double, Boolean> entry = iterator.next();
 					if(entry.getValue()) {
 						wavelengths.add(entry.getKey());
 					}
@@ -95,26 +114,6 @@ public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition 
 			}
 		}
 		return multipleSeries;
-	}
-
-	@Override
-	public void addScan(IScan scan) {
-
-		super.addScan(scan);
-		if(setWavelenght) {
-			resetWaveLengths();
-			setWavelenght = false;
-		}
-	}
-
-	@Override
-	public void addScanAutoSet(IScan scan) {
-
-		super.addScanAutoSet(scan);
-		if(setWavelenght) {
-			resetWaveLengths();
-			setWavelenght = false;
-		}
 	}
 
 	@Override

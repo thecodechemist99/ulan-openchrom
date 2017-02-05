@@ -23,7 +23,7 @@ public class AcquisitionMSDSaver extends AbstractAcquisitionSaver implements IAc
 		File file = getFile();
 		ISupplier supplier = getSupplier();
 		IAcquisition acquisition = getAcquisition();
-		if(acquisition ==null || chromatograms == null || file == null || supplier == null) {
+		if(acquisition == null || chromatograms == null || file == null || supplier == null) {
 			throw new NullPointerException();
 		}
 		namesRemove();

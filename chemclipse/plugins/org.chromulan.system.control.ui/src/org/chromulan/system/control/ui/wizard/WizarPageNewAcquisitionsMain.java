@@ -26,6 +26,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
@@ -47,21 +48,17 @@ import org.eclipse.swt.widgets.Text;
 
 public class WizarPageNewAcquisitionsMain extends WizardPage {
 
-	private File defFile;
-	private ISupplier defSupplierCSD;
-	private ISupplier defSupplierMSD;
-	private ISupplier defSupplierWSD;
-	private IObservableValue file;
-	private IObservableValue supplierCSD;
-	private IObservableValue supplierMSD;
-	private IObservableValue supplierWSD;
+	private IObservableValue<File> file;
+	private IObservableValue<ISupplier> supplierCSD;
+	private IObservableValue<ISupplier> supplierMSD;
+	private IObservableValue<ISupplier> supplierWSD;
 
 	public WizarPageNewAcquisitionsMain(String pageName, File defFile, ISupplier defSupplierCSD, ISupplier defSupplierWSD, ISupplier defSupplierMSD) {
 		super(pageName, null, null);
-		this.defFile = defFile;
-		this.defSupplierCSD = defSupplierCSD;
-		this.defSupplierWSD = defSupplierWSD;
-		this.defSupplierMSD = defSupplierMSD;
+		this.file = new WritableValue<>(defFile, File.class);
+		this.supplierCSD = new WritableValue<>(defSupplierCSD, ISupplier.class);
+		this.supplierMSD = new WritableValue<>(defSupplierMSD, ISupplier.class);
+		this.supplierWSD = new WritableValue<>(defSupplierWSD, ISupplier.class);
 	}
 
 	@Override
@@ -90,7 +87,6 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 			}
 		});
 		combo.setInput(suppliers);
-		supplierCSD = new WritableValue(defSupplierCSD, ISupplier.class);
 		IViewerObservableValue observeCombo = ViewerProperties.singleSelection().observe(combo);
 		dbc.bindValue(observeCombo, supplierCSD);
 		label = new Label(composite, SWT.None);
@@ -112,7 +108,6 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 			}
 		});
 		combo.setInput(suppliers);
-		supplierMSD = new WritableValue(defSupplierMSD, ISupplier.class);
 		observeCombo = ViewerProperties.singleSelection().observe(combo);
 		dbc.bindValue(observeCombo, supplierMSD);
 		label = new Label(composite, SWT.None);
@@ -134,10 +129,8 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 			}
 		});
 		combo.setInput(suppliers);
-		supplierWSD = new WritableValue(defSupplierWSD, ISupplier.class);
 		observeCombo = ViewerProperties.singleSelection().observe(combo);
 		dbc.bindValue(observeCombo, supplierWSD);
-		file = new WritableValue(defFile, File.class);
 		final DirectoryDialog dialog = new DirectoryDialog(parent.getShell());
 		label = new Label(composite, SWT.None);
 		label.setText("Directory: ");
@@ -146,7 +139,7 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 		GridData gridData = new GridData(GridData.END, GridData.END, false, false);
 		button.setLayoutData(gridData);
 		final Text directory = new Text(composite, SWT.BEGINNING | SWT.BORDER);
-		IObservableValue observeDirectory = WidgetProperties.text(SWT.Modify).observe(directory);
+		ISWTObservableValue observeDirectory = WidgetProperties.text(SWT.Modify).observe(directory);
 		dbc.bindValue(observeDirectory, file, new UpdateValueStrategy().setAfterConvertValidator(new ValidatorDirectory()).setConverter(new StringToFile()), new UpdateValueStrategy().setConverter(new FileToString()));
 		gridData = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
 		gridData.horizontalSpan = 2;
@@ -169,22 +162,22 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 
 	public File getFile() {
 
-		return (File)file.getValue();
+		return file.getValue();
 	}
 
 	public ISupplier getSupplierCSD() {
 
-		return (ISupplier)supplierCSD.getValue();
+		return supplierCSD.getValue();
 	}
 
 	public ISupplier getSupplierMSD() {
 
-		return (ISupplier)supplierMSD.getValue();
+		return supplierMSD.getValue();
 	}
 
 	public ISupplier getSupplierWSD() {
 
-		return (ISupplier)supplierWSD.getValue();
+		return supplierWSD.getValue();
 	}
 
 	@Override

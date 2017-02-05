@@ -32,30 +32,30 @@ import purejavacomm.CommPortIdentifier;
 
 public class ConnectionPreferencePage extends PreferencePage {
 
-	private IObservableValue boudRate;
+	private IObservableValue<String> boudRate;
 	private ControlDevice controlDevice;
-	private IObservableValue controlSignal;
+	private IObservableValue<Boolean> controlSignal;
 	private DataBindingContext dbc;
-	private IObservableValue delimiter;
+	private IObservableValue<String> delimiter;
 	private String delimiterCR = "CR";
 	private String delimiterCRLF = "CR+LF";
 	private DeviceInterface deviceInterface;
-	private IObservableValue name;
-	private IObservableValue parity;
+	private IObservableValue<String> name;
+	private IObservableValue<Boolean> parity;
 
 	public ConnectionPreferencePage(DeviceInterface deviceInterface) {
 		super("Connection");
 		this.controlDevice = deviceInterface.getControlDevice();
 		this.deviceInterface = deviceInterface;
-		this.name = new WritableValue(controlDevice.getPortName(), String.class);
-		this.boudRate = new WritableValue(Integer.toString(controlDevice.getPortBaudRate()), String.class);
+		this.name = new WritableValue<>(controlDevice.getPortName(), String.class);
+		this.boudRate = new WritableValue<>(Integer.toString(controlDevice.getPortBaudRate()), String.class);
 		if(controlDevice.getPortDelimeter().equals(ControlDevice.DELIMITER_CR)) {
-			this.delimiter = new WritableValue(delimiterCR, String.class);
+			this.delimiter = new WritableValue<>(delimiterCR, String.class);
 		} else {
-			this.delimiter = new WritableValue(delimiterCRLF, String.class);
+			this.delimiter = new WritableValue<>(delimiterCRLF, String.class);
 		}
-		this.parity = new WritableValue(controlDevice.isPortEventParity(), Boolean.class);
-		this.controlSignal = new WritableValue(controlDevice.isPortDataControlSignal(), Boolean.class);
+		this.parity = new WritableValue<>(controlDevice.isPortEventParity(), Boolean.class);
+		this.controlSignal = new WritableValue<>(controlDevice.isPortDataControlSignal(), Boolean.class);
 		this.dbc = new DataBindingContext();
 	}
 
@@ -132,13 +132,13 @@ public class ConnectionPreferencePage extends PreferencePage {
 	@Override
 	public boolean performOk() {
 
-		String name = (String)this.name.getValue();
+		String name = this.name.getValue();
 		if(name == null || name.isEmpty()) {
 			return false;
 		}
-		int boudRate = Integer.valueOf((String)this.boudRate.getValue());
-		boolean parity = (Boolean)this.parity.getValue();
-		boolean controlSignal = (Boolean)this.controlSignal.getValue();
+		int boudRate = Integer.valueOf(this.boudRate.getValue());
+		boolean parity = this.parity.getValue();
+		boolean controlSignal = this.controlSignal.getValue();
 		String delimiter = null;
 		if(this.delimiter.getValue().equals(delimiterCR)) {
 			delimiter = ControlDevice.DELIMITER_CR;

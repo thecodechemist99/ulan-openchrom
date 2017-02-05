@@ -76,7 +76,7 @@ public class UlanDevicesManager {
 					if(IUlanControlDevices.contains(acquisition.getDevicesProfile().getControlDevices(), iUlanControlDevice.getDeviceID())) {
 						if(iUlanControlDevice instanceof DetectorULanControlDevice) {
 							DetectorULanControlDevice detectorULanControlDevice = (DetectorULanControlDevice)iUlanControlDevice;
-							saveChromatograms.add(new SaveChromatogram(detectorULanControlDevice.getChromatogramRecording().getChromatogram(), detectorULanControlDevice.getName(),detectorULanControlDevice.getName()));
+							saveChromatograms.add(new SaveChromatogram(detectorULanControlDevice.getChromatogramRecording().getChromatogram(), detectorULanControlDevice.getName(), detectorULanControlDevice.getName()));
 						}
 					}
 				}

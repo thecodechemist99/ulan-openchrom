@@ -52,7 +52,7 @@ public interface IChromatogramWSDAcquisition extends IChromatogramAcquisition {
 
 	IChromatogramWSD getChromatogramWSD();
 
-	Map<Double,Boolean> getSelectedWaveLengths();
+	Map<Double, Boolean> getSelectedWaveLengths();
 
 	void resetWaveLengths();
 }
