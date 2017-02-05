@@ -48,7 +48,7 @@ public class ChromatogramFilesDialog extends Dialog {
 	public ChromatogramFilesDialog(Shell parentShell, IAcquisitionSaver acquisitionSaver) {
 		super(parentShell);
 		this.acquisitionSaver = acquisitionSaver;
-		chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
+		chromatogramExportConverterProcessingInfos = new LinkedList<>();
 	}
 
 	@Override

@@ -22,13 +22,14 @@ public class AcquisitionMSDSaver extends AbstractAcquisitionSaver implements IAc
 		List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos = getChromatogramExportConverterProcessInfo();
 		File file = getFile();
 		ISupplier supplier = getSupplier();
-		if(chromatograms == null || file == null || supplier == null) {
+		IAcquisition acquisition = getAcquisition();
+		if(acquisition ==null || chromatograms == null || file == null || supplier == null) {
 			throw new NullPointerException();
 		}
-		getNames().clear();
+		namesRemove();
 		chromatogramExportConverterProcessingInfos.clear();
 		for(SaveChromatogram saveChromatogram : chromatograms) {
-			IChromatogram chromatogram = saveChromatogram.getChromatogram();
+			IChromatogram chromatogram = setChromatogramParameters(saveChromatogram, acquisition);
 			if(chromatogram instanceof IChromatogramMSD) {
 				IChromatogramMSD chromatogramMSD = (IChromatogramMSD)chromatogram;
 				File nfile = setFile(saveChromatogram.getName(), supplier.getFileExtension());

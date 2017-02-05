@@ -11,19 +11,22 @@
  *******************************************************************************/
 package org.chromulan.system.control.model;
 
+import java.util.HashMap;
+
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public class SaveChromatogram {
 
 	private IChromatogram chromatogram;
 	private String name;
+	private String nameDevice;
+	private HashMap<String, String> deviceProperties;
 
-	public SaveChromatogram() {
-	}
 
-	public SaveChromatogram(IChromatogram chromatogram, String name) {
+	public SaveChromatogram(IChromatogram chromatogram, String name,String nameDevice) {
 		this.chromatogram = chromatogram;
 		this.name = name;
+		this.nameDevice = nameDevice;
 	}
 
 	public IChromatogram getChromatogram() {
@@ -34,6 +37,33 @@ public class SaveChromatogram {
 	public String getName() {
 
 		return name;
+	}
+	
+	
+	public boolean addDevicePropertie(String name,String value)
+	{
+		String ss = deviceProperties.put(name, value);
+		if(ss == null)
+			return true;
+		else 
+			return false;
+	}
+	
+	
+	public HashMap<String, String> getDeviceProperties() {
+
+		return deviceProperties;
+	}
+	
+	public void setNameDevice(String nameDevice) {
+
+		this.nameDevice = nameDevice;
+	}
+	
+	
+	public String getNameDevice() {
+
+		return nameDevice;
 	}
 
 	public void setChromatogram(IChromatogram chromatogram) {

@@ -13,15 +13,19 @@ package org.chromulan.system.control.model;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
+import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 
-	static String adjustNameFile(String name) {
+	protected static String adjustNameFile(String name) {
 
 		if(name == null) {
 			return "CHROMATOGRAM";
@@ -63,9 +67,9 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 		return chromatogramExportConverterProcessingInfos;
 	}
 
-	protected HashMap<String, Integer> getNames() {
+	protected void namesRemove() {
 
-		return names;
+		names.clear();
 	}
 
 	@Override
@@ -115,6 +119,43 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 			names.put(allName, 1);
 		}
 		return new File(file + File.separator + adjustNameFile(acquisition.getName()) + File.separator + newName);
+	}
+
+	protected IChromatogram setChromatogramParameters(SaveChromatogram saveChromatogram, IAcquisition acquisition) {
+
+		IChromatogram chromatogram = saveChromatogram.getChromatogram();
+		Iterator<Entry<String, String>> deviceProperties = saveChromatogram.getDeviceProperties().entrySet().iterator();
+		String deviceName = saveChromatogram.getNameDevice();
+		chromatogram.setShortInfo(acquisition.getDescription());
+		Map<String, String> miscellaneous = chromatogram.getMiscellaneous();
+		String duration = Long.toString(acquisition.getDuration() / (1000 * 60)) + " min";
+		String analysis = acquisition.getAnalysis();
+		String amount = Float.toString(acquisition.getAmount());
+		String istdAmount = Float.toString(acquisition.getISTDAmount());
+		String InjVolume = Float.toString(acquisition.getInjectionVolume());
+		String column = acquisition.getColumn();
+		String mobilPhase = acquisition.getMobilPhase();
+		String flowrate = Float.toString(acquisition.getFlowRate()) + " " + acquisition.getFlowRateUnit();
+		String detection = acquisition.getDetection();
+		String temperature = Float.toString(acquisition.getTemperature()) + " " + acquisition.getTemperatureUnit();
+		miscellaneous.put("Duration", duration);
+		miscellaneous.put("Analysis", analysis);
+		miscellaneous.put("Amount", amount);
+		miscellaneous.put("ISTD Amount", istdAmount);
+		miscellaneous.put("Inj. Volume", InjVolume);
+		miscellaneous.put("Column", column);
+		miscellaneous.put("Mobil Phase", mobilPhase);
+		miscellaneous.put("Flow rate", flowrate);
+		miscellaneous.put("Detection", detection);
+		miscellaneous.put("Temperature", temperature);
+		miscellaneous.put("Device", deviceName);
+		while(deviceProperties.hasNext()) {
+			Entry<String, String> entry = deviceProperties.next();
+			String propertyName = entry.getKey();
+			String propertyValue = entry.getValue();
+			miscellaneous.put(propertyName, propertyValue);
+		}
+		return chromatogram;
 	}
 
 	@Override
