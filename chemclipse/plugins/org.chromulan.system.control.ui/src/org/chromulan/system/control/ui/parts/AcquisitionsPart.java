@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-@SuppressWarnings("restriction")
 public class AcquisitionsPart {
 
 	private class ActualyationTimeRecording implements Runnable {
@@ -64,7 +63,7 @@ public class AcquisitionsPart {
 		@Override
 		public void run() {
 
-			IAcquisition acquisition = acquisitionProcess.getActualAcquisition();
+			IAcquisition acquisition = setAcquisition;
 			if(acquisition == null) {
 				return;
 			}
@@ -117,6 +116,7 @@ public class AcquisitionsPart {
 	@Inject
 	private EPartService partService;
 	private ProgressBar progressBarTimeRemain;
+	private IAcquisition setAcquisition;
 	private Table tableActualAcquisition;
 	private ActualyationTimeRecording timeRecording;
 
@@ -245,7 +245,8 @@ public class AcquisitionsPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				acquisitionProcess.endAcquisition();
+				acquisitionProcess.setNextAcquisition();
+				redrawTable();
 			}
 		});
 		gridData = new GridData(GridData.END, GridData.FILL, false, false);
@@ -299,7 +300,7 @@ public class AcquisitionsPart {
 	@Optional
 	public void endAcquisition(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition acquisition) {
 
-		if(acquisition != null && acquisition == this.acquisitionProcess.getActualAcquisition()) {
+		if(acquisition != null && acquisition == setAcquisition) {
 			acquisition.removePropertyChangeListener(dataAcquisitionChange);
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(false);
@@ -307,7 +308,6 @@ public class AcquisitionsPart {
 			tableActualAcquisition.removeAll();
 			lableNameAcquisition.setText("");
 			progressBarTimeRemain.setSelection(0);
-			acquisitionProcess.setNextAcquisition();
 			redrawTable();
 			if(acquisitionProcess.getActualAcquisition() != null) {
 				buttonEnd.setEnabled(false);
@@ -387,6 +387,7 @@ public class AcquisitionsPart {
 			buttonEnd.setEnabled(true);
 			acquisition.addPropertyChangeListener(dataAcquisitionChange);
 			setTable(acquisition);
+			setAcquisition = acquisition;
 			redrawTable();
 		}
 	}
@@ -423,7 +424,7 @@ public class AcquisitionsPart {
 	@Optional
 	public void startRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_START_RECORDING) IAcquisition acquisition) {
 
-		if(acquisition != null && this.acquisitionProcess.getActualAcquisition() == acquisition) {
+		if(acquisition != null && setAcquisition == acquisition) {
 			display.asyncExec(timeRecording);
 			buttonStart.setEnabled(false);
 			buttonStop.setEnabled(true);
@@ -435,7 +436,7 @@ public class AcquisitionsPart {
 	@Optional
 	public void stopRecording(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_STOP_RECORDING) IAcquisition acquisition) {
 
-		if(acquisition != null && this.acquisitionProcess.getActualAcquisition() == acquisition) {
+		if(acquisition != null && setAcquisition == acquisition) {
 			display.timerExec(-1, timeRecording);
 		}
 	}

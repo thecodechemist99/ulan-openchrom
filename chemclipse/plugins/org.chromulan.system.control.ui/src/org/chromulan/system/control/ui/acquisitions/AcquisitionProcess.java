@@ -13,10 +13,13 @@ package org.chromulan.system.control.ui.acquisitions;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.chromulan.system.control.device.IControlDevice;
+import org.chromulan.system.control.events.IAcquisitionEvents;
 import org.chromulan.system.control.events.IControlDevicesEvents;
+import org.chromulan.system.control.manager.acquisitions.IAcquisitionChangeListener;
 import org.chromulan.system.control.manager.acquisitions.IAcquisitionManager;
 import org.chromulan.system.control.manager.devices.DataSupplier;
 import org.chromulan.system.control.manager.events.IDataSupplierEvents;
@@ -36,24 +39,28 @@ public class AcquisitionProcess {
 	private IAcquisitions acquisitions = new Acquisitions();;
 	@Inject
 	private IEventBroker eventBroker;
+	private IAcquisition nextAcquisition;
 	private IAcquisition prepareAcquisition;
 	private IAcquisition setAcquisition;
+	private Object synSetNextAcqusition = new Object();
 
 	public AcquisitionProcess() {
 	}
 
 	public void addAcquisitions(List<IAcquisition> newAcquisitions) {
 
-		if(acquisitions.getActualAcquisition() == null) {
-			for(IAcquisition acquisition : newAcquisitions) {
-				acquisitions.addAcquisition(acquisition);
-			}
-			if(acquisitions.getActualAcquisition() != null) {
-				setAcquisition(acquisitions.getActualAcquisition());
-			}
-		} else {
-			for(IAcquisition acquisition : newAcquisitions) {
-				acquisitions.addAcquisition(acquisition);
+		synchronized(synSetNextAcqusition) {
+			if(acquisitions.getActualAcquisition() == null) {
+				for(IAcquisition acquisition : newAcquisitions) {
+					acquisitions.addAcquisition(acquisition);
+				}
+				if(acquisitions.getActualAcquisition() != null) {
+					setAcquisition(acquisitions.getActualAcquisition());
+				}
+			} else {
+				for(IAcquisition acquisition : newAcquisitions) {
+					acquisitions.addAcquisition(acquisition);
+				}
 			}
 		}
 	}
@@ -68,20 +75,6 @@ public class AcquisitionProcess {
 		return true;
 	}
 
-	public boolean endAcquisition() {
-
-		if(setAcquisition != null) {
-			boolean b = acquisitionManager.end(setAcquisition);
-			if(b) {
-				setAcquisition = null;
-			}
-			return b;
-		} else {
-			prepareAcquisition = null;
-		}
-		return true;
-	}
-
 	public List<IAcquisition> getAcquisitions() {
 
 		return acquisitions.getAcquisitions();
@@ -92,39 +85,59 @@ public class AcquisitionProcess {
 		return acquisitions.getActualAcquisition();
 	}
 
-	public boolean isSetAcquisition() {
+	@PostConstruct
+	private void postConstruct() {
 
-		if(setAcquisition != null) {
-			return true;
-		} else {
-			return false;
-		}
+		acquisitionManager.addChangeListener(new IAcquisitionChangeListener() {
+
+			@Override
+			public void endAcquisition(IAcquisition acquisition) {
+
+				synchronized(synSetNextAcqusition) {
+					if(acquisition == setAcquisition) {
+						setAcquisition = null;
+						nextAcquisition = acquisitions.setNextAcquisitionActual();
+					}
+				}
+			}
+		});
 	}
 
 	public boolean removeAcquisition(IAcquisition acquisition) {
 
-		int number = acquisitions.getIndex(acquisition);
-		boolean remove = false;
-		if(setAcquisition == acquisition || prepareAcquisition == acquisition) {
-			if(endAcquisition()) {
+		synchronized(synSetNextAcqusition) {
+			int number = acquisitions.getIndex(acquisition);
+			if(prepareAcquisition == acquisition) {
+				prepareAcquisition = null;
 				IAcquisition newAcquisition = acquisitions.setNextAcquisitionActual();
 				acquisitions.removeAcquisition(number);
-				setAcquisition(newAcquisition);
-				remove = true;
+				if(newAcquisition != null) {
+					setAcquisition(newAcquisition);
+				}
+				return true;
 			}
-		} else {
+			if(setAcquisition == acquisition) {
+				boolean b = acquisitionManager.end(acquisition);
+				if(b) {
+					acquisitions.removeAcquisition(number);
+					return true;
+				} else {
+					return false;
+				}
+			}
 			acquisitions.removeAcquisition(number);
-			remove = true;
+			return true;
 		}
-		return remove;
 	}
 
 	@Inject
 	@Optional
 	private void setAcquisition(@UIEventTopic(value = IDataSupplierEvents.TOPIC_DATA_UPDATE_DEVICES) DataSupplier supplier) {
 
-		if(prepareAcquisition != null) {
-			setAcquisition(prepareAcquisition);
+		synchronized(synSetNextAcqusition) {
+			if(prepareAcquisition != null) {
+				setAcquisition(prepareAcquisition);
+			}
 		}
 	}
 
@@ -146,33 +159,54 @@ public class AcquisitionProcess {
 		return 1;
 	}
 
-	public IAcquisition setNextAcquisition() {
+	public boolean setNextAcquisition() {
 
-		IAcquisition acquisition = null;
-		boolean b = endAcquisition();
-		if(b && (acquisition = acquisitions.setNextAcquisitionActual()) != null) {
-			setAcquisition(acquisition);
+		synchronized(synSetNextAcqusition) {
+			if(setAcquisition != null) {
+				return acquisitionManager.end(setAcquisition);
+			} else {
+				prepareAcquisition = null;
+				IAcquisition nextAcqusution = acquisitions.setNextAcquisitionActual();
+				if(nextAcqusution != null) {
+					setAcquisition(nextAcqusution);
+					return true;
+				} else {
+					return false;
+				}
+			}
 		}
-		return acquisition;
+	}
+
+	@Inject
+	@Optional
+	private void setNextAcqusitionAsActual(@UIEventTopic(value = IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END) IAcquisition acquisition) {
+
+		synchronized(synSetNextAcqusition) {
+			if(nextAcquisition == acquisitions.getActualAcquisition()) {
+				setAcquisition(nextAcquisition);
+			}
+			nextAcquisition = null;
+		}
 	}
 
 	public boolean startAcquisition() {
 
-		if(setAcquisition != null) {
-			return acquisitionManager.start(setAcquisition);
+		synchronized(synSetNextAcqusition) {
+			if(setAcquisition != null) {
+				return acquisitionManager.start(setAcquisition);
+			}
+			return false;
 		}
-		return false;
 	}
 
 	public boolean stopAcquisition(boolean changeDuration) {
 
-		if(setAcquisition != null) {
-			boolean b = acquisitionManager.stop(setAcquisition, changeDuration);
-			if(b) {
-				setAcquisition = null;
+		synchronized(synSetNextAcqusition) {
+			if(setAcquisition != null) {
+				boolean b = acquisitionManager.stop(setAcquisition, changeDuration);
+				return b;
 			}
-			return b;
+			return false;
 		}
-		return false;
 	}
 }

@@ -56,7 +56,7 @@ public class AcquisitionsSearchToolItem {
 
 				String search = text.getText();
 				if(search.isEmpty()) {
-					Map<String, Object> parameters = new HashMap<String, Object>();
+					Map<String, Object> parameters = new HashMap<>();
 					parameters.put(AcquisitionsPart.ID_PARAMETER_SEARCH_NAME, search);
 					ParameterizedCommand com = commandService.createCommand(AcquisitionsPart.ID_COMMAND_SEARCH, parameters);
 					if(handlerService.canExecute(com)) {
@@ -65,7 +65,7 @@ public class AcquisitionsSearchToolItem {
 					return;
 				}
 				if(e.keyCode == SWT.LF || e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
-					Map<String, Object> parameters = new HashMap<String, Object>();
+					Map<String, Object> parameters = new HashMap<>();
 					parameters.put(AcquisitionsPart.ID_PARAMETER_SEARCH_NAME, search);
 					ParameterizedCommand com = commandService.createCommand(AcquisitionsPart.ID_COMMAND_SEARCH, parameters);
 					if(handlerService.canExecute(com)) {
@@ -81,7 +81,7 @@ public class AcquisitionsSearchToolItem {
 			public void widgetSelected(SelectionEvent e) {
 
 				text.setText("");
-				Map<String, Object> parameters = new HashMap<String, Object>();
+				Map<String, Object> parameters = new HashMap<>();
 				parameters.put(AcquisitionsPart.ID_PARAMETER_SEARCH_NAME, "");
 				ParameterizedCommand com = commandService.createCommand(AcquisitionsPart.ID_COMMAND_SEARCH, parameters);
 				if(handlerService.canExecute(com)) {

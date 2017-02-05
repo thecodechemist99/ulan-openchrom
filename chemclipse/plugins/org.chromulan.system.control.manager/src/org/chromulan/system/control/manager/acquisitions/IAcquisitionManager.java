@@ -13,6 +13,7 @@ package org.chromulan.system.control.manager.acquisitions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -39,10 +40,11 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 @Singleton
 public class IAcquisitionManager {
 
+	private HashSet<IAcquisition> acquisitions = new HashSet<>();
 	@Inject
 	private IEventBroker eventBroker;
-	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(100);
-	private List<IAcquisitionChangeListener> changeListeners = new ArrayList<>();;
+	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(100);;
+	private List<IAcquisitionChangeListener> changeListeners = new ArrayList<>();
 	private HashMap<IAcquisition, ScheduledFuture<?>> scheduleStopAcquisition = new HashMap<>();
 
 	public IAcquisitionManager() {
@@ -57,11 +59,13 @@ public class IAcquisitionManager {
 
 	public boolean end(IAcquisition acquisition) {
 
-		if(acquisition != null && !acquisition.isRunning()) {
-			endAcqustion(acquisition);
-			return true;
-		} else {
-			return false;
+		synchronized(changeListeners) {
+			if(acquisition != null && !acquisition.isRunning() && acquisitions.remove(acquisition)) {
+				endAcqustion(acquisition);
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
@@ -71,6 +75,7 @@ public class IAcquisitionManager {
 			listener.endAcquisition(acquisition);
 		}
 		eventBroker.post(IAcquisitionEvents.TOPIC_ACQUISITION_CHROMULAN_END, acquisition);
+		acquisitions.remove(acquisition);
 	}
 
 	private void proccessDataAcqusition(IAcquisition acquisition) {
@@ -138,7 +143,13 @@ public class IAcquisitionManager {
 
 	public boolean set(IAcquisition acquisition) {
 
-		return setAcquisition(acquisition);
+		synchronized(changeListeners) {
+			if(acquisitions.add(acquisition)) {
+				return setAcquisition(acquisition);
+			} else {
+				return false;
+			}
+		}
 	}
 
 	private boolean setAcquisition(IAcquisition acquisition) {
@@ -155,7 +166,7 @@ public class IAcquisitionManager {
 	public boolean start(final IAcquisition acquisition) {
 
 		synchronized(changeListeners) {
-			if(acquisition != null && !acquisition.isRunning() && !acquisition.isCompleted()) {
+			if(acquisition != null && !acquisition.isRunning() && !acquisition.isCompleted() && acquisitions.contains(acquisition)) {
 				acquisition.start();
 				for(IAcquisitionChangeListener listener : changeListeners) {
 					listener.startAcquisition(acquisition);
@@ -186,11 +197,13 @@ public class IAcquisitionManager {
 
 	public boolean stop(IAcquisition acquisition, boolean changeDuaration) {
 
-		ScheduledFuture<?> future = scheduleStopAcquisition.get(acquisition);
-		if(future != null) {
-			future.cancel(false);
+		synchronized(changeListeners) {
+			ScheduledFuture<?> future = scheduleStopAcquisition.get(acquisition);
+			if(future != null) {
+				future.cancel(false);
+			}
+			return stopAndProcessAcquisition(acquisition, changeDuaration);
 		}
-		return stopAndProcessAcquisition(acquisition, changeDuaration);
 	}
 
 	private void stopAcquisition(IAcquisition acquisition, boolean changeDuaration) {
@@ -205,7 +218,7 @@ public class IAcquisitionManager {
 	private boolean stopAndProcessAcquisition(IAcquisition acquisition, boolean changeDuaration) {
 
 		synchronized(changeListeners) {
-			if((acquisition != null) && acquisition.isRunning()) {
+			if((acquisition != null) && acquisition.isRunning() && acquisitions.contains(acquisition)) {
 				stopAcquisition(acquisition, changeDuaration);
 				proccessDataAcqusition(acquisition);
 				saveAcqusition(acquisition);

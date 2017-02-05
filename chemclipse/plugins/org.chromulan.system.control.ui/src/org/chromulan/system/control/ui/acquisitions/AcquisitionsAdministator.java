@@ -73,7 +73,7 @@ public class AcquisitionsAdministator {
 		String supplierCSD = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_CSD, null);
 		String supplierMSD = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_MSD, null);
 		String supplierWSD = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_WSD, null);
-		defClassAcquisition = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_WSD, defClass);
+		defClassAcquisition = PreferenceSupplier.INSTANCE().getPreferences().get(PREFERENCE_SUPPLIER_TYPE, defClass);
 		setDefaultParameters(filePath, supplierCSD, supplierMSD, supplierWSD);
 	}
 
@@ -206,7 +206,7 @@ public class AcquisitionsAdministator {
 
 	public boolean isDefParametersSet() {
 
-		if(defFile.exists() && defSupplierCSD != null && defSupplierMSD != null && defSupplierWSD != null) {
+		if(defFile != null && defFile.exists() && defSupplierCSD != null && defSupplierMSD != null && defSupplierWSD != null) {
 			return true;
 		} else {
 			return false;
