@@ -91,7 +91,7 @@ public class AcquisitionSavePreferencePage extends PreferencePage {
 		buttonSelectDirectory = new Button(composite, SWT.PUSH);
 		buttonSelectDirectory.setText("Browse..");
 		directory = new Text(composite, SWT.BEGINNING | SWT.BORDER);
-		ISWTObservableValue  observeDirectory = WidgetProperties.text(SWT.Modify).observe(directory);
+		ISWTObservableValue observeDirectory = WidgetProperties.text(SWT.Modify).observe(directory);
 		dbc.bindValue(observeDirectory, file, new UpdateValueStrategy(UpdateValueStrategy.POLICY_CONVERT).setAfterConvertValidator(new ValidatorDirectory()).setConverter(new StringToFile()), new UpdateValueStrategy().setConverter(new FileToString()));
 		buttonSelectDirectory.addSelectionListener(new SelectionAdapter() {
 
@@ -129,8 +129,8 @@ public class AcquisitionSavePreferencePage extends PreferencePage {
 			return false;
 		} else {
 			dbc.updateModels();
-			acquisition.getAcquisitionSaver().setFile((File)file.getValue());
-			acquisition.getAcquisitionSaver().setSupplier((ISupplier)supplier.getValue());
+			acquisition.getAcquisitionSaver().setFile(file.getValue());
+			acquisition.getAcquisitionSaver().setSupplier(supplier.getValue());
 			return true;
 		}
 	}

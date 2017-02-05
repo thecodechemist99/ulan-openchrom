@@ -189,6 +189,6 @@ public class AcquisitionsTable {
 	public void setAcquisitions(AcquisitionProcess acquisitions) {
 
 		this.acquisitionProcess = acquisitions;
-		viewer.setInput(new WritableList(acquisitions.getAcquisitions(), IAcquisition.class));
+		viewer.setInput(new WritableList<>(acquisitions.getAcquisitions(), IAcquisition.class));
 	}
 }
