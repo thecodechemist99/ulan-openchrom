@@ -12,9 +12,15 @@
 package org.chromulan.system.control.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.model.exceptions.ChromatogramIsNullException;
 import org.eclipse.chemclipse.swt.ui.series.IMultipleSeries;
 import org.eclipse.chemclipse.swt.ui.support.Sign;
@@ -23,23 +29,22 @@ import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.chemclipse.wsd.model.core.IScanSignalWSD;
 import org.eclipse.chemclipse.wsd.model.core.IScanWSD;
 import org.eclipse.chemclipse.wsd.model.core.selection.ChromatogramSelectionWSD;
-import org.eclipse.chemclipse.wsd.model.core.support.IMarkedWavelengths;
-import org.eclipse.chemclipse.wsd.model.core.support.MarkedWavelength;
-import org.eclipse.chemclipse.wsd.model.core.support.MarkedWavelengths;
 import org.eclipse.chemclipse.wsd.swt.ui.converter.SeriesConverterWSD;
 
 public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition implements IChromatogramWSDAcquisition {
 
-	private IMarkedWavelengths selectedMarkedWavelengths;
+	private Map<Double, Boolean> selectedWavelengths;
+	private boolean setWavelenght = true;
 
 	public ChromatogramWSDAcquisition(int interval, int delay) {
 		super(interval, delay);
-		selectedMarkedWavelengths = new MarkedWavelengths();
+		selectedWavelengths = new ConcurrentHashMap<>();
 	}
 
 	@Override
 	protected IChromatogram createChromatogram() {
 
+		setWavelenght = true;
 		IChromatogramWSD chromatogramWSD = new AbstractChromatogramWSD() {
 
 			@Override
@@ -52,7 +57,7 @@ public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition 
 	}
 
 	@Override
-	public IChromatogramWSD geChromatogramWSD() {
+	public IChromatogramWSD getChromatogramWSD() {
 
 		IChromatogram chromatogram = getChromatogram();
 		if(chromatogram instanceof IChromatogramWSD) {
@@ -62,9 +67,9 @@ public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition 
 	}
 
 	@Override
-	public IMarkedWavelengths getSelectedWaveLenaght() {
+	public Map<Double, Boolean> getSelectedWaveLengths() {
 
-		return selectedMarkedWavelengths;
+		return selectedWavelengths;
 	}
 
 	@Override
@@ -72,8 +77,17 @@ public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition 
 
 		IMultipleSeries multipleSeries = null;
 		synchronized(this) {
-			IChromatogramWSD chromatogramWSD = geChromatogramWSD();
-			List<Double> wavelengths = new ArrayList<Double>(this.getWaveLenaght().getWavelengths());
+			IChromatogramWSD chromatogramWSD = getChromatogramWSD();
+			List<Double> wavelengths = new ArrayList<Double>();
+			synchronized(selectedWavelengths) {
+				Iterator<Entry<Double, Boolean>> iterator = selectedWavelengths.entrySet().iterator();
+				while(iterator.hasNext()) {
+					Map.Entry<Double, Boolean> entry = (Map.Entry<Double, Boolean>)iterator.next();
+					if(entry.getValue()) {
+						wavelengths.add(entry.getKey());
+					}
+				}
+			}
 			try {
 				ChromatogramSelectionWSD chromatogramSelection = new ChromatogramSelectionWSD(chromatogramWSD, false);
 				multipleSeries = SeriesConverterWSD.convertChromatogram(chromatogramSelection, wavelengths, false, Sign.POSITIVE);
@@ -84,16 +98,37 @@ public class ChromatogramWSDAcquisition extends AbstractChromatogramAcquisition 
 	}
 
 	@Override
-	public IMarkedWavelengths getWaveLenaght() {
+	public void addScan(IScan scan) {
 
-		IMarkedWavelengths wavelengths = new MarkedWavelengths();
+		super.addScan(scan);
+		if(setWavelenght) {
+			resetWaveLengths();
+			setWavelenght = false;
+		}
+	}
+
+	@Override
+	public void addScanAutoSet(IScan scan) {
+
+		super.addScanAutoSet(scan);
+		if(setWavelenght) {
+			resetWaveLengths();
+			setWavelenght = false;
+		}
+	}
+
+	@Override
+	public void resetWaveLengths() {
+
 		synchronized(this) {
-			IChromatogramWSD wsdChromatogram = geChromatogramWSD();
+			selectedWavelengths.clear();
+			IChromatogramWSD wsdChromatogram = getChromatogramWSD();
 			IScanWSD scan = (IScanWSD)wsdChromatogram.getScans().stream().findFirst().get();
-			for(IScanSignalWSD signal : scan.getScanSignals()) {
-				wavelengths.add(new MarkedWavelength(signal.getWavelength()));
+			if(scan != null) {
+				for(IScanSignalWSD signal : scan.getScanSignals()) {
+					selectedWavelengths.put(signal.getWavelength(), true);
+				}
 			}
-			return wavelengths;
 		}
 	}
 }

@@ -13,6 +13,7 @@ package org.chromulan.system.control.model;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.csd.model.implementation.ChromatogramCSD;
@@ -21,7 +22,6 @@ import org.eclipse.chemclipse.model.core.IScan;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.chemclipse.wsd.model.core.IScanSignalWSD;
 import org.eclipse.chemclipse.wsd.model.core.IScanWSD;
-import org.eclipse.chemclipse.wsd.model.core.support.IMarkedWavelengths;
 
 public interface IChromatogramWSDAcquisition extends IChromatogramAcquisition {
 
@@ -50,9 +50,9 @@ public interface IChromatogramWSDAcquisition extends IChromatogramAcquisition {
 		return chromatogramCSDs;
 	}
 
-	IChromatogramWSD geChromatogramWSD();
+	IChromatogramWSD getChromatogramWSD();
 
-	IMarkedWavelengths getSelectedWaveLenaght();
+	Map<Double,Boolean> getSelectedWaveLengths();
 
-	IMarkedWavelengths getWaveLenaght();
+	void resetWaveLengths();
 }

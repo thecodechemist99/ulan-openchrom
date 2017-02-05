@@ -137,11 +137,7 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 		supplierWSD = new WritableValue(defSupplierWSD, ISupplier.class);
 		observeCombo = ViewerProperties.singleSelection().observe(combo);
 		dbc.bindValue(observeCombo, supplierWSD);
-		if(defFile != null) {
-			file = new WritableValue(defFile, File.class);
-		} else {
-			file = new WritableValue(null, File.class);
-		}
+		file = new WritableValue(defFile, File.class);
 		final DirectoryDialog dialog = new DirectoryDialog(parent.getShell());
 		label = new Label(composite, SWT.None);
 		label.setText("Directory: ");
@@ -189,5 +185,16 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 	public ISupplier getSupplierWSD() {
 
 		return (ISupplier)supplierWSD.getValue();
+	}
+
+	@Override
+	public boolean isPageComplete() {
+
+		File file = getFile();
+		if(!(file.isDirectory() && getSupplierCSD() != null && getSupplierMSD() != null && getSupplierWSD() != null)) {
+			return false;
+		} else {
+			return super.isPageComplete();
+		}
 	}
 }

@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -106,9 +107,12 @@ public class ChromatogramWSDViewer {
 			public void execute() {
 
 				PreferenceManager manager = new PreferenceManager();
-				ChromatogramPreferencePage page = new ChromatogramPreferencePage(chromatogramOverView);
-				PreferenceNode mainNode = new PreferenceNode("Main", page);
+				PreferencePage page1 = new ChromatogramPreferencePage(chromatogramOverView);
+				PreferencePage page2 = new ChromatogramWSDPreferencePage(chromatogramOverView);
+				PreferenceNode mainNode = new PreferenceNode("Main", page1);
+				PreferenceNode wavelenght = new PreferenceNode("Select wave lenght", page2);
 				manager.addToRoot(mainNode);
+				manager.addToRoot(wavelenght);
 				PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
 				dialog.open();
 			}

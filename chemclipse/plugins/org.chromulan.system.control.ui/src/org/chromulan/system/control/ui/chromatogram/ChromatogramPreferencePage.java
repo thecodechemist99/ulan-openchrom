@@ -35,22 +35,14 @@ public class ChromatogramPreferencePage extends PreferencePage {
 
 	private DataBindingContext dbc;
 	private ChromatogramOverviewUI chromatogramOverviewUI;
-	private IObservableValue interval;
-	private IObservableValue minYAdjustIntensity;
+	private IObservableValue<Double> interval;
+	private IObservableValue<Double> minYAdjustIntensity;
 
 	public ChromatogramPreferencePage(ChromatogramOverviewUI chromatogramOverviewUI) {
 		super("Main");
 		this.chromatogramOverviewUI = chromatogramOverviewUI;
-	}
-
-	public ChromatogramPreferencePage(String title, ChromatogramOverviewUI chromatogramOverviewUI) {
-		super(title);
-		this.chromatogramOverviewUI = chromatogramOverviewUI;
-	}
-
-	public ChromatogramPreferencePage(String title, ImageDescriptor image, ChromatogramOverviewUI chromatogramOverviewUI) {
-		super(title, image);
-		this.chromatogramOverviewUI = chromatogramOverviewUI;
+		minYAdjustIntensity = new WritableValue<>(chromatogramOverviewUI.getMinYAdjustIntensity(), Double.class);
+		interval = new WritableValue<>(chromatogramOverviewUI.getInterval(), Double.class);
 	}
 
 	@Override
@@ -61,13 +53,11 @@ public class ChromatogramPreferencePage extends PreferencePage {
 		PreferencePageSupport.create(this, dbc);
 		Label label = new Label(composite, SWT.None);
 		label.setText("Interval (min)");
-		Text textInterval = new Text(composite, SWT.None);
-		interval = new WritableValue(chromatogramOverviewUI.getInterval(), Double.class);
+		Text textInterval = new Text(composite, SWT.None);	
 		setDBCInterval(WidgetProperties.text(SWT.Modify).observe(textInterval), interval);
 		label = new Label(composite, SWT.None);
 		label.setText("Minimal Y adjust Intensity");
-		Text textIntensity = new Text(composite, SWT.None);
-		minYAdjustIntensity = new WritableValue(chromatogramOverviewUI.getMinYAdjustIntensity(), Double.class);
+		Text textIntensity = new Text(composite, SWT.None);	
 		setDBCAutoMinYAdjustIntensity(WidgetProperties.text(SWT.Modify).observe(textIntensity), minYAdjustIntensity);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 		return composite;
@@ -80,11 +70,10 @@ public class ChromatogramPreferencePage extends PreferencePage {
 		interval.setValue(chromatogramOverviewUI.getInterval());
 	}
 
-	@Override
 	public boolean performOk() {
 
-		chromatogramOverviewUI.setMinYAdjustIntensity((double)minYAdjustIntensity.getValue());
-		chromatogramOverviewUI.setInterval((double)interval.getValue());
+		chromatogramOverviewUI.setMinYAdjustIntensity(minYAdjustIntensity.getValue());
+		chromatogramOverviewUI.setInterval(interval.getValue());
 		return true;
 	}
 
