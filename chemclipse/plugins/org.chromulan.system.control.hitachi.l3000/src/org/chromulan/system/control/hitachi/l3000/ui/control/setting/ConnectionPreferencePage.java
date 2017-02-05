@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.chromulan.system.control.hitachi.l3000.ui.control.setting;
 
+import java.util.Enumeration;
+
 import org.chromulan.system.control.hitachi.l3000.model.ControlDevice;
 import org.chromulan.system.control.hitachi.l3000.model.DeviceInterface;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -26,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-import jssc.SerialPortList;
+import purejavacomm.CommPortIdentifier;
 
 public class ConnectionPreferencePage extends PreferencePage {
 
@@ -109,9 +111,14 @@ public class ConnectionPreferencePage extends PreferencePage {
 	private Combo getNames(Composite parent) {
 
 		Combo combo = new Combo(parent, SWT.READ_ONLY);
-		String[] names = SerialPortList.getPortNames();
-		for(String name : names) {
-			combo.add(name);
+		Enumeration<CommPortIdentifier> enumerations = CommPortIdentifier.getPortIdentifiers();
+		while(enumerations.hasMoreElements()) {
+			CommPortIdentifier commPortIdentifier = enumerations.nextElement();
+			String name = commPortIdentifier.getName();
+			int portType = commPortIdentifier.getPortType();
+			if(portType == CommPortIdentifier.PORT_SERIAL) {
+				combo.add(name);
+			}
 		}
 		return combo;
 	}
@@ -126,24 +133,17 @@ public class ConnectionPreferencePage extends PreferencePage {
 	public boolean performOk() {
 
 		String name = (String)this.name.getValue();
+		if(name == null || name.isEmpty()) {
+			return false;
+		}
 		int boudRate = Integer.valueOf((String)this.boudRate.getValue());
 		boolean parity = (Boolean)this.parity.getValue();
 		boolean controlSignal = (Boolean)this.controlSignal.getValue();
 		String delimiter = null;
-		boolean validName = false;
 		if(this.delimiter.getValue().equals(delimiterCR)) {
 			delimiter = ControlDevice.DELIMITER_CR;
 		} else {
 			delimiter = ControlDevice.DELIMITER_CRLF;
-		}
-		for(String posibleName : SerialPortList.getPortNames()) {
-			if(posibleName.equals(name)) {
-				validName = true;
-				break;
-			}
-		}
-		if(!validName) {
-			return false;
 		}
 		if(!controlDevice.isConnected()) {
 			return deviceInterface.openConnection(name, boudRate, parity, controlSignal, delimiter, true);

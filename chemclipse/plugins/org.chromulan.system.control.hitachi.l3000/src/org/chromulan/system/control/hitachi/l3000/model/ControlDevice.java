@@ -14,10 +14,14 @@ package org.chromulan.system.control.hitachi.l3000.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.TooManyListenersException;
 
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.setting.DeviceSetting;
@@ -29,10 +33,13 @@ import org.chromulan.system.control.device.setting.ValueFloat;
 import org.chromulan.system.control.device.setting.ValueInt;
 import org.chromulan.system.control.hitachi.l3000.Activator;
 
-import jssc.SerialPort;
-import jssc.SerialPortEvent;
-import jssc.SerialPortEventListener;
-import jssc.SerialPortException;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.NoSuchPortException;
+import purejavacomm.PortInUseException;
+import purejavacomm.SerialPort;
+import purejavacomm.SerialPortEvent;
+import purejavacomm.SerialPortEventListener;
+import purejavacomm.UnsupportedCommOperationException;
 
 public class ControlDevice implements IControlDevice {
 
@@ -79,6 +86,7 @@ public class ControlDevice implements IControlDevice {
 	private boolean portDataControlSignal;
 	private String portDelimeter;
 	private boolean portEventParity;
+	private CommPortIdentifier portId;
 	private String portName;
 	private PropertyChangeSupport propertyChangeSupport;
 	private boolean sendStart;
@@ -109,41 +117,36 @@ public class ControlDevice implements IControlDevice {
 		dataReceive = new DataReceive(this);
 	}
 
-	private void addDataEvent() throws SerialPortException {
+	private void addDataEvent() throws TooManyListenersException, IOException {
 
 		final StringBuilder builder = new StringBuilder();
+		final InputStream inputStream = serialPort.getInputStream();
 		serialPort.addEventListener(new SerialPortEventListener() {
 
 			@Override
-			public void serialEvent(SerialPortEvent arg) {
+			public void serialEvent(SerialPortEvent arg0) {
 
-				if(arg.isRXCHAR() && arg.getEventValue() > 0) {
-					byte[] messagge;
-					try {
-						messagge = serialPort.readBytes();
-						for(int i = 0; i < messagge.length; i++) {
-							if(messagge[i] == 'D') {
-								builder.append((char)messagge[i]);
-							} else {
-								if(builder.length() != 0) {
-									if(messagge[i] == '\r') {
-										dataReceive.addScan(builder.toString());
-										builder.setLength(0);
-									} else {
-										builder.append((char)messagge[i]);
-									}
+				try {
+					int ch;
+					while((ch = inputStream.read()) != -1) {
+						if(ch == 'D') {
+							builder.append((char)ch);
+						} else {
+							if(builder.length() != 0) {
+								if(ch == '\r') {
+									dataReceive.addScan(builder.toString());
+									builder.setLength(0);
+								} else {
+									builder.append((char)ch);
 								}
 							}
 						}
-					} catch(SerialPortException e) {
-						try {
-							closeSerialPort();
-						} catch(Exception e2) {
-						}
 					}
+				} catch(IOException e) {
+					serialPort.close();
 				}
 			}
-		}, SerialPort.MASK_RXCHAR);
+		});
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -156,10 +159,10 @@ public class ControlDevice implements IControlDevice {
 		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 	}
 
-	void closeSerialPort() throws SerialPortException {
+	public void closeSerialPort() {
 
 		if(serialPort != null) {
-			serialPort.closePort();
+			serialPort.close();
 		}
 	}
 
@@ -193,7 +196,7 @@ public class ControlDevice implements IControlDevice {
 	public String getDescription() {
 
 		if(serialPort != null) {
-			return "Port Name: " + serialPort.getPortName();
+			return "Port Name: " + serialPort.getName();
 		}
 		return "";
 	}
@@ -290,7 +293,7 @@ public class ControlDevice implements IControlDevice {
 		if(serialPort == null) {
 			return false;
 		}
-		return serialPort.isOpened();
+		return portId.isCurrentlyOwned();
 	}
 
 	public boolean isPortDataControlSignal() {
@@ -319,19 +322,27 @@ public class ControlDevice implements IControlDevice {
 		return sendStop;
 	}
 
-	boolean openSerialPort(String portName, int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) throws SerialPortException {
+	public boolean openSerialPort(String portName, int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, TooManyListenersException, IOException {
 
-		if(serialPort == null) {
-			serialPort = new SerialPort(portName);
+		boolean openNewPort = false;
+		if(portId == null) {
+			portId = CommPortIdentifier.getPortIdentifier(portName);
+			serialPort = (purejavacomm.SerialPort)portId.open("OpenChrom-Hitachi-L3000", 1000);
+			openNewPort = true;
 		} else {
-			if(!serialPort.isOpened() && !serialPort.getPortName().equals(portName)) {
-				serialPort = new SerialPort(portName);
+			if(!isConnected()) {
+				if(!serialPort.getName().equals(portName)) {
+					portId = CommPortIdentifier.getPortIdentifier(portName);
+				}
+				serialPort = (purejavacomm.SerialPort)portId.open("OpenChrom-Hitachi-L3000", 1000);
+				openNewPort = true;
 			}
 		}
-		this.portName = portName;
-		if(!serialPort.isOpened()) {
-			serialPort.openPort();
+		if(openNewPort) {
+			this.portName = portName;
 			setPortParameters(portBaudRate, portEventParity, portDataControlSignal, portDelimiter);
+			serialPort.notifyOnDataAvailable(true);
+			serialPort.getOutputStream();
 			addDataEvent();
 			return true;
 		}
@@ -382,9 +393,9 @@ public class ControlDevice implements IControlDevice {
 		propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 	}
 
-	boolean sendDataOutputType() throws SerialPortException {
+	public boolean sendDataOutputType() throws IOException {
 
-		if(serialPort != null && serialPort.isOpened()) {
+		if(isConnected()) {
 			if(outputType == OUTPUT_ANALOG) {
 				return sendMessagge("SEND", " 0");
 			} else if(outputType == OUTPUT_DIGITAL) {
@@ -394,41 +405,48 @@ public class ControlDevice implements IControlDevice {
 		return false;
 	}
 
-	private boolean sendMessagge(String command, String messagge) throws SerialPortException {
+	private boolean sendMessagge(String command, String messagge) throws IOException {
 
-		if(serialPort != null && serialPort.isOpened()) {
+		if(isConnected()) {
+			OutputStream outputStream = serialPort.getOutputStream();
 			if(messagge != null) {
-				return serialPort.writeString(command + " " + messagge + portDelimeter);
+				outputStream.write(command.getBytes(StandardCharsets.UTF_8));
+				outputStream.write(" ".getBytes(StandardCharsets.UTF_8));
+				outputStream.write(messagge.getBytes(StandardCharsets.UTF_8));
+				outputStream.write(portDelimeter.getBytes(StandardCharsets.UTF_8));
 			} else {
-				return serialPort.writeString(command + portDelimeter);
+				outputStream.write(command.getBytes(StandardCharsets.UTF_8));
+				outputStream.write(portDelimeter.getBytes(StandardCharsets.UTF_8));
 			}
+			outputStream.flush();
+			return true;
 		}
 		return false;
 	}
 
-	boolean sendStart() throws SerialPortException {
+	public boolean sendStart() throws IOException {
 
 		return sendMessagge("START", null);
 	}
 
-	boolean sendStop() throws SerialPortException {
+	public boolean sendStop() throws IOException {
 
 		return sendMessagge("STOP", null);
 	}
 
-	boolean sendTimeInterval() throws SerialPortException {
+	public boolean sendTimeInterval() throws IOException {
 
 		String timeInterval = String.format("%.1f", this.timeInterval);
 		return sendMessagge("TIME", timeInterval);
 	}
 
-	boolean sendWavelenghtInterval() throws SerialPortException {
+	public boolean sendWavelenghtInterval() throws IOException {
 
 		String waveLenghtInterval = String.format("%.1f", this.wavelenghtInterval);
 		return sendMessagge("WL", waveLenghtInterval);
 	}
 
-	boolean sendWaveLenghtRange() {
+	public boolean sendWaveLenghtRange() throws IOException {
 
 		// TODO:body of function
 		return false;
@@ -524,22 +542,20 @@ public class ControlDevice implements IControlDevice {
 		this.outputType = outputType;
 	}
 
-	boolean setPortParameters(int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) throws SerialPortException {
+	public boolean setPortParameters(int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) throws UnsupportedCommOperationException {
 
-		if(serialPort != null && serialPort.isOpened()) {
-			boolean b;
+		if(isConnected()) {
 			if(portEventParity) {
-				b = serialPort.setParams(portBaudRate, 7, 2, SerialPort.PARITY_EVEN, portDataControlSignal, false);
+				serialPort.setSerialPortParams(portBaudRate, 7, 2, SerialPort.PARITY_EVEN);
 			} else {
-				b = serialPort.setParams(portBaudRate, 7, 2, SerialPort.PARITY_NONE, portDataControlSignal, false);
+				serialPort.setSerialPortParams(portBaudRate, 7, 2, SerialPort.PARITY_NONE);
 			}
-			if(b) {
-				this.portBaudRate = portBaudRate;
-				this.portEventParity = portEventParity;
-				this.portDataControlSignal = portDataControlSignal;
-				this.portDelimeter = portDelimiter;
-			}
-			return b;
+			serialPort.setRTS(portDataControlSignal);
+			this.portBaudRate = portBaudRate;
+			this.portEventParity = portEventParity;
+			this.portDataControlSignal = portDataControlSignal;
+			this.portDelimeter = portDelimiter;
+			return true;
 		}
 		return false;
 	}

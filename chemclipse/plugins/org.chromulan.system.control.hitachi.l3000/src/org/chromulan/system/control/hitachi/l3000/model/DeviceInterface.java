@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.chromulan.system.control.hitachi.l3000.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +35,6 @@ import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
-
-import jssc.SerialPortException;
 
 @Creatable
 @Singleton
@@ -68,17 +67,26 @@ public class DeviceInterface {
 
 				List<SaveChromatogram> chromatograms = new ArrayList<>();
 				if(acquisition == setAcqiusition) {
-					IChromatogramWSD chromatogramWSD = controlDevice.getDatareceive().getChromatogram().geChromatogramWSD();
+					IChromatogramWSD chromatogramWSD = controlDevice.getDatareceive().getChromatogram().getChromatogramWSD();
 					if(acquisition instanceof IAcquisitionCSD) {
 						HashMap<Double, IChromatogramCSD> newChrom = IChromatogramWSDAcquisition.chromatogramWSDtoCSD(chromatogramWSD);
 						for(Entry<Double, IChromatogramCSD> chromSet : newChrom.entrySet()) {
 							IChromatogramCSD chromatogramCSD = chromSet.getValue();
-							chromatograms.add(new SaveChromatogram(chromatogramCSD, acquisition.getName() + " " + chromSet.getKey().toString()));
+							SaveChromatogram saveChromatogram =new SaveChromatogram(chromatogramCSD, acquisition.getName() + " " + chromSet.getKey().toString(),controlDevice.getName());
+							saveChromatogram.addDevicePropertie(ControlDevice.SETTING_TIME_INTERVAL, Integer.toString(controlDevice.getTimeIntervalMill()) + "ms");
+							saveChromatogram.addDevicePropertie("wave lenght",chromSet.getKey().toString()+"nm");
+							chromatograms.add(saveChromatogram);
 						}
 					}
 					if(acquisition instanceof IChromatogramWSD) {
-						chromatograms.add(new SaveChromatogram(chromatogramWSD, acquisition.getName()));
+						SaveChromatogram saveChromatogram = new SaveChromatogram(chromatogramWSD, acquisition.getName(),controlDevice.getName());
+						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_TIME_INTERVAL, Integer.toString(controlDevice.getTimeIntervalMill()) + "ms");
+						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_WAVELENGHT_INTERVAL, Float.toString(controlDevice.getWavelenghtInterval())+"nm");
+						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_WAVELENGHT_RANGE_FROM, Float.toString(controlDevice.getWavelenghtRangeFrom())+"nm");
+						saveChromatogram.addDevicePropertie(ControlDevice.SETTING_WAVELENGHT_RANGE_TO, Float.toString(controlDevice.getWavelenghtRangeTo())+"nm");
+						chromatograms.add(saveChromatogram);
 					}
+				
 				}
 				return chromatograms;
 			}
@@ -161,10 +169,7 @@ public class DeviceInterface {
 			}
 			return b;
 		} catch(Exception e) {
-			try {
-				controlDevice.closeSerialPort();
-			} catch(SerialPortException e1) {
-			}
+			controlDevice.closeSerialPort();
 		}
 		return false;
 	}
@@ -198,7 +203,7 @@ public class DeviceInterface {
 
 		try {
 			return controlDevice.sendStart();
-		} catch(SerialPortException e) {
+		} catch(IOException e) {
 			closeConnection();
 		}
 		return false;
@@ -208,7 +213,7 @@ public class DeviceInterface {
 
 		try {
 			return controlDevice.sendStop();
-		} catch(Exception e) {
+		} catch(IOException e) {
 			closeConnection();
 		}
 		return false;
@@ -218,7 +223,7 @@ public class DeviceInterface {
 
 		try {
 			return controlDevice.sendTimeInterval();
-		} catch(Exception e) {
+		} catch(IOException e) {
 			closeConnection();
 		}
 		return false;
@@ -228,7 +233,7 @@ public class DeviceInterface {
 
 		try {
 			return controlDevice.sendWavelenghtInterval();
-		} catch(Exception e) {
+		} catch(IOException e) {
 			closeConnection();
 		}
 		return false;
@@ -238,7 +243,7 @@ public class DeviceInterface {
 
 		try {
 			return controlDevice.sendWaveLenghtRange();
-		} catch(Exception e) {
+		} catch(IOException e) {
 			closeConnection();
 		}
 		return false;
