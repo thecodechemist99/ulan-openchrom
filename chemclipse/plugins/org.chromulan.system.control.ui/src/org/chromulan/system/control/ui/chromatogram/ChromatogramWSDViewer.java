@@ -38,13 +38,10 @@ public class ChromatogramWSDViewer {
 		@Override
 		public void run() {
 
-			chromatogramOverView.reloadData();
 			if(autoRedraw) {
-				if(diplayChromatogram == DISPLAY_ALL_CHROMATOGRAM) {
-					chromatogramOverView.displayAllChromatogram();
-				} else if(diplayChromatogram == DISPLAY_INTERVAL_CHROMATOGRAM) {
-					chromatogramOverView.displayInteval();
-				}
+				redraw();
+			} else {
+				chromatogramOverView.reloadData();
 			}
 			display.timerExec(2000, this);
 		}
@@ -115,6 +112,7 @@ public class ChromatogramWSDViewer {
 				manager.addToRoot(wavelenght);
 				PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
 				dialog.open();
+				redraw();
 			}
 		};
 		handlerService.activateHandler("org.chromulan.system.control.ui.command.chromatogram.displaySettings", handler4);
@@ -134,6 +132,16 @@ public class ChromatogramWSDViewer {
 	public void destroyPart() {
 
 		display.timerExec(-1, redrawChromatogram);
+	}
+
+	private void redraw() {
+
+		chromatogramOverView.reloadData();
+		if(diplayChromatogram == DISPLAY_ALL_CHROMATOGRAM) {
+			chromatogramOverView.displayAllChromatogram();
+		} else if(diplayChromatogram == DISPLAY_INTERVAL_CHROMATOGRAM) {
+			chromatogramOverView.displayInteval();
+		}
 	}
 
 	private void redrawChromatogram(boolean b) {
