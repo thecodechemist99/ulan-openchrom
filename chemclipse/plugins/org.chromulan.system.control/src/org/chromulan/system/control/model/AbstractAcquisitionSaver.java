@@ -39,14 +39,20 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 
 	private IAcquisition acquisition;
 	private File file;
-	private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos;
-	private HashMap<String, Integer> names;
+	final private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
+	private HashMap<String, Integer> names = new HashMap<>();
 	private ISupplier supplier;
 
 	public AbstractAcquisitionSaver(IAcquisition acquisition) {
-		this.chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
-		this.names = new HashMap<>();
 		this.acquisition = acquisition;
+	}
+
+	private void floatPutToMiscellaneous(Map<String, String> miscellaneous, String name, Float value, String unit) {
+
+		if(value == null) {
+			return;
+		}
+		miscellaneous.put(name, Float.toString(value) + unit);
 	}
 
 	@Override
@@ -71,6 +77,14 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 	public ISupplier getSupplier() {
 
 		return supplier;
+	}
+
+	private void longPutToMiscellaneous(Map<String, String> miscellaneous, String name, Long value, String unit) {
+
+		if(value == null) {
+			return;
+		}
+		miscellaneous.put(name, Long.toString(value) + unit);
 	}
 
 	protected void namesRemove() {
@@ -128,27 +142,17 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 		String deviceName = saveChromatogram.getNameDevice();
 		chromatogram.setShortInfo(acquisition.getDescription());
 		Map<String, String> miscellaneous = chromatogram.getMiscellaneous();
-		String duration = Long.toString(acquisition.getDuration() / (1000 * 60)) + " min";
-		String analysis = acquisition.getAnalysis();
-		String amount = Float.toString(acquisition.getAmount());
-		String istdAmount = Float.toString(acquisition.getISTDAmount());
-		String InjVolume = Float.toString(acquisition.getInjectionVolume());
-		String column = acquisition.getColumn();
-		String mobilPhase = acquisition.getMobilPhase();
-		String flowrate = Float.toString(acquisition.getFlowRate()) + " " + acquisition.getFlowRateUnit();
-		String detection = acquisition.getDetection();
-		String temperature = Float.toString(acquisition.getTemperature()) + " " + acquisition.getTemperatureUnit();
-		miscellaneous.put("Duration", duration);
-		miscellaneous.put("Analysis", analysis);
-		miscellaneous.put("Amount", amount);
-		miscellaneous.put("ISTD Amount", istdAmount);
-		miscellaneous.put("Inj. Volume", InjVolume);
-		miscellaneous.put("Column", column);
-		miscellaneous.put("Mobil Phase", mobilPhase);
-		miscellaneous.put("Flow rate", flowrate);
-		miscellaneous.put("Detection", detection);
-		miscellaneous.put("Temperature", temperature);
-		miscellaneous.put("Device", deviceName);
+		longPutToMiscellaneous(miscellaneous, "Duration", acquisition.getDuration() / (1000 * 60), " min");
+		stringPutToMiscellaneous(miscellaneous, "Analysis", acquisition.getAnalysis(), "");
+		floatPutToMiscellaneous(miscellaneous, "Amount", acquisition.getAmount(), "");
+		floatPutToMiscellaneous(miscellaneous, "ISTD Amount", acquisition.getISTDAmount(), "");
+		floatPutToMiscellaneous(miscellaneous, "Inj. Volume", acquisition.getInjectionVolume(), "");
+		stringPutToMiscellaneous(miscellaneous, "Column", acquisition.getColumn(), "");
+		stringPutToMiscellaneous(miscellaneous, "Mobil Phase", acquisition.getMobilPhase(), "");
+		floatPutToMiscellaneous(miscellaneous, "Flow rate", acquisition.getFlowRate(), acquisition.getFlowRateUnit());
+		stringPutToMiscellaneous(miscellaneous, "Detection", acquisition.getDetection(), "");
+		floatPutToMiscellaneous(miscellaneous, "Temperature", acquisition.getTemperature(), acquisition.getTemperatureUnit());
+		stringPutToMiscellaneous(miscellaneous, "Device", deviceName, "");
 		while(deviceProperties.hasNext()) {
 			Entry<String, String> entry = deviceProperties.next();
 			String propertyName = entry.getKey();
@@ -162,5 +166,13 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 	public void setSupplier(ISupplier suplier) {
 
 		this.supplier = suplier;
+	}
+
+	private void stringPutToMiscellaneous(Map<String, String> miscellaneous, String name, String value, String unit) {
+
+		if(value == null) {
+			return;
+		}
+		miscellaneous.put(name, value + unit);
 	}
 }
