@@ -17,7 +17,7 @@ import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public class SaveChromatogram {
 
-	private HashMap<String, String> deviceProperties;
+	final private HashMap<String, String> deviceProperties = new HashMap<>();
 	private IChromatogram chromatogram;
 	private String name;
 	private String nameDevice;

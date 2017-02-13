@@ -17,14 +17,12 @@ import java.util.List;
 
 public class Acquisitions implements IAcquisitions {
 
-	private List<IAcquisition> acquisitions;
+	final private List<IAcquisition> acquisitions = new ArrayList<>();
 	private IAcquisition actualAcquisition;
 	private String name;
 
 	public Acquisitions() {
-		acquisitions = new ArrayList<>();
 		name = DEFAULT_NAME;
-		actualAcquisition = null;
 	}
 
 	@Override
