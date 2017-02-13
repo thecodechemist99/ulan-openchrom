@@ -35,7 +35,7 @@ public abstract class AbstractAcquisition implements IAcquisition {
 	private Float ISTDAmount;
 	private String mobilPhase;
 	private String name;
-	protected PropertyChangeSupport propertyChangeSupport;
+	final protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private boolean record;
 	private boolean recording;
 	private Float temperature;
@@ -46,7 +46,6 @@ public abstract class AbstractAcquisition implements IAcquisition {
 		recording = false;
 		record = false;
 		autoStop = false;
-		propertyChangeSupport = new PropertyChangeSupport(this);
 	}
 
 	@Override

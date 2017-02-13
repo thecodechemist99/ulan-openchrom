@@ -19,13 +19,12 @@ import org.chromulan.system.control.model.IAcquisition;
 
 public class DevicesProfile extends ControlDevices implements IDevicesProfile {
 
-	private List<IAcquisition> acquisitions;
-	private List<IDeviceSetting> deviceSettings;
+	final private List<IAcquisition> acquisitions = new LinkedList<>();
+	final private List<IDeviceSetting> deviceSettings = new LinkedList<>();
 	private String name;
 
 	public DevicesProfile() {
 		super();
-		acquisitions = new LinkedList<>();
 	}
 
 	@Override

@@ -16,10 +16,9 @@ import java.util.List;
 
 public class ControlDevices implements IControlDevices {
 
-	private List<IControlDevice> controlDevices;
+	final private List<IControlDevice> controlDevices = new LinkedList<IControlDevice>();
 
 	public ControlDevices() {
-		controlDevices = new LinkedList<IControlDevice>();
 	}
 
 	@Override

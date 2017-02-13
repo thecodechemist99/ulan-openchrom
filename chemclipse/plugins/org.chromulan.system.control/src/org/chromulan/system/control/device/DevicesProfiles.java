@@ -16,10 +16,9 @@ import java.util.List;
 
 public class DevicesProfiles implements IDevicesProfiles {
 
-	private List<IDevicesProfile> profiles;
+	final private List<IDevicesProfile> profiles = new LinkedList<>();
 
 	public DevicesProfiles() {
-		profiles = new LinkedList<>();
 	}
 
 	@Override
