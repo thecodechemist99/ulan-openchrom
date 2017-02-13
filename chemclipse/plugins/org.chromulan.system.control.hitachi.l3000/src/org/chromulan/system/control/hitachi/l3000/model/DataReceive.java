@@ -23,44 +23,44 @@ import org.eclipse.chemclipse.wsd.model.core.IScanWSD;
 
 public class DataReceive {
 
-	private ControlDevice controlDevice;
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private IChromatogramWSDAcquisition chromatogram;
 	volatile private boolean reset;
-	private Boolean saveData;
+	volatile private Boolean saveData;
 	private int timeInterval;
 	private float wavelenghtInterval;
 	private int wavelenghtRangeFrom;
 
-	public DataReceive(ControlDevice controlDevice) {
-		this.chromatogram = new ChromatogramWSDAcquisition(controlDevice.getTimeIntervalMill(), 0);
-		this.controlDevice = controlDevice;
-		this.wavelenghtInterval = controlDevice.getWavelenghtInterval();
-		this.wavelenghtRangeFrom = controlDevice.getWavelenghtRangeFrom();
-		this.timeInterval = controlDevice.getTimeIntervalMill();
+	public DataReceive(String name, int timeInterval, float wavelenghtInterval, int wavelenghtRangeFrom, int wavelenghtRangeTo) {
+		this.chromatogram = new ChromatogramWSDAcquisition(timeInterval, 0);
+		this.chromatogram.setName(name);
+		this.wavelenghtInterval = wavelenghtInterval;
+		this.wavelenghtRangeFrom = wavelenghtRangeFrom;
+		this.timeInterval = timeInterval;
 		this.saveData = true;
 		this.reset = false;
 	}
 
 	private void addScan(IScanWSD actualScan) {
 
-		synchronized(saveData) {
-			if(saveData && !reset) {
-				chromatogram.addScanAutoSet(actualScan);
-			}
-		}
+		chromatogram.addScanAutoSet(actualScan);
 	}
 
 	public void addScan(final String message) {
 
+		if(!saveData) {
+			return;
+		}
+		final boolean reset = this.reset;
 		executor.execute(new Runnable() {
 
 			@Override
 			public void run() {
 
-				parseMessagge(message);
+				parseMessagge(message, reset);
 			}
 		});
+		this.reset = false;
 	}
 
 	private void addScanSignal(float abundance, IScanWSD scanWSD, int actualScanOrder) {
@@ -68,7 +68,7 @@ public class DataReceive {
 		IScanSignalWSD scanSignalWSD = new AbstractScanSignalWSD() {
 		};
 		scanSignalWSD.setAbundance(abundance);
-		scanSignalWSD.setWavelength(wavelenghtRangeFrom + (int)(wavelenghtInterval * actualScanOrder));
+		scanSignalWSD.setWavelength(wavelenghtRangeFrom + wavelenghtInterval * actualScanOrder);
 		actualScanOrder++;
 		scanWSD.addScanSignal(scanSignalWSD);
 	}
@@ -93,8 +93,11 @@ public class DataReceive {
 		return saveData;
 	}
 
-	private void parseMessagge(String messagge) {
+	private void parseMessagge(String messagge, boolean reset) {
 
+		if(reset) {
+			chromatogram.newAcquisition(timeInterval, 0);
+		}
 		String[] data = messagge.trim().split("\\s+");
 		IScanWSD actualScan = new AbstractScanWSD() {
 
@@ -113,22 +116,25 @@ public class DataReceive {
 		}
 	}
 
-	public void reset(boolean saveData) {
+	public void reset(boolean saveData, int timeInterval, float wavelenghtInterval, int wavelenghtRangeFrom, int wavelenghtRangeTo) {
 
-		synchronized(this.saveData) {
-			this.reset = true;
-			this.saveData = saveData;
-			this.wavelenghtInterval = controlDevice.getWavelenghtInterval();
-			this.wavelenghtRangeFrom = controlDevice.getWavelenghtRangeFrom();
-			this.timeInterval = controlDevice.getTimeIntervalMill();
-			chromatogram.newAcquisition(timeInterval, 0);
-		}
+		this.saveData = saveData;
+		this.wavelenghtInterval = wavelenghtInterval;
+		this.wavelenghtRangeFrom = wavelenghtRangeFrom;
+		this.timeInterval = timeInterval;
+		this.reset = true;
+	}
+
+	public void reset(int timeInterval, float wavelenghtInterval, int wavelenghtRangeFrom, int wavelenghtRangeTo) {
+
+		this.wavelenghtInterval = wavelenghtInterval;
+		this.wavelenghtRangeFrom = wavelenghtRangeFrom;
+		this.timeInterval = timeInterval;
+		this.reset = true;
 	}
 
 	public void setSaveData(boolean saveData) {
 
-		synchronized(this.saveData) {
-			this.saveData = saveData;
-		}
+		this.saveData = saveData;
 	}
 }

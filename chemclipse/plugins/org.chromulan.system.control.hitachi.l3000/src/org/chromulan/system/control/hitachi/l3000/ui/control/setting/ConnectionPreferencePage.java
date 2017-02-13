@@ -11,11 +11,14 @@
  *******************************************************************************/
 package org.chromulan.system.control.hitachi.l3000.ui.control.setting;
 
-import java.util.Enumeration;
+import java.io.IOException;
 
 import org.chromulan.system.control.hitachi.l3000.model.ControlDevice;
-import org.chromulan.system.control.hitachi.l3000.model.DeviceInterface;
+import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort.BaudRate;
+import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort.Delimiter;
+import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort.Parity;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -28,35 +31,27 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-import purejavacomm.CommPortIdentifier;
-
 public class ConnectionPreferencePage extends PreferencePage {
 
 	private IObservableValue<String> boudRate;
+	private Button buttonClose;
+	private Combo comboName;
 	private ControlDevice controlDevice;
-	private IObservableValue<Boolean> controlSignal;
-	private DataBindingContext dbc;
+	private IObservableValue<String> controlSignal;
+	final private DataBindingContext dbc = new DataBindingContext();
 	private IObservableValue<String> delimiter;
-	private String delimiterCR = "CR";
-	private String delimiterCRLF = "CR+LF";
-	private DeviceInterface deviceInterface;
+	private Label labelCTSsignal;
 	private IObservableValue<String> name;
-	private IObservableValue<Boolean> parity;
+	private IObservableValue<String> parity;
 
-	public ConnectionPreferencePage(DeviceInterface deviceInterface) {
+	public ConnectionPreferencePage(ControlDevice controlDevice) {
 		super("Connection");
-		this.controlDevice = deviceInterface.getControlDevice();
-		this.deviceInterface = deviceInterface;
+		this.controlDevice = controlDevice;
 		this.name = new WritableValue<>(controlDevice.getPortName(), String.class);
-		this.boudRate = new WritableValue<>(Integer.toString(controlDevice.getPortBaudRate()), String.class);
-		if(controlDevice.getPortDelimeter().equals(ControlDevice.DELIMITER_CR)) {
-			this.delimiter = new WritableValue<>(delimiterCR, String.class);
-		} else {
-			this.delimiter = new WritableValue<>(delimiterCRLF, String.class);
-		}
-		this.parity = new WritableValue<>(controlDevice.isPortEventParity(), Boolean.class);
-		this.controlSignal = new WritableValue<>(controlDevice.isPortDataControlSignal(), Boolean.class);
-		this.dbc = new DataBindingContext();
+		this.boudRate = new WritableValue<>(Integer.toString(controlDevice.getPortBaudRate().getBaudRate()), String.class);
+		this.delimiter = new WritableValue<>(controlDevice.getPortDelimeter().name(), String.class);
+		this.parity = new WritableValue<>(controlDevice.getPortParity().name(), String.class);
+		this.controlSignal = new WritableValue<>(controlDevice.getPortDataControlSignal(), String.class);
 	}
 
 	@Override
@@ -65,60 +60,79 @@ public class ConnectionPreferencePage extends PreferencePage {
 		Composite parent = new Composite(composite, SWT.None);
 		Label label = new Label(parent, SWT.None);
 		label.setText("Select Port Name");
-		Combo combo = getNames(parent);
-		dbc.bindValue(WidgetProperties.selection().observe(combo), name);
+		comboName = getNames(parent);
+		dbc.bindValue(WidgetProperties.selection().observe(comboName), name, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
 		label = new Label(parent, SWT.None);
 		label.setText("Select Boud rate");
-		combo = getBaudRate(parent);
-		dbc.bindValue(WidgetProperties.selection().observe(combo), boudRate);
+		Combo combo = getBaudRate(parent);
+		dbc.bindValue(WidgetProperties.selection().observe(combo), boudRate, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
 		label = new Label(parent, SWT.None);
 		label.setText("Select Delimiter");
 		combo = getDelimiter(parent);
-		dbc.bindValue(WidgetProperties.selection().observe(combo), delimiter);
+		dbc.bindValue(WidgetProperties.selection().observe(combo), delimiter, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
 		label = new Label(parent, SWT.None);
 		label.setText("Parity even");
-		Button button = new Button(parent, SWT.CHECK);
-		dbc.bindValue(WidgetProperties.selection().observe(button), parity);
+		combo = getParity(parent);
+		dbc.bindValue(WidgetProperties.selection().observe(combo), parity, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
 		label = new Label(parent, SWT.None);
 		label.setText("Data control signal");
-		button = new Button(parent, SWT.CHECK);
-		dbc.bindValue(WidgetProperties.selection().observe(button), controlSignal);
+		combo = getControlSignal(parent);
+		dbc.bindValue(WidgetProperties.selection().observe(combo), controlSignal, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
+		label = new Label(parent, SWT.None);
+		label.setText("CTS signal");
+		labelCTSsignal = new Label(parent, SWT.None);
+		buttonClose = new Button(parent, SWT.PUSH);
+		buttonClose.setText("close");
+		buttonClose.addListener(SWT.Selection, (event) -> {
+			controlDevice.closeSerialPort();
+			updateWidget();
+		});
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(parent);
+		updateWidget();
 		return composite;
 	}
 
 	private Combo getBaudRate(Composite parent) {
 
 		Combo combo = new Combo(parent, SWT.READ_ONLY);
-		combo.add(Integer.toString(ControlDevice.BOUD_RATE_4800));
-		combo.add(Integer.toString(ControlDevice.BOUD_RATE_2400));
-		combo.add(Integer.toString(ControlDevice.BOUD_RATE_1200));
-		combo.add(Integer.toString(ControlDevice.BOUD_RATE_600));
-		combo.add(Integer.toString(ControlDevice.BOUD_RATE_300));
-		combo.add(Integer.toString(ControlDevice.BOUD_RATE_150));
-		combo.add(Integer.toString(ControlDevice.BOUD_RATE_75));
+		for(BaudRate baudRate : BaudRate.values()) {
+			combo.add(Integer.toString(baudRate.getBaudRate()));
+		}
+		return combo;
+	}
+
+	private Combo getControlSignal(Composite parent) {
+
+		Combo combo = new Combo(parent, SWT.READ_ONLY);
+		for(String controlSignal : controlDevice.getDataControlTypes()) {
+			combo.add(controlSignal);
+		}
 		return combo;
 	}
 
 	private Combo getDelimiter(Composite parent) {
 
 		Combo combo = new Combo(parent, SWT.READ_ONLY);
-		combo.add(delimiterCR);
-		combo.add(delimiterCRLF);
+		for(Delimiter delimiter : Delimiter.values()) {
+			combo.add(delimiter.name());
+		}
 		return combo;
 	}
 
 	private Combo getNames(Composite parent) {
 
 		Combo combo = new Combo(parent, SWT.READ_ONLY);
-		Enumeration<CommPortIdentifier> enumerations = CommPortIdentifier.getPortIdentifiers();
-		while(enumerations.hasMoreElements()) {
-			CommPortIdentifier commPortIdentifier = enumerations.nextElement();
-			String name = commPortIdentifier.getName();
-			int portType = commPortIdentifier.getPortType();
-			if(portType == CommPortIdentifier.PORT_SERIAL) {
-				combo.add(name);
-			}
+		for(String name : controlDevice.getSerialPortNames()) {
+			combo.add(name);
+		}
+		return combo;
+	}
+
+	private Combo getParity(Composite parent) {
+
+		Combo combo = new Combo(parent, SWT.READ_ONLY);
+		for(Parity parity : Parity.values()) {
+			combo.add(parity.name());
 		}
 		return combo;
 	}
@@ -132,28 +146,53 @@ public class ConnectionPreferencePage extends PreferencePage {
 	@Override
 	public boolean performOk() {
 
+		dbc.updateModels();
+		setErrorMessage(null);
 		String name = this.name.getValue();
 		if(name == null || name.isEmpty()) {
 			return false;
 		}
 		int boudRate = Integer.valueOf(this.boudRate.getValue());
-		boolean parity = this.parity.getValue();
-		boolean controlSignal = this.controlSignal.getValue();
-		String delimiter = null;
-		if(this.delimiter.getValue().equals(delimiterCR)) {
-			delimiter = ControlDevice.DELIMITER_CR;
-		} else {
-			delimiter = ControlDevice.DELIMITER_CRLF;
-		}
+		String parity = this.parity.getValue();
+		String controlSignal = this.controlSignal.getValue();
+		String delimiter = this.delimiter.getValue();
 		if(!controlDevice.isConnected()) {
-			return deviceInterface.openConnection(name, boudRate, parity, controlSignal, delimiter, true);
+			try {
+				return controlDevice.openSerialPort(name, BaudRate.getBaudeRate(boudRate), Parity.valueOf(parity), controlSignal, Delimiter.valueOf(delimiter));
+			} catch(IOException e) {
+				setErrorMessage(e.getMessage());
+				controlDevice.closeSerialPort();
+			} finally {
+				updateWidget();
+			}
 		} else {
-			if(controlDevice.getPortName().equals(name)) {
-				return deviceInterface.setParameters(boudRate, parity, controlSignal, delimiter);
-			} else {
-				deviceInterface.closeConnection();
-				return deviceInterface.openConnection(name, boudRate, parity, controlSignal, delimiter, true);
+			try {
+				return controlDevice.setParametrsSerialPort(BaudRate.getBaudeRate(boudRate), Parity.valueOf(parity), controlSignal, Delimiter.valueOf(delimiter));
+			} catch(IOException e) {
+				setErrorMessage(e.getMessage());
+				controlDevice.closeSerialPort();
+			} finally {
+				updateWidget();
 			}
 		}
+		return false;
+	}
+
+	private void updateWidget() {
+
+		if(controlDevice.isConnected()) {
+			comboName.setEnabled(false);
+			buttonClose.setEnabled(true);
+			if(controlDevice.getCTS()) {
+				labelCTSsignal.setText("Yes");
+			} else {
+				labelCTSsignal.setText("No");
+			}
+		} else {
+			comboName.setEnabled(true);
+			buttonClose.setEnabled(false);
+			labelCTSsignal.setText("No");
+		}
+		labelCTSsignal.getParent().update();
 	}
 }

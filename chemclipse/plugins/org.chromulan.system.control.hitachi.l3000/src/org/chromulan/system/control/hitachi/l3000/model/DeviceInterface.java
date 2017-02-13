@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.chromulan.system.control.device.IControlDevice;
-import org.chromulan.system.control.hitachi.l3000.model.evens.DeviceEvents;
 import org.chromulan.system.control.manager.acquisitions.IAcquisitionChangeListener;
 import org.chromulan.system.control.manager.acquisitions.IAcquisitionManager;
 import org.chromulan.system.control.manager.devices.DataSupplier;
@@ -33,8 +32,9 @@ import org.chromulan.system.control.model.IChromatogramWSDAcquisition;
 import org.chromulan.system.control.model.SaveChromatogram;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
-import org.eclipse.e4.core.services.events.IEventBroker;
 
 @Creatable
 @Singleton
@@ -43,8 +43,6 @@ public class DeviceInterface {
 	private ControlDevice controlDevice;
 	@Inject
 	private DataSupplier dataSupplier;
-	@Inject
-	private IEventBroker eventBroker;
 	private IAcquisitionChangeListener changeListener;
 	@Inject
 	private IAcquisitionManager manager;
@@ -59,6 +57,7 @@ public class DeviceInterface {
 				if(acquisition == setAcqiusition) {
 					setAcqiusition = null;
 					controlDevice.setPrepare(true);
+					controlDevice.resetChromatogram(true);
 				}
 			}
 
@@ -67,7 +66,7 @@ public class DeviceInterface {
 
 				List<SaveChromatogram> chromatograms = new ArrayList<>();
 				if(acquisition == setAcqiusition) {
-					IChromatogramWSD chromatogramWSD = controlDevice.getDatareceive().getChromatogram().getChromatogramWSD();
+					IChromatogramWSD chromatogramWSD = controlDevice.getChromatogram().getChromatogramWSD();
 					if(acquisition instanceof IAcquisitionCSD) {
 						HashMap<Double, IChromatogramCSD> newChrom = IChromatogramWSDAcquisition.chromatogramWSDtoCSD(chromatogramWSD);
 						for(Entry<Double, IChromatogramCSD> chromSet : newChrom.entrySet()) {
@@ -110,10 +109,14 @@ public class DeviceInterface {
 
 				if(acquisition == setAcqiusition) {
 					if(controlDevice.isSendStart()) {
-						sendStart();
+						try {
+							controlDevice.sendStart();
+						} catch(IOException e) {
+							controlDevice.closeSerialPort();
+						}
 					}
 					controlDevice.setPrepare(false);
-					controlDevice.getDatareceive().reset(true);
+					controlDevice.resetChromatogram(true);
 				}
 			}
 
@@ -122,29 +125,21 @@ public class DeviceInterface {
 
 				if(acquisition == setAcqiusition) {
 					if(controlDevice.isSendStop()) {
-						sendStop();
+						try {
+							controlDevice.sendStop();
+						} catch(IOException e) {
+							controlDevice.closeSerialPort();
+						}
 					}
-					controlDevice.getDatareceive().setSaveData(false);
+					controlDevice.saveData(false);
 				}
 			}
 		};
 	}
 
-	public boolean closeConnection() {
-
-		try {
-			controlDevice.closeSerialPort();
-			dataSupplier.updateControlDevices();
-			return true;
-		} catch(Exception e) {
-		}
-		return false;
-	}
-
 	@PreDestroy
 	public void destroy() {
 
-		closeConnection();
 		manager.removeChangeListener(changeListener);
 	}
 
@@ -158,23 +153,8 @@ public class DeviceInterface {
 		return controlDevice;
 	}
 
-	public boolean openConnection(String portName, int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter, boolean addFilter) {
-
-		try {
-			boolean b = controlDevice.openSerialPort(portName, portBaudRate, portEventParity, portDataControlSignal, portDelimiter);
-			if(b) {
-				eventBroker.post(DeviceEvents.TOPIC_HITACHI_L3000_CONNECTION_OPEN, this);
-				dataSupplier.updateControlDevices();
-			}
-			return b;
-		} catch(Exception e) {
-			controlDevice.closeSerialPort();
-		}
-		return false;
-	}
-
 	@PostConstruct
-	public void postConstruct() {
+	public void postConstruct(IEclipseContext context) {
 
 		for(IControlDevice device : dataSupplier.getControlDevices()) {
 			if(device instanceof ControlDevice) {
@@ -185,80 +165,7 @@ public class DeviceInterface {
 			controlDevice = new ControlDevice();
 			dataSupplier.getControlDevices().add(controlDevice);
 		}
+		ContextInjectionFactory.inject(controlDevice, context);
 		manager.addChangeListener(changeListener);
-	}
-
-	public boolean sendDataOutputType() {
-
-		try {
-			return controlDevice.sendDataOutputType();
-		} catch(Exception e) {
-			closeConnection();
-		}
-		return false;
-	}
-
-	private boolean sendStart() {
-
-		try {
-			return controlDevice.sendStart();
-		} catch(IOException e) {
-			closeConnection();
-		}
-		return false;
-	}
-
-	private boolean sendStop() {
-
-		try {
-			return controlDevice.sendStop();
-		} catch(IOException e) {
-			closeConnection();
-		}
-		return false;
-	}
-
-	public boolean sendTimeInterval() {
-
-		try {
-			return controlDevice.sendTimeInterval();
-		} catch(IOException e) {
-			closeConnection();
-		}
-		return false;
-	}
-
-	public boolean sendWavelenghtInterval() {
-
-		try {
-			return controlDevice.sendWavelenghtInterval();
-		} catch(IOException e) {
-			closeConnection();
-		}
-		return false;
-	}
-
-	public boolean sendWaveLenghtRange() {
-
-		try {
-			return controlDevice.sendWaveLenghtRange();
-		} catch(IOException e) {
-			closeConnection();
-		}
-		return false;
-	}
-
-	public boolean setParameters(int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) {
-
-		try {
-			boolean b = controlDevice.setPortParameters(portBaudRate, portEventParity, portDataControlSignal, portDelimiter);
-			if(b) {
-				eventBroker.post(DeviceEvents.TOPIC_HITACHI_L3000_CONNECTION_SET_PARAMETERS, this);
-			}
-			return b;
-		} catch(Exception e) {
-			closeConnection();
-		}
-		return false;
 	}
 }

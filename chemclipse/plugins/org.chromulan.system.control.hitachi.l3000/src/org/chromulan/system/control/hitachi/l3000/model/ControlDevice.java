@@ -14,14 +14,12 @@ package org.chromulan.system.control.hitachi.l3000.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.TooManyListenersException;
+
+import javax.inject.Inject;
 
 import org.chromulan.system.control.device.IControlDevice;
 import org.chromulan.system.control.device.setting.DeviceSetting;
@@ -32,26 +30,15 @@ import org.chromulan.system.control.device.setting.ValueEnumeration;
 import org.chromulan.system.control.device.setting.ValueFloat;
 import org.chromulan.system.control.device.setting.ValueInt;
 import org.chromulan.system.control.hitachi.l3000.Activator;
-
-import purejavacomm.CommPortIdentifier;
-import purejavacomm.NoSuchPortException;
-import purejavacomm.PortInUseException;
-import purejavacomm.SerialPort;
-import purejavacomm.SerialPortEvent;
-import purejavacomm.SerialPortEventListener;
-import purejavacomm.UnsupportedCommOperationException;
+import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort;
+import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort.BaudRate;
+import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort.Delimiter;
+import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort.Parity;
+import org.chromulan.system.control.manager.devices.DataSupplier;
+import org.chromulan.system.control.model.IChromatogramWSDAcquisition;
 
 public class ControlDevice implements IControlDevice {
 
-	public static final int BOUD_RATE_1200 = 1200;
-	public static final int BOUD_RATE_150 = 150;
-	public static final int BOUD_RATE_2400 = 2400;
-	public static final int BOUD_RATE_300 = 300;
-	public static final int BOUD_RATE_4800 = 4800;
-	public static final int BOUD_RATE_600 = 600;
-	public static final int BOUD_RATE_75 = 75;
-	public static final String DELIMITER_CR = "\r";
-	public static final String DELIMITER_CRLF = "\r\n";
 	public final static int OUTPUT_ANALOG = 0;
 	public final static int OUTPUT_DIGITAL = 1;
 	public final static String PROPERTY_AUTOSET_VALUE = "autoSetValue";
@@ -77,28 +64,28 @@ public class ControlDevice implements IControlDevice {
 	private boolean autoSetValue;
 	private final String COMPANY = "HITACHI";
 	private DataReceive dataReceive;
+	@Inject
+	private DataSupplier dataSupplier;
 	private IDeviceSetting deviceSetting;
 	private boolean isPrepare;
 	private final String MODEL = "L3000";
 	private String name;
 	private int outputType;
-	private int portBaudRate;
-	private boolean portDataControlSignal;
-	private String portDelimeter;
-	private boolean portEventParity;
-	private CommPortIdentifier portId;
+	private BaudRate portBaudRate;
+	private String portDataControlSignal;
+	private Delimiter portDelimeter;
 	private String portName;
-	private PropertyChangeSupport propertyChangeSupport;
+	private Parity portParity;
+	final private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private boolean sendStart;
 	private boolean sendStop;
-	private SerialPort serialPort;
+	private AbstractSerialPort serialPort;
 	private float timeInterval;
 	private float wavelenghtInterval;
 	private int wavelenghtRangeFrom;
 	private int wavelenghtRangeTo;
 
 	public ControlDevice() {
-		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		this.isPrepare = true;
 		deviceSetting = create();
 		setName(COMPANY + " " + MODEL);
@@ -109,44 +96,13 @@ public class ControlDevice implements IControlDevice {
 		setWavelenghtRangeTo(360);
 		setSendStart(false);
 		setSendStop(false);
-		portName = "";
-		portBaudRate = BOUD_RATE_4800;
-		portDelimeter = DELIMITER_CR;
-		portDataControlSignal = true;
-		portEventParity = true;
-		dataReceive = new DataReceive(this);
-	}
-
-	private void addDataEvent() throws TooManyListenersException, IOException {
-
-		final StringBuilder builder = new StringBuilder();
-		final InputStream inputStream = serialPort.getInputStream();
-		serialPort.addEventListener(new SerialPortEventListener() {
-
-			@Override
-			public void serialEvent(SerialPortEvent arg0) {
-
-				try {
-					int ch;
-					while((ch = inputStream.read()) != -1) {
-						if(ch == 'D') {
-							builder.append((char)ch);
-						} else {
-							if(builder.length() != 0) {
-								if(ch == '\r') {
-									dataReceive.addScan(builder.toString());
-									builder.setLength(0);
-								} else {
-									builder.append((char)ch);
-								}
-							}
-						}
-					}
-				} catch(IOException e) {
-					serialPort.close();
-				}
-			}
-		});
+		this.dataReceive = new DataReceive("hitachi l3000", 1 * 1000, 5, 200, 360);
+		this.serialPort = AbstractSerialPort.getSerialPort(dataReceive);
+		portParity = serialPort.getParity();
+		portBaudRate = serialPort.getBaudeRate();
+		portName = serialPort.getName();
+		portDelimeter = serialPort.getDelimiter();
+		portDataControlSignal = serialPort.getDataContol();
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -161,8 +117,12 @@ public class ControlDevice implements IControlDevice {
 
 	public void closeSerialPort() {
 
-		if(serialPort != null) {
+		try {
 			serialPort.close();
+		} catch(IOException e) {
+		}
+		if(dataSupplier != null) {
+			dataSupplier.updateControlDevices();
 		}
 	}
 
@@ -187,9 +147,14 @@ public class ControlDevice implements IControlDevice {
 		return COMPANY;
 	}
 
-	public DataReceive getDatareceive() {
+	public boolean getCTS() {
 
-		return dataReceive;
+		return serialPort.getCTS();
+	}
+
+	public String[] getDataControlTypes() {
+
+		return serialPort.getDataControlTypes();
 	}
 
 	@Override
@@ -219,6 +184,11 @@ public class ControlDevice implements IControlDevice {
 		return FLG_SUPPORT_CSD_CHROMATOGRAM;
 	}
 
+	public IChromatogramWSDAcquisition getChromatogram() {
+
+		return dataReceive.getChromatogram();
+	}
+
 	@Override
 	public String getModel() {
 
@@ -242,12 +212,17 @@ public class ControlDevice implements IControlDevice {
 		return Activator.PLUGIN_ID;
 	}
 
-	public int getPortBaudRate() {
+	public BaudRate getPortBaudRate() {
 
 		return portBaudRate;
 	}
 
-	public String getPortDelimeter() {
+	public String getPortDataControlSignal() {
+
+		return portDataControlSignal;
+	}
+
+	public Delimiter getPortDelimeter() {
 
 		return portDelimeter;
 	}
@@ -255,6 +230,16 @@ public class ControlDevice implements IControlDevice {
 	public String getPortName() {
 
 		return portName;
+	}
+
+	public Parity getPortParity() {
+
+		return portParity;
+	}
+
+	public String[] getSerialPortNames() {
+
+		return serialPort.getNames();
 	}
 
 	public float getTimeInterval() {
@@ -290,26 +275,18 @@ public class ControlDevice implements IControlDevice {
 	@Override
 	public boolean isConnected() {
 
-		if(serialPort == null) {
-			return false;
-		}
-		return portId.isCurrentlyOwned();
-	}
-
-	public boolean isPortDataControlSignal() {
-
-		return portDataControlSignal;
-	}
-
-	public boolean isPortEventParity() {
-
-		return portEventParity;
+		return serialPort.isOpen();
 	}
 
 	@Override
 	public boolean isPrepared() {
 
 		return isPrepare;
+	}
+
+	public boolean isSavaData() {
+
+		return this.dataReceive.isSaveData();
 	}
 
 	public boolean isSendStart() {
@@ -322,31 +299,21 @@ public class ControlDevice implements IControlDevice {
 		return sendStop;
 	}
 
-	public boolean openSerialPort(String portName, int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, TooManyListenersException, IOException {
+	public boolean openSerialPort(String portName, BaudRate portBaudRate, Parity portParity, String portDataControlSignal, Delimiter portDelimiter) throws IOException {
 
-		boolean openNewPort = false;
-		if(portId == null) {
-			portId = CommPortIdentifier.getPortIdentifier(portName);
-			serialPort = (purejavacomm.SerialPort)portId.open("OpenChrom-Hitachi-L3000", 1000);
-			openNewPort = true;
-		} else {
-			if(!isConnected()) {
-				if(!serialPort.getName().equals(portName)) {
-					portId = CommPortIdentifier.getPortIdentifier(portName);
-				}
-				serialPort = (purejavacomm.SerialPort)portId.open("OpenChrom-Hitachi-L3000", 1000);
-				openNewPort = true;
+		boolean b = serialPort.open(portName, portBaudRate, portParity, portDelimiter, portDataControlSignal);
+		if(b) {
+			serialPort.addDataEvent();
+			this.portName = portName;
+			this.portBaudRate = portBaudRate;
+			this.portParity = portParity;
+			this.portDataControlSignal = portDataControlSignal;
+			this.portDelimeter = portDelimiter;
+			if(dataSupplier != null) {
+				dataSupplier.updateControlDevices();
 			}
 		}
-		if(openNewPort) {
-			this.portName = portName;
-			setPortParameters(portBaudRate, portEventParity, portDataControlSignal, portDelimiter);
-			serialPort.notifyOnDataAvailable(true);
-			serialPort.getOutputStream();
-			addDataEvent();
-			return true;
-		}
-		return false;
+		return b;
 	}
 
 	@Override
@@ -362,10 +329,10 @@ public class ControlDevice implements IControlDevice {
 		boolean sendStop = in.readBoolean();
 		boolean autosetValue = in.readBoolean();
 		String portName = (String)in.readObject();
-		int portBaudRate = in.readInt();
-		String portDelimeter = (String)in.readObject();
-		boolean portDataControlSignal = in.readBoolean();
-		boolean portEventParity = in.readBoolean();
+		BaudRate portBaudRate = (BaudRate)in.readObject();
+		Delimiter portDelimeter = (Delimiter)in.readObject();
+		String portDataControlSignal = (String)in.readObject();
+		Parity portParity = (Parity)in.readObject();
 		setName(name);
 		setOutputType(outPutType);
 		setTimeInterval(timeInterval);
@@ -379,8 +346,8 @@ public class ControlDevice implements IControlDevice {
 		this.portBaudRate = portBaudRate;
 		this.portDelimeter = portDelimeter;
 		this.portDataControlSignal = portDataControlSignal;
-		this.portEventParity = portEventParity;
-		this.dataReceive = new DataReceive(this);
+		this.portParity = portParity;
+		this.dataReceive.reset(true, (int)(timeInterval * 1000), wavelenghtInterval, wavelenghtRangeFrom, wavelenghtRangeTo);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -393,57 +360,44 @@ public class ControlDevice implements IControlDevice {
 		propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 	}
 
-	public boolean sendDataOutputType() throws IOException {
+	public void resetChromatogram() {
 
-		if(isConnected()) {
-			if(outputType == OUTPUT_ANALOG) {
-				return sendMessagge("SEND", " 0");
-			} else if(outputType == OUTPUT_DIGITAL) {
-				return sendMessagge("SEND", " 1");
-			}
-		}
-		return false;
+		this.dataReceive.reset((int)(timeInterval * 1000), wavelenghtInterval, wavelenghtRangeFrom, wavelenghtRangeTo);
 	}
 
-	private boolean sendMessagge(String command, String messagge) throws IOException {
+	public void resetChromatogram(boolean savadata) {
 
-		if(isConnected()) {
-			OutputStream outputStream = serialPort.getOutputStream();
-			if(messagge != null) {
-				outputStream.write(command.getBytes(StandardCharsets.UTF_8));
-				outputStream.write(" ".getBytes(StandardCharsets.UTF_8));
-				outputStream.write(messagge.getBytes(StandardCharsets.UTF_8));
-				outputStream.write(portDelimeter.getBytes(StandardCharsets.UTF_8));
-			} else {
-				outputStream.write(command.getBytes(StandardCharsets.UTF_8));
-				outputStream.write(portDelimeter.getBytes(StandardCharsets.UTF_8));
-			}
-			outputStream.flush();
-			return true;
-		}
-		return false;
+		this.dataReceive.reset(savadata, (int)(timeInterval * 1000), wavelenghtInterval, wavelenghtRangeFrom, wavelenghtRangeTo);
+	}
+
+	public void saveData(boolean save) {
+
+		this.dataReceive.setSaveData(save);
+	}
+
+	public boolean sendDataOutputType() throws IOException {
+
+		return serialPort.sendDataOutputType(outputType);
 	}
 
 	public boolean sendStart() throws IOException {
 
-		return sendMessagge("START", null);
+		return serialPort.sendStart();
 	}
 
 	public boolean sendStop() throws IOException {
 
-		return sendMessagge("STOP", null);
+		return serialPort.sendStop();
 	}
 
 	public boolean sendTimeInterval() throws IOException {
 
-		String timeInterval = String.format("%.1f", this.timeInterval);
-		return sendMessagge("TIME", timeInterval);
+		return serialPort.sendTimeInterval(timeInterval);
 	}
 
 	public boolean sendWavelenghtInterval() throws IOException {
 
-		String waveLenghtInterval = String.format("%.1f", this.wavelenghtInterval);
-		return sendMessagge("WL", waveLenghtInterval);
+		return serialPort.sendWavelenghtInterval(wavelenghtInterval);
 	}
 
 	public boolean sendWaveLenghtRange() throws IOException {
@@ -542,22 +496,16 @@ public class ControlDevice implements IControlDevice {
 		this.outputType = outputType;
 	}
 
-	public boolean setPortParameters(int portBaudRate, boolean portEventParity, boolean portDataControlSignal, String portDelimiter) throws UnsupportedCommOperationException {
+	public boolean setParametrsSerialPort(BaudRate portBaudRate, Parity portParity, String portDataControlSignal, Delimiter portDelimiter) throws IOException {
 
-		if(isConnected()) {
-			if(portEventParity) {
-				serialPort.setSerialPortParams(portBaudRate, 7, 2, SerialPort.PARITY_EVEN);
-			} else {
-				serialPort.setSerialPortParams(portBaudRate, 7, 2, SerialPort.PARITY_NONE);
-			}
-			serialPort.setRTS(portDataControlSignal);
+		boolean b = serialPort.setParametrs(portBaudRate, portParity, portDelimiter, portDataControlSignal);
+		if(b) {
 			this.portBaudRate = portBaudRate;
-			this.portEventParity = portEventParity;
+			this.portParity = portParity;
 			this.portDataControlSignal = portDataControlSignal;
 			this.portDelimeter = portDelimiter;
-			return true;
 		}
-		return false;
+		return b;
 	}
 
 	public void setPrepare(boolean isPrepare) {
@@ -626,9 +574,9 @@ public class ControlDevice implements IControlDevice {
 		out.writeBoolean(sendStop);
 		out.writeBoolean(autoSetValue);
 		out.writeObject(portName);
-		out.writeInt(portBaudRate);
+		out.writeObject(portBaudRate);
 		out.writeObject(portDelimeter);
-		out.writeBoolean(portDataControlSignal);
-		out.writeBoolean(portEventParity);
+		out.writeObject(portDataControlSignal);
+		out.writeObject(portParity);
 	}
 }
