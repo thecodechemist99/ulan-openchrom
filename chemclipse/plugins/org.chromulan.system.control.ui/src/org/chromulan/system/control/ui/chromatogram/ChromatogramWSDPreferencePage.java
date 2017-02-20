@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.WritableMap;
@@ -41,7 +40,7 @@ public class ChromatogramWSDPreferencePage extends PreferencePage {
 	private ChromatogramWSDOverviewUI chromatogramWSDOverviewUI;
 
 	public ChromatogramWSDPreferencePage(ChromatogramWSDOverviewUI chromatogramWSDOverviewUI) {
-		super("Select Wave lenght");
+		super("Select wavelenght");
 		this.chromatogramWSDOverviewUI = chromatogramWSDOverviewUI;
 		this.attributesMap = new WritableMap<>();
 		Map<Double, Boolean> map = chromatogramWSDOverviewUI.getChromatogramWSD().getSelectedWaveLengths();
@@ -59,7 +58,7 @@ public class ChromatogramWSDPreferencePage extends PreferencePage {
 			Entry<Double, Boolean> entry = iterator.next();
 			button.setText(Double.toString(entry.getKey()));
 			IObservableValue<Boolean> observeValue = Observables.observeMapEntry(attributesMap, entry.getKey());
-			dbc.bindValue(WidgetProperties.selection().observe(button), observeValue, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
+			dbc.bindValue(WidgetProperties.selection().observe(button), observeValue);
 		}
 		Button button = new Button(composite, SWT.PUSH);
 		button.setText("select all");
@@ -90,14 +89,14 @@ public class ChromatogramWSDPreferencePage extends PreferencePage {
 	@Override
 	protected void performDefaults() {
 
-		dbc.updateTargets();
+		Map<Double, Boolean> map = chromatogramWSDOverviewUI.getChromatogramWSD().getSelectedWaveLengths();
+		attributesMap.putAll(map);
 		super.performDefaults();
 	}
 
 	@Override
 	public boolean performOk() {
 
-		dbc.updateModels();
 		Map<Double, Boolean> map = chromatogramWSDOverviewUI.getChromatogramWSD().getSelectedWaveLengths();
 		map.putAll(attributesMap);
 		return super.performOk();
