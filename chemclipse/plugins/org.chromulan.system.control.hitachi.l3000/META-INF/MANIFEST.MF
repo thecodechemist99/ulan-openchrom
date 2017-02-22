@@ -26,5 +26,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/purejavacomm-master/purejavacomm.jar,
- lib/purejavacomm-master/jna-4.0.0.jar,  
+ lib/purejavacomm-master/jna-4.0.0.jar,
+ lib/jSSC-2.8.0/jssc.jar,    
  .

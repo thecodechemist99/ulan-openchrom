@@ -63,15 +63,16 @@ public abstract class AbstractSerialPort {
 		PARITY_EVEN(), PARITY_NONE();
 	}
 
+	static protected int dataBits = 7;
+	static protected int stopBits = 2;
+
 	public static AbstractSerialPort getSerialPort(DataReceive dataReceive) {
 
-		return new PureSerialPort(dataReceive);
+		return new Jssc(dataReceive);
 	}
 
 	private StringBuilder builder = new StringBuilder();
-	protected int dataBits = 7;
 	private DataReceive dataReceive;
-	protected int stopBits = 2;
 
 	protected AbstractSerialPort(DataReceive dataReceive) {
 		this.dataReceive = dataReceive;
