@@ -12,35 +12,37 @@
 package org.chromulan.system.control.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public class SaveChromatogram {
 
-	final private HashMap<String, String> deviceProperties = new HashMap<>();
+	final private HashMap<String, HashMap<String, String>> devicesProperties = new HashMap<>();
 	private IChromatogram chromatogram;
 	private String name;
-	private String nameDevice;
 
 	public SaveChromatogram(IChromatogram chromatogram, String name, String nameDevice) {
 		this.chromatogram = chromatogram;
 		this.name = name;
-		this.nameDevice = nameDevice;
 	}
 
-	public boolean addDevicePropertie(String name, String value) {
+	public void addDevicePropertie(String nameDevice, String name, String value) {
 
-		String ss = deviceProperties.put(name, value);
-		if(ss == null) {
-			return true;
+		HashMap<String, String> devicesPropertie = devicesProperties.get(nameDevice);
+		if(devicesPropertie != null) {
+			devicesPropertie.put(name, value);
 		} else {
-			return false;
+			devicesPropertie = new HashMap<>();
+			devicesPropertie.put(name, value);
+			devicesProperties.put(nameDevice, devicesPropertie);
 		}
 	}
 
-	public HashMap<String, String> getDeviceProperties() {
+	public HashMap<String, String> getDeviceProperties(String nameDevice) {
 
-		return deviceProperties;
+		return devicesProperties.get(nameDevice);
 	}
 
 	public IChromatogram getChromatogram() {
@@ -53,9 +55,19 @@ public class SaveChromatogram {
 		return name;
 	}
 
-	public String getNameDevice() {
+	public String[] getNamesDevices() {
 
-		return nameDevice;
+		if(!devicesProperties.isEmpty()) {
+			String[] names = new String[devicesProperties.size()];
+			Iterator<Entry<String, HashMap<String, String>>> iterator = devicesProperties.entrySet().iterator();
+			for(int i = 0; iterator.hasNext(); i++) {
+				Entry<String, HashMap<String, String>> entry = iterator.next();
+				names[i] = entry.getKey();
+			}
+			return names;
+		} else {
+			return null;
+		}
 	}
 
 	public void setChromatogram(IChromatogram chromatogram) {
@@ -66,10 +78,5 @@ public class SaveChromatogram {
 	public void setName(String name) {
 
 		this.name = name;
-	}
-
-	public void setNameDevice(String nameDevice) {
-
-		this.nameDevice = nameDevice;
 	}
 }

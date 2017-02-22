@@ -3,6 +3,7 @@ package org.chromulan.system.control.model;
 import java.io.File;
 import java.util.List;
 
+import org.chromulan.system.control.report.ProccessMiscellaneousDataChromatogram;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.model.core.IChromatogram;
@@ -29,7 +30,8 @@ public class AcquisitionWSDSaver extends AbstractAcquisitionSaver implements IAc
 		namesRemove();
 		chromatogramExportConverterProcessingInfos.clear();
 		for(SaveChromatogram saveChromatogram : chromatograms) {
-			IChromatogram chromatogram = setChromatogramParameters(saveChromatogram, acquisition);
+			ProccessMiscellaneousDataChromatogram.setChromatogramParameters(saveChromatogram, acquisition);
+			IChromatogram chromatogram = saveChromatogram.getChromatogram();
 			if(chromatogram instanceof IChromatogramWSD) {
 				IChromatogramWSD chromatogramWSD = (IChromatogramWSD)chromatogram;
 				File nfile = setFile(saveChromatogram.getName(), supplier.getFileExtension());

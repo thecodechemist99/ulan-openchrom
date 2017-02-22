@@ -61,7 +61,6 @@ public class AcquisitionSavePreferencePage extends PreferencePage {
 		file = new WritableValue<>(acquisition.getAcquisitionSaver().getFile(), File.class);
 		supplier = new WritableValue<>(acquisition.getAcquisitionSaver().getSupplier(), ISupplier.class);
 		setAcquisition(acquisition);
-		
 	}
 
 	@Override

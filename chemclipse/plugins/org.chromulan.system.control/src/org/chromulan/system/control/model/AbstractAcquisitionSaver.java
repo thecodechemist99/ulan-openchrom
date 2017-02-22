@@ -13,15 +13,11 @@ package org.chromulan.system.control.model;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
-import org.eclipse.chemclipse.model.core.IChromatogram;
 
 public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 
@@ -47,14 +43,6 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 		this.acquisition = acquisition;
 	}
 
-	private void floatPutToMiscellaneous(Map<String, String> miscellaneous, String name, Float value, String unit) {
-
-		if(value == null) {
-			return;
-		}
-		miscellaneous.put(name, Float.toString(value) + unit);
-	}
-
 	@Override
 	public IAcquisition getAcquisition() {
 
@@ -77,14 +65,6 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 	public ISupplier getSupplier() {
 
 		return supplier;
-	}
-
-	private void longPutToMiscellaneous(Map<String, String> miscellaneous, String name, Long value, String unit) {
-
-		if(value == null) {
-			return;
-		}
-		miscellaneous.put(name, Long.toString(value) + unit);
 	}
 
 	protected void namesRemove() {
@@ -135,44 +115,9 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 		return new File(file + File.separator + adjustNameFile(acquisition.getName()) + File.separator + newName);
 	}
 
-	protected IChromatogram setChromatogramParameters(SaveChromatogram saveChromatogram, IAcquisition acquisition) {
-
-		IChromatogram chromatogram = saveChromatogram.getChromatogram();
-		Iterator<Entry<String, String>> deviceProperties = saveChromatogram.getDeviceProperties().entrySet().iterator();
-		String deviceName = saveChromatogram.getNameDevice();
-		chromatogram.setShortInfo(acquisition.getDescription());
-		Map<String, String> miscellaneous = chromatogram.getMiscellaneous();
-		longPutToMiscellaneous(miscellaneous, "Duration", acquisition.getDuration() / (1000 * 60), " min");
-		stringPutToMiscellaneous(miscellaneous, "Analysis", acquisition.getAnalysis(), "");
-		floatPutToMiscellaneous(miscellaneous, "Amount", acquisition.getAmount(), "");
-		floatPutToMiscellaneous(miscellaneous, "ISTD Amount", acquisition.getISTDAmount(), "");
-		floatPutToMiscellaneous(miscellaneous, "Inj. Volume", acquisition.getInjectionVolume(), "");
-		stringPutToMiscellaneous(miscellaneous, "Column", acquisition.getColumn(), "");
-		stringPutToMiscellaneous(miscellaneous, "Mobil Phase", acquisition.getMobilPhase(), "");
-		floatPutToMiscellaneous(miscellaneous, "Flow rate", acquisition.getFlowRate(), acquisition.getFlowRateUnit());
-		stringPutToMiscellaneous(miscellaneous, "Detection", acquisition.getDetection(), "");
-		floatPutToMiscellaneous(miscellaneous, "Temperature", acquisition.getTemperature(), acquisition.getTemperatureUnit());
-		stringPutToMiscellaneous(miscellaneous, "Device", deviceName, "");
-		while(deviceProperties.hasNext()) {
-			Entry<String, String> entry = deviceProperties.next();
-			String propertyName = entry.getKey();
-			String propertyValue = entry.getValue();
-			miscellaneous.put(propertyName, propertyValue);
-		}
-		return chromatogram;
-	}
-
 	@Override
 	public void setSupplier(ISupplier suplier) {
 
 		this.supplier = suplier;
-	}
-
-	private void stringPutToMiscellaneous(Map<String, String> miscellaneous, String name, String value, String unit) {
-
-		if(value == null) {
-			return;
-		}
-		miscellaneous.put(name, value + unit);
 	}
 }
