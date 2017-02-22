@@ -184,7 +184,7 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 	public boolean isPageComplete() {
 
 		File file = getFile();
-		if(!(file.isDirectory() && getSupplierCSD() != null && getSupplierMSD() != null && getSupplierWSD() != null)) {
+		if(!(file != null && file.isDirectory() && getSupplierCSD() != null && getSupplierMSD() != null && getSupplierWSD() != null)) {
 			return false;
 		} else {
 			return super.isPageComplete();
