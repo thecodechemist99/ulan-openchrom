@@ -56,7 +56,7 @@ public class ChromatogramWSDOverviewUI extends ChromatogramOverviewUI {
 		IChromatogramWSDAcquisition chromatogramWSD = getChromatogramWSD();
 		if(chromatogramWSD != null) {
 			IMultipleSeries multipleSeries = chromatogramWSD.getSeries();
-			if(!multipleSeries.getMultipleSeries().isEmpty()) {
+			if(!multipleSeries.getMultipleSeries().isEmpty() && (multipleSeries.getXMin() != multipleSeries.getXMax())) {
 				int size = multipleSeries.getMultipleSeries().size();
 				setMaxSignal(multipleSeries.getYMax());
 				ISeries series;

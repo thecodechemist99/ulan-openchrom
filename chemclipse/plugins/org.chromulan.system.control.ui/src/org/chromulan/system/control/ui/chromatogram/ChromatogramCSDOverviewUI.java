@@ -47,7 +47,7 @@ public class ChromatogramCSDOverviewUI extends ChromatogramOverviewUI {
 		IChromatogramCSDAcquisition chromatogramCSD = getChromatogramCSD();
 		if(chromatogramCSD != null) {
 			IMultipleSeries multipleSeries = chromatogramCSD.getSeries();
-			if(!multipleSeries.getMultipleSeries().isEmpty()) {
+			if(!multipleSeries.getMultipleSeries().isEmpty() && (multipleSeries.getXMin() != multipleSeries.getXMax())) {
 				series = multipleSeries.getMultipleSeries().get(0);
 				setMaxSignal(series.getYMax());
 				addSeries(series);
