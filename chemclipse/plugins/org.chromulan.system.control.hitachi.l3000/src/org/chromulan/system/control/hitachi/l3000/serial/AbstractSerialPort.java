@@ -85,6 +85,7 @@ public abstract class AbstractSerialPort {
 		} else {
 			if(builder.length() != 0) {
 				if(ch == '\r') {
+					System.out.print("add scan");
 					dataReceive.addScan(builder.toString());
 					builder.setLength(0);
 				} else {

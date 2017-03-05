@@ -35,6 +35,11 @@ public class Jssc extends AbstractSerialPort {
 
 	protected Jssc(DataReceive dataReceive) {
 		super(dataReceive);
+		dataControl = DataControlAnable;
+		this.baudRate = BaudRate.BOUD_RATE_4800;
+		this.delimiter = Delimiter.DELIMITER_CR;
+		this.parity = Parity.PARITY_EVEN;
+		this.name = "";
 	}
 
 	@Override

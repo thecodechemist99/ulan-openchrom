@@ -28,23 +28,27 @@ import purejavacomm.SerialPortEvent;
 import purejavacomm.SerialPortEventListener;
 import purejavacomm.UnsupportedCommOperationException;
 
-class PureSerialPort extends AbstractSerialPort {
+public class PureSerialPort extends AbstractSerialPort {
 
 	private boolean addDataread;
-	private BaudRate baudRate = BaudRate.BOUD_RATE_4800;
+	private BaudRate baudRate;
 	private String dataControl;
 	private String DataControlAnable = "data control enable";
 	private String DataControlDisable = "data control disable";
-	private Delimiter delimiter = Delimiter.DELIMITER_CR;
+	private Delimiter delimiter;
 	private OutputStream inputStream;
-	private String name = "";
-	private Parity parity = Parity.PARITY_EVEN;
+	private String name;
+	private Parity parity;
 	private CommPortIdentifier portId;
 	private SerialPort serialPort;
 
 	protected PureSerialPort(DataReceive dataReceive) {
 		super(dataReceive);
 		dataControl = DataControlAnable;
+		this.baudRate = BaudRate.BOUD_RATE_4800;
+		this.delimiter = Delimiter.DELIMITER_CR;
+		this.parity = Parity.PARITY_EVEN;
+		this.name = "";
 	}
 
 	@Override
