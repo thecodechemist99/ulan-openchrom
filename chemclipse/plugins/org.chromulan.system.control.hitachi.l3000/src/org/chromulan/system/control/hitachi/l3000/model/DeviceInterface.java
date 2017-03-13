@@ -31,6 +31,7 @@ import org.chromulan.system.control.model.IAcquisitionCSD;
 import org.chromulan.system.control.model.IChromatogramWSDAcquisition;
 import org.chromulan.system.control.model.SaveChromatogram;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
+import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -40,6 +41,7 @@ import org.eclipse.e4.core.di.annotations.Creatable;
 @Singleton
 public class DeviceInterface {
 
+	private static final Logger logger = Logger.getLogger(DeviceInterface.class);
 	private ControlDevice controlDevice;
 	@Inject
 	private DataSupplier dataSupplier;
@@ -156,16 +158,21 @@ public class DeviceInterface {
 	@PostConstruct
 	public void postConstruct(IEclipseContext context) {
 
-		for(IControlDevice device : dataSupplier.getControlDevices()) {
-			if(device instanceof ControlDevice) {
-				this.controlDevice = (ControlDevice)device;
+		logger.info("run post construct");
+		try {
+			for(IControlDevice device : dataSupplier.getControlDevices()) {
+				if(device instanceof ControlDevice) {
+					this.controlDevice = (ControlDevice)device;
+				}
 			}
+			if(controlDevice == null) {
+				controlDevice = new ControlDevice();
+				dataSupplier.getControlDevices().add(controlDevice);
+			}
+			ContextInjectionFactory.inject(controlDevice, context);
+			manager.addChangeListener(changeListener);
+		} catch(Exception e) {
+			logger.error("exception in  post construct", e);
 		}
-		if(controlDevice == null) {
-			controlDevice = new ControlDevice();
-			dataSupplier.getControlDevices().add(controlDevice);
-		}
-		ContextInjectionFactory.inject(controlDevice, context);
-		manager.addChangeListener(changeListener);
 	}
 }

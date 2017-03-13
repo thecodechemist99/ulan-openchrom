@@ -17,6 +17,7 @@ import org.chromulan.system.control.hitachi.l3000.model.ControlDevice;
 import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort.BaudRate;
 import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort.Delimiter;
 import org.chromulan.system.control.hitachi.l3000.serial.AbstractSerialPort.Parity;
+import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Label;
 
 public class ConnectionPreferencePage extends PreferencePage {
 
+	private static final Logger logger = Logger.getLogger(ConnectionPreferencePage.class);
 	private IObservableValue<String> boudRate;
 	private Button buttonClose;
 	private Combo comboName;
@@ -46,50 +48,62 @@ public class ConnectionPreferencePage extends PreferencePage {
 
 	public ConnectionPreferencePage(ControlDevice controlDevice) {
 		super("Connection");
-		this.controlDevice = controlDevice;
-		this.name = new WritableValue<>(controlDevice.getPortName(), String.class);
-		this.boudRate = new WritableValue<>(Integer.toString(controlDevice.getPortBaudRate().getBaudRate()), String.class);
-		this.delimiter = new WritableValue<>(controlDevice.getPortDelimeter().name(), String.class);
-		this.parity = new WritableValue<>(controlDevice.getPortParity().name(), String.class);
-		this.controlSignal = new WritableValue<>(controlDevice.getPortDataControlSignal(), String.class);
+		try {
+			logger.info("create object ConnectionPreferencePage");
+			this.controlDevice = controlDevice;
+			this.name = new WritableValue<>(this.controlDevice.getPortName(), String.class);
+			this.boudRate = new WritableValue<>(Integer.toString(controlDevice.getPortBaudRate().getBaudRate()), String.class);
+			this.delimiter = new WritableValue<>(controlDevice.getPortDelimeter().name(), String.class);
+			this.parity = new WritableValue<>(controlDevice.getPortParity().name(), String.class);
+			this.controlSignal = new WritableValue<>(controlDevice.getPortDataControlSignal(), String.class);
+		} catch(Throwable e) {
+			logger.error("Exception in constor", e);
+			throw e;
+		}
 	}
 
 	@Override
 	protected Control createContents(Composite composite) {
 
-		Composite parent = new Composite(composite, SWT.None);
-		Label label = new Label(parent, SWT.None);
-		label.setText("Select Port Name");
-		comboName = getNames(parent);
-		dbc.bindValue(WidgetProperties.selection().observe(comboName), name, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
-		label = new Label(parent, SWT.None);
-		label.setText("Select Boud rate");
-		Combo combo = getBaudRate(parent);
-		dbc.bindValue(WidgetProperties.selection().observe(combo), boudRate, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
-		label = new Label(parent, SWT.None);
-		label.setText("Select Delimiter");
-		combo = getDelimiter(parent);
-		dbc.bindValue(WidgetProperties.selection().observe(combo), delimiter, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
-		label = new Label(parent, SWT.None);
-		label.setText("Parity even");
-		combo = getParity(parent);
-		dbc.bindValue(WidgetProperties.selection().observe(combo), parity, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
-		label = new Label(parent, SWT.None);
-		label.setText("Data control signal");
-		combo = getControlSignal(parent);
-		dbc.bindValue(WidgetProperties.selection().observe(combo), controlSignal, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
-		label = new Label(parent, SWT.None);
-		label.setText("CTS signal");
-		labelCTSsignal = new Label(parent, SWT.None);
-		buttonClose = new Button(parent, SWT.PUSH);
-		buttonClose.setText("close");
-		buttonClose.addListener(SWT.Selection, (event) -> {
-			controlDevice.closeSerialPort();
+		try {
+			logger.info("run method createContents");
+			Composite parent = new Composite(composite, SWT.None);
+			Label label = new Label(parent, SWT.None);
+			label.setText("Select Port Name");
+			comboName = getNames(parent);
+			dbc.bindValue(WidgetProperties.selection().observe(comboName), name, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
+			label = new Label(parent, SWT.None);
+			label.setText("Select Boud rate");
+			Combo combo = getBaudRate(parent);
+			dbc.bindValue(WidgetProperties.selection().observe(combo), boudRate, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
+			label = new Label(parent, SWT.None);
+			label.setText("Select Delimiter");
+			combo = getDelimiter(parent);
+			dbc.bindValue(WidgetProperties.selection().observe(combo), delimiter, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
+			label = new Label(parent, SWT.None);
+			label.setText("Parity even");
+			combo = getParity(parent);
+			dbc.bindValue(WidgetProperties.selection().observe(combo), parity, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
+			label = new Label(parent, SWT.None);
+			label.setText("Data control signal");
+			combo = getControlSignal(parent);
+			dbc.bindValue(WidgetProperties.selection().observe(combo), controlSignal, new UpdateValueStrategy(UpdateValueStrategy.POLICY_ON_REQUEST), null);
+			label = new Label(parent, SWT.None);
+			label.setText("CTS signal");
+			labelCTSsignal = new Label(parent, SWT.None);
+			buttonClose = new Button(parent, SWT.PUSH);
+			buttonClose.setText("close");
+			buttonClose.addListener(SWT.Selection, (event) -> {
+				controlDevice.closeSerialPort();
+				updateWidget();
+			});
+			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(parent);
 			updateWidget();
-		});
-		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(parent);
-		updateWidget();
-		return composite;
+			return composite;
+		} catch(Throwable e) {
+			logger.error("Exception in create Control", e);
+			throw e;
+		}
 	}
 
 	private Combo getBaudRate(Composite parent) {

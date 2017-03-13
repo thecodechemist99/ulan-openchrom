@@ -29,6 +29,7 @@ import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenght
 import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenghtRangeFrom;
 import org.chromulan.system.control.hitachi.l3000.ui.support.ValidatorWavelenghtRangeTo;
 import org.chromulan.system.control.model.IAcquisition;
+import org.eclipse.chemclipse.logging.core.Logger;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -55,6 +56,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class DevicePart {
 
+	private static final Logger logger = Logger.getLogger(DevicePart.class);
 	private Button buttonResetParamets;
 	private Button buttonSendStart;
 	private Button buttonSendStop;
@@ -191,13 +193,19 @@ public class DevicePart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				PreferenceManager manager = new PreferenceManager();
-				ConnectionPreferencePage settings = new ConnectionPreferencePage(device);
-				PreferenceNode nodeBase = new PreferenceNode("Connection", settings);
-				manager.addToRoot(nodeBase);
-				PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
-				dialog.open();
-				setWidgeConnection();
+				try {
+					logger.info("press button connection");
+					PreferenceManager manager = new PreferenceManager();
+					ConnectionPreferencePage settings = new ConnectionPreferencePage(device);
+					PreferenceNode nodeBase = new PreferenceNode("Connection", settings);
+					manager.addToRoot(nodeBase);
+					PreferenceDialog dialog = new PreferenceDialog(Display.getCurrent().getActiveShell(), manager);
+					dialog.open();
+					setWidgeConnection();
+				} catch(Throwable e1) {
+					logger.error("Exception in button", e1);
+					throw e1;
+				}
 			}
 		});
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
