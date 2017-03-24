@@ -51,11 +51,28 @@ public class ConnectionPreferencePage extends PreferencePage {
 		try {
 			logger.info("create object ConnectionPreferencePage");
 			this.controlDevice = controlDevice;
-			this.name = new WritableValue<>(this.controlDevice.getPortName(), String.class);
-			this.boudRate = new WritableValue<>(Integer.toString(controlDevice.getPortBaudRate().getBaudRate()), String.class);
-			this.delimiter = new WritableValue<>(controlDevice.getPortDelimeter().name(), String.class);
-			this.parity = new WritableValue<>(controlDevice.getPortParity().name(), String.class);
-			this.controlSignal = new WritableValue<>(controlDevice.getPortDataControlSignal(), String.class);
+			String name = this.controlDevice.getPortName();
+			BaudRate baudeRate = controlDevice.getPortBaudRate();
+			Delimiter delimiter = controlDevice.getPortDelimeter();
+			Parity parity = controlDevice.getPortParity();
+			String controlSignal = controlDevice.getPortDataControlSignal();
+			this.name = new WritableValue<>(name, String.class);
+			if(baudeRate != null) {
+				this.boudRate = new WritableValue<>(Integer.toString(baudeRate.getBaudRate()), String.class);
+			} else {
+				this.boudRate = new WritableValue<>(Integer.toString(BaudRate.BOUD_RATE_4800.getBaudRate()), String.class);
+			}
+			if(delimiter != null) {
+				this.delimiter = new WritableValue<>(delimiter.name(), String.class);
+			} else {
+				this.delimiter = new WritableValue<>(Delimiter.DELIMITER_CR.name(), String.class);
+			}
+			if(parity != null) {
+				this.parity = new WritableValue<>(parity.name(), String.class);
+			} else {
+				this.parity = new WritableValue<>(Parity.PARITY_EVEN.name(), String.class);
+			}
+			this.controlSignal = new WritableValue<>(controlSignal, String.class);
 		} catch(Throwable e) {
 			logger.error("Exception in constor", e);
 			throw e;
@@ -163,16 +180,17 @@ public class ConnectionPreferencePage extends PreferencePage {
 		dbc.updateModels();
 		setErrorMessage(null);
 		String name = this.name.getValue();
-		if(name == null || name.isEmpty()) {
-			return false;
-		}
-		int boudRate = Integer.valueOf(this.boudRate.getValue());
 		String parity = this.parity.getValue();
 		String controlSignal = this.controlSignal.getValue();
 		String delimiter = this.delimiter.getValue();
+		String baudeRate = this.boudRate.getValue();
+		int boudrate = Integer.valueOf(baudeRate);
+		if(name == null || name.isEmpty() || controlSignal == null || controlSignal.isEmpty()) {
+			return false;
+		}
 		if(!controlDevice.isConnected()) {
 			try {
-				return controlDevice.openSerialPort(name, BaudRate.getBaudeRate(boudRate), Parity.valueOf(parity), controlSignal, Delimiter.valueOf(delimiter));
+				return controlDevice.openSerialPort(name, BaudRate.getBaudeRate(boudrate), Parity.valueOf(parity), controlSignal, Delimiter.valueOf(delimiter));
 			} catch(IOException e) {
 				setErrorMessage(e.getMessage());
 				controlDevice.closeSerialPort();
@@ -181,7 +199,7 @@ public class ConnectionPreferencePage extends PreferencePage {
 			}
 		} else {
 			try {
-				return controlDevice.setParametrsSerialPort(BaudRate.getBaudeRate(boudRate), Parity.valueOf(parity), controlSignal, Delimiter.valueOf(delimiter));
+				return controlDevice.setParametrsSerialPort(BaudRate.getBaudeRate(boudrate), Parity.valueOf(parity), controlSignal, Delimiter.valueOf(delimiter));
 			} catch(IOException e) {
 				setErrorMessage(e.getMessage());
 				controlDevice.closeSerialPort();
