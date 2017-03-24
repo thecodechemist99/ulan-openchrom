@@ -175,6 +175,7 @@ public class Jssc extends AbstractSerialPort {
 				this.name = name;
 				this.parity = parity;
 				this.dataControl = dataControl;
+				this.baudRate = baudRate;
 				return true;
 			} catch(SerialPortException e) {
 				throw new IOException();
@@ -213,6 +214,7 @@ public class Jssc extends AbstractSerialPort {
 			}
 			try {
 				serialPort.setParams(baudRate.getBaudRate(), AbstractSerialPort.dataBits, AbstractSerialPort.stopBits, setParity, setRTS, false);
+				this.baudRate = baudRate;
 				this.delimiter = delimiter;
 				this.parity = parity;
 				this.dataControl = dataControl;
