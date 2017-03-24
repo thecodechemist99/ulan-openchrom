@@ -80,19 +80,11 @@ public abstract class AbstractSerialPort {
 
 	protected void addData(char ch) {
 
-		if(ch == 'D') {
-			builder.append(ch);
-		} else {
-			if(builder.length() != 0) {
-				if(ch == '\r') {
-					System.out.print("add scan");
-					dataReceive.addScan(builder.toString());
-					builder.setLength(0);
-				} else {
-					builder.append(ch);
-				}
-			}
+		if((ch == 'D') && (builder.length() > 0)) {
+			dataReceive.addScan(builder.toString());
+			builder.setLength(0);
 		}
+		builder.append(ch);
 	}
 
 	abstract public void addDataEvent() throws IOException;
