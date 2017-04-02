@@ -68,7 +68,7 @@ public abstract class AbstractSerialPort {
 
 	public static AbstractSerialPort getSerialPort(DataReceive dataReceive) {
 
-		return new Jssc(dataReceive);
+		return new PureSerialPort(dataReceive);
 	}
 
 	private StringBuilder builder = new StringBuilder();
