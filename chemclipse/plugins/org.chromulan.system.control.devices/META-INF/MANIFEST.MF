@@ -2,7 +2,7 @@ SManifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Devices
 Bundle-SymbolicName: org.chromulan.system.control.devices;singleton:=true
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 1.3.0.qualifier
 Bundle-Activator: org.chromulan.system.control.devices.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
