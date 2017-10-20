@@ -107,7 +107,7 @@ public class AcquisitionsAdministator {
 				if(support != null) {
 					for(IChromatogramExportConverterProcessingInfo chromatogramFile : chromatogramFiles) {
 						try {
-							support.openEditor(chromatogramFile.getFile(), modelService, application, partService);
+							support.openEditor(chromatogramFile.getFile());
 						} catch(TypeCastException e) {
 							// TODO: logger.warn(e);
 						}
