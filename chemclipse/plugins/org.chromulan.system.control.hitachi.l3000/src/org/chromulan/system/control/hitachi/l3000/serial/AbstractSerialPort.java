@@ -81,7 +81,9 @@ public abstract class AbstractSerialPort {
 	protected void addData(char ch) {
 
 		if((ch == 'D') && (builder.length() > 0)) {
-			dataReceive.addScan(builder.toString());
+			String message = builder.toString();
+			System.out.println(message);
+			dataReceive.addScan(message);
 			builder.setLength(0);
 		}
 		builder.append(ch);
@@ -119,21 +121,17 @@ public abstract class AbstractSerialPort {
 	public boolean sendDataOutputType(int outputType) throws IOException {
 
 		if(outputType == 0) {
-			return sendMessagge("SEND", "0");
+			return sendMessagge("SEND 0");
 		} else if(outputType == 1) {
-			return sendMessagge("SEND", "1");
+			return sendMessagge("SEND 1");
 		}
 		return false;
 	}
 
-	private boolean sendMessagge(String command, String messagge) throws IOException {
+	private boolean sendMessagge(String command) throws IOException {
 
 		String msg;
-		if(messagge != null) {
-			msg = new String(command + " " + messagge + getDelimiter().getDelimiter());
-		} else {
-			msg = new String(command + getDelimiter().getDelimiter());
-		}
+		msg = new String(command + getDelimiter().getDelimiter());
 		return sendMsg(msg.getBytes(StandardCharsets.UTF_8));
 	}
 
@@ -141,30 +139,29 @@ public abstract class AbstractSerialPort {
 
 	public boolean sendStart() throws IOException {
 
-		return sendMessagge("START", null);
+		return sendMessagge("START");
 	}
 
 	public boolean sendStop() throws IOException {
 
-		return sendMessagge("STOP", null);
+		return sendMessagge("STOP");
 	}
 
 	public boolean sendTimeInterval(float timeInterval) throws IOException {
 
 		String StimeInterval = String.format(Locale.US, "%.1f", timeInterval);
-		return sendMessagge("TIME", StimeInterval);
+		return sendMessagge("TIME " + StimeInterval);
 	}
 
 	public boolean sendWavelenghtInterval(float wavelenghtInterval) throws IOException {
 
 		String waveLenghtInterval = String.format(Locale.US, "%.1f", wavelenghtInterval);
-		return sendMessagge("WL", waveLenghtInterval);
+		return sendMessagge("WL " + waveLenghtInterval);
 	}
 
-	public boolean sendWaveLenghtRange() throws IOException {
+	public boolean sendWaveLenghtRange(int from, int to) throws IOException {
 
-		// TODO:body of function
-		return false;
+		return sendMessagge("RANGE " + from + " " + to);
 	}
 
 	abstract public boolean setParametrs(BaudRate baudRate, Parity parity, Delimiter delimiter, String dataControl) throws IOException;

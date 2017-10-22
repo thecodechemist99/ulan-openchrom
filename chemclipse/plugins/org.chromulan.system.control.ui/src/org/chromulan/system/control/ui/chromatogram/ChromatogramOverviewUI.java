@@ -72,7 +72,7 @@ public abstract class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	public void displayAllChromatogram() {
 
-		if(this.chromatogramAcquisition != null && this.chromatogramAcquisition.getNumberOfScans() != 0) {
+		if(this.chromatogramAcquisition != null && this.chromatogramAcquisition.getNumberOfScans() > 1) {
 			adjustRange();
 			redraw();
 		}
@@ -80,10 +80,10 @@ public abstract class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
 	public void displayInteval() {
 
-		if(this.chromatogramAcquisition != null && this.chromatogramAcquisition.getNumberOfScans() != 0) {
+		if(this.chromatogramAcquisition != null && this.chromatogramAcquisition.getNumberOfScans() > 1) {
 			setXAxisInterval();
 			adjustYRange();
-			redraw();
+			//redraw();
 		}
 	}
 
@@ -124,8 +124,11 @@ public abstract class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 	public void reloadData() {
 
 		if(this.chromatogramAcquisition != null && this.chromatogramAcquisition.getNumberOfScans() != 0) {
+			suspendUpdate(true);
 			deleteAllCurrentSeries();
 			setViewSeries();
+			suspendUpdate(false);
+			redraw();
 		}
 	}
 

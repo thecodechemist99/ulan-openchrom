@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.chromulan.system.control.hitachi.l3000.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,31 +27,51 @@ import org.eclipse.chemclipse.wsd.model.core.IScanWSD;
 
 public class DataReceive {
 
+	private boolean dataRecieve;
+	private final List<IDataRecieveListener> dataRecieveListeners = new ArrayList<>();
+	private final List<IDataStopRecieveListener> dataStopRecieveListeners = new ArrayList<>();
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private IChromatogramWSDAcquisition chromatogram;
-	volatile private boolean reset;
-	volatile private Boolean saveData;
+	private float lastScanTime = 0;
+	private volatile boolean reset;
+	private volatile Boolean saveData;
+	volatile private boolean testConnection;
 	private int timeInterval;
+	private Timer timer = new Timer();
 	private float wavelenghtInterval;
 	private int wavelenghtRangeFrom;
+	private int wavelenghtRangeTo;
 
 	public DataReceive(String name, int timeInterval, float wavelenghtInterval, int wavelenghtRangeFrom, int wavelenghtRangeTo) {
 		this.chromatogram = new ChromatogramWSDAcquisition(timeInterval, 0);
 		this.chromatogram.setName(name);
 		this.wavelenghtInterval = wavelenghtInterval;
 		this.wavelenghtRangeFrom = wavelenghtRangeFrom;
+		this.wavelenghtRangeTo = wavelenghtRangeTo;
 		this.timeInterval = timeInterval;
 		this.saveData = true;
 		this.reset = false;
 	}
 
-	private void addScan(IScanWSD actualScan) {
+	void addDataRecieveListener(IDataRecieveListener dataRecieveListener) {
 
-		chromatogram.addScanAutoSet(actualScan);
+		synchronized(dataRecieveListeners) {
+			dataRecieveListeners.add(dataRecieveListener);
+		}
 	}
 
 	public void addScan(final String message) {
 
+		if(!dataRecieve) {
+			scheduleTimer();
+		}
+		testConnection = true;
+		dataRecieve = true;
+		synchronized(dataRecieveListeners) {
+			for(IDataRecieveListener dataRecieveListener : dataRecieveListeners) {
+				dataRecieveListener.dataRecieve();
+			}
+		}
 		if(!saveData) {
 			return;
 		}
@@ -73,6 +97,13 @@ public class DataReceive {
 		scanWSD.addScanSignal(scanSignalWSD);
 	}
 
+	void addStopDataRecieveListener(IDataStopRecieveListener dataStopRecieveListener) {
+
+		synchronized(dataStopRecieveListeners) {
+			dataStopRecieveListeners.add(dataStopRecieveListener);
+		}
+	}
+
 	@Override
 	protected void finalize() throws Throwable {
 
@@ -86,6 +117,11 @@ public class DataReceive {
 	public IChromatogramWSDAcquisition getChromatogram() {
 
 		return chromatogram;
+	}
+
+	public boolean isDataRecieve() {
+
+		return dataRecieve;
 	}
 
 	public boolean isSaveData() {
@@ -107,34 +143,68 @@ public class DataReceive {
 			private static final long serialVersionUID = 1088506877109062789L;
 		};
 		try {
-			for(int i = 2; i < data.length; i++) {
-				float value = Float.valueOf(data[i]);
-				addScanSignal(value, actualScan, i - 2);
+			if(data.length == (2 + (wavelenghtRangeTo - wavelenghtRangeFrom) / wavelenghtInterval + 1)) {
+				float scanTime = Float.valueOf(data[1]);
+				if(scanTime < lastScanTime) {
+					chromatogram.newAcquisition(timeInterval, 0);
+				}
+				lastScanTime = scanTime;
+				for(int i = 2; i < data.length; i++) {
+					float value = Float.valueOf(data[i]);
+					addScanSignal(value, actualScan, i - 2);
+				}
+				actualScan.setRetentionTime((int)(lastScanTime * 1000));
+				chromatogram.addScanAutoSet(actualScan);
 			}
-			addScan(actualScan);
 		} catch(NumberFormatException e) {
 		}
 	}
 
-	public void reset(boolean saveData, int timeInterval, float wavelenghtInterval, int wavelenghtRangeFrom, int wavelenghtRangeTo) {
+	void removeDataRecieveListener(IDataRecieveListener dataRecieveListener) {
 
-		this.saveData = saveData;
-		this.wavelenghtInterval = wavelenghtInterval;
-		this.wavelenghtRangeFrom = wavelenghtRangeFrom;
-		this.timeInterval = timeInterval;
-		this.reset = true;
+		synchronized(dataRecieveListener) {
+			dataRecieveListeners.remove(dataRecieveListener);
+		}
+	}
+
+	void removeStopDataRecieveListener(IDataStopRecieveListener dataStopRecieveListener) {
+
+		synchronized(dataStopRecieveListeners) {
+			dataStopRecieveListeners.remove(dataStopRecieveListener);
+		}
 	}
 
 	public void reset(int timeInterval, float wavelenghtInterval, int wavelenghtRangeFrom, int wavelenghtRangeTo) {
 
 		this.wavelenghtInterval = wavelenghtInterval;
 		this.wavelenghtRangeFrom = wavelenghtRangeFrom;
+		this.wavelenghtRangeTo = wavelenghtRangeTo;
 		this.timeInterval = timeInterval;
 		this.reset = true;
+		this.lastScanTime = 0;
 	}
 
-	public void setSaveData(boolean saveData) {
+	private void scheduleTimer() {
 
-		this.saveData = saveData;
+		timer.cancel();
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+
+				if(testConnection) {
+					testConnection = false;
+					scheduleTimer();
+				} else {
+					dataRecieve = false;
+					synchronized(dataStopRecieveListeners) {
+						for(IDataStopRecieveListener dataStopRecieveListener : dataStopRecieveListeners) {
+							dataStopRecieveListener.dataStopRecieve();
+						}
+					}
+				}
+			}
+		}, 10000);
 	}
 }

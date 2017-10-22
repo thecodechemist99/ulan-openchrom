@@ -35,6 +35,7 @@ import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.swt.widgets.Display;
 
 @Creatable
 @Singleton
@@ -208,7 +209,14 @@ public class IAcquisitionManager {
 
 	private void stopAcquisition(IAcquisition acquisition, boolean changeDuaration) {
 
-		acquisition.stop(changeDuaration);
+		Display.getDefault().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+
+				acquisition.stop(changeDuaration);
+			}
+		});
 		for(IAcquisitionChangeListener listener : changeListeners) {
 			listener.stopAcquisition(acquisition);
 		}

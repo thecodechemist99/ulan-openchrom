@@ -32,9 +32,9 @@ public class PureSerialPort extends AbstractSerialPort {
 
 	private boolean addDataread;
 	private BaudRate baudRate;
+	private String DATA_CONTROL_DISABLE = "data control disable";
+	private String DATA_CONTROL_ENABLE = "data control enable";
 	private String dataControl;
-	private String DataControlAnable = "data control enable";
-	private String DataControlDisable = "data control disable";
 	private Delimiter delimiter;
 	private OutputStream inputStream;
 	private String name;
@@ -44,7 +44,7 @@ public class PureSerialPort extends AbstractSerialPort {
 
 	protected PureSerialPort(DataReceive dataReceive) {
 		super(dataReceive);
-		dataControl = DataControlAnable;
+		dataControl = DATA_CONTROL_ENABLE;
 		this.baudRate = BaudRate.BOUD_RATE_4800;
 		this.delimiter = Delimiter.DELIMITER_CR;
 		this.parity = Parity.PARITY_EVEN;
@@ -112,7 +112,7 @@ public class PureSerialPort extends AbstractSerialPort {
 	@Override
 	public String[] getDataControlTypes() {
 
-		return new String[]{DataControlAnable, DataControlDisable};
+		return new String[]{DATA_CONTROL_ENABLE, DATA_CONTROL_DISABLE};
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class PureSerialPort extends AbstractSerialPort {
 	@Override
 	public boolean open(String name, BaudRate baudRate, Parity parity, Delimiter delimiter, String dataControl) throws IOException {
 
-		if(!isOpen() && name != null && baudRate != null && delimiter != null && dataControl != null && (dataControl.equals(DataControlAnable) || dataControl.equals(DataControlDisable))) {
+		if(!isOpen() && name != null && baudRate != null && delimiter != null && dataControl != null && (dataControl.equals(DATA_CONTROL_ENABLE) || dataControl.equals(DATA_CONTROL_DISABLE))) {
 			try {
 				portId = CommPortIdentifier.getPortIdentifier(name);
 				if(portId == null) {
@@ -175,7 +175,7 @@ public class PureSerialPort extends AbstractSerialPort {
 				} else {
 					serialPort.setSerialPortParams(getBaudeRate().getBaudRate(), dataBits, stopBits, SerialPort.PARITY_NONE);
 				}
-				if(dataControl.equals(DataControlAnable)) {
+				if(dataControl.equals(DATA_CONTROL_ENABLE)) {
 					serialPort.setRTS(true);
 				} else {
 					serialPort.setRTS(false);
@@ -189,11 +189,11 @@ public class PureSerialPort extends AbstractSerialPort {
 				this.addDataread = false;
 				return true;
 			} catch(NoSuchPortException e) {
-				throw new IOException("No Such Port Exception");
+				throw new IOException(e);
 			} catch(PortInUseException e) {
-				throw new IOException("Port In use Exception");
+				throw new IOException(e);
 			} catch(UnsupportedCommOperationException e) {
-				throw new IOException("Unsupported Comm Operation Exception");
+				throw new IOException(e);
 			}
 		}
 		return false;
@@ -205,24 +205,27 @@ public class PureSerialPort extends AbstractSerialPort {
 		if(!isOpen()) {
 			return false;
 		}
+		serialPort.setRTS(false);
 		inputStream.write(msg);
 		inputStream.flush();
+		if(dataControl.equals(DATA_CONTROL_ENABLE)) {
+			serialPort.setRTS(true);
+		}
 		return true;
 	}
 
 	@Override
 	public boolean setParametrs(BaudRate baudRate, Parity parity, Delimiter delimiter, String dataControl) throws IOException {
 
-		if(isOpen() && baudRate != null && delimiter != null && dataControl != null && (dataControl.equals(DataControlAnable) || dataControl.equals(DataControlDisable))) {
+		if(isOpen() && baudRate != null && delimiter != null && dataControl != null && (dataControl.equals(DATA_CONTROL_ENABLE) || dataControl.equals(DATA_CONTROL_DISABLE))) {
 			try {
 				if(parity.equals(Parity.PARITY_EVEN)) {
 					serialPort.setSerialPortParams(getBaudeRate().getBaudRate(), dataBits, stopBits, SerialPort.PARITY_EVEN);
 				} else {
 					serialPort.setSerialPortParams(getBaudeRate().getBaudRate(), dataBits, stopBits, SerialPort.PARITY_NONE);
 				}
-				if(dataControl.equals(DataControlAnable)) {
+				if(dataControl.equals(DATA_CONTROL_ENABLE)) {
 					serialPort.setRTS(true);
-					serialPort.getFlowControlMode();
 				} else {
 					serialPort.setRTS(false);
 				}

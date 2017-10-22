@@ -49,6 +49,16 @@ public class DeviceInterface {
 	@Inject
 	private IAcquisitionManager manager;
 	private IAcquisition setAcqiusition;
+	private final IDataRecieveListener startAcquisition = () -> {
+		if(setAcqiusition != null && controlDevice.isAutoStartRecieveData() && !setAcqiusition.isRunning() && !setAcqiusition.isCompleted()) {
+			manager.start(setAcqiusition);
+		}
+	};
+	private final IDataStopRecieveListener stopAcquisition = () -> {
+		if(setAcqiusition != null && controlDevice.isAutoStopRecieveData() && setAcqiusition.isRunning()) {
+			manager.stop(setAcqiusition, true);
+		}
+	};
 
 	public DeviceInterface() {
 		changeListener = new IAcquisitionChangeListener() {
@@ -59,7 +69,7 @@ public class DeviceInterface {
 				if(acquisition == setAcqiusition) {
 					setAcqiusition = null;
 					controlDevice.setPrepare(true);
-					controlDevice.resetChromatogram(true);
+					controlDevice.resetChromatogram();
 				}
 			}
 
@@ -110,15 +120,22 @@ public class DeviceInterface {
 			public void startAcquisition(IAcquisition acquisition) {
 
 				if(acquisition == setAcqiusition) {
-					if(controlDevice.isSendStart()) {
-						try {
-							controlDevice.sendStart();
-						} catch(IOException e) {
-							controlDevice.closeSerialPort();
+					try {
+						if(!controlDevice.isAutoStartRecieveData()) {
+							controlDevice.sendStop();
+							controlDevice.resetChromatogram();
+							try {
+								Thread.currentThread();
+								Thread.sleep(1000);
+							} catch(InterruptedException e) {
+								logger.warn(e);
+							}
 						}
+						controlDevice.sendStart();
+						controlDevice.setPrepare(false);
+					} catch(IOException e) {
+						controlDevice.closeSerialPort();
 					}
-					controlDevice.setPrepare(false);
-					controlDevice.resetChromatogram(true);
 				}
 			}
 
@@ -126,14 +143,11 @@ public class DeviceInterface {
 			public void stopAcquisition(IAcquisition acquisition) {
 
 				if(acquisition == setAcqiusition) {
-					if(controlDevice.isSendStop()) {
-						try {
-							controlDevice.sendStop();
-						} catch(IOException e) {
-							controlDevice.closeSerialPort();
-						}
+					try {
+						controlDevice.sendStop();
+					} catch(IOException e) {
+						controlDevice.closeSerialPort();
 					}
-					controlDevice.saveData(false);
 				}
 			}
 		};
@@ -171,6 +185,8 @@ public class DeviceInterface {
 			}
 			ContextInjectionFactory.inject(controlDevice, context);
 			manager.addChangeListener(changeListener);
+			controlDevice.addDataRecieveListener(startAcquisition);
+			controlDevice.addStopDataRecieveListener(stopAcquisition);
 		} catch(Exception e) {
 			logger.error("exception in  post construct", e);
 		}

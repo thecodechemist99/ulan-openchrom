@@ -25,8 +25,8 @@ public class ValidatorWavelenghtInterval extends ValidatorControlDeviceVariable 
 	public IStatus validate(Object value) {
 
 		Float controlValue = (Float)value;
-		float controlInterval = controlValue / 2.5f;
-		if(controlValue >= 2.5f && controlValue <= 160 && (controlInterval == (int)controlInterval)) {
+		float controlInterval = (controlValue / 2.5f);
+		if(controlInterval >= 1 && controlInterval <= 64 && (controlInterval == (int)controlInterval)) {
 			int rangeFrom = getControlDevice().getWavelenghtRangeFrom();
 			int rangeTo = getControlDevice().getWavelenghtRangeTo();
 			if((rangeTo - rangeFrom) > controlValue) {
