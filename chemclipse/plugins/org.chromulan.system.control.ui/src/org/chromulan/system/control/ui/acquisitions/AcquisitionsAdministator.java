@@ -41,7 +41,7 @@ import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExp
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
-import org.eclipse.chemclipse.ux.extension.ui.provider.IChromatogramEditorSupport;
+import org.eclipse.chemclipse.ux.extension.ui.provider.ISupplierEditorSupport;
 import org.eclipse.chemclipse.wsd.converter.chromatogram.ChromatogramConverterWSD;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -96,7 +96,7 @@ public class AcquisitionsAdministator {
 			ChromatogramFilesDialog dialog = new ChromatogramFilesDialog(display.getActiveShell(), acquisition.getAcquisitionSaver());
 			if(dialog.open() == Window.OK) {
 				List<IChromatogramExportConverterProcessingInfo> chromatogramFiles = dialog.getChromatogramExportConverterProcessingInfos();
-				IChromatogramEditorSupport support = null;
+				ISupplierEditorSupport support = null;
 				if(acquisition instanceof IAcquisitionCSD) {
 					support = new org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport();
 				} else if(acquisition instanceof IAcquisitionCSD) {
