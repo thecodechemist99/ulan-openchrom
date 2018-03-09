@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.chromulan.system.control.model.IAcquisition;
@@ -36,25 +35,25 @@ public class ProccessMiscellaneousDataChromatogram {
 	static private final String MOBIL_PHASE = "Mobil phase";
 	static private final String TEMPERATURE = "Temperature";
 
-	static private void addDevice(Map<String, String> miscellaneous, String[] namesDevices) {
+	static private void addDevice(IChromatogram chromatogram, String[] namesDevices) {
 
 		for(int i = 0; i < namesDevices.length; i++) {
-			miscellaneous.put(DEVICE + i, namesDevices[i]);
+			chromatogram.putHeaderData(DEVICE + i, namesDevices[i]);
 		}
 	}
 
-	static private void addDeviceSettings(Map<String, String> miscellaneous, String namedevice, HashMap<String, String> settings) {
+	static private void addDeviceSettings(IChromatogram chromatogram, String namedevice, HashMap<String, String> settings) {
 
 		Iterator<Entry<String, String>> iterator = settings.entrySet().iterator();
 		while(iterator.hasNext()) {
 			Entry<String, String> entry = iterator.next();
-			miscellaneous.put(namedevice + ":" + entry.getKey(), entry.getValue());
+			chromatogram.putHeaderData(namedevice + ":" + entry.getKey(), entry.getValue());
 		}
 	}
 
-	private static void addMiscellaneousAcqusitionDataToStringBuilder(StringBuilder builder, Map<String, String> miscellaneous, String key, String name) {
+	private static void addMiscellaneousAcqusitionDataToStringBuilder(StringBuilder builder, IChromatogram chromatogram, String key, String name) {
 
-		String value = miscellaneous.get(key);
+		Object value = chromatogram.getHeaderData(key);
 		if(value != null) {
 			builder.append(name);
 			builder.append(":");
@@ -63,38 +62,37 @@ public class ProccessMiscellaneousDataChromatogram {
 		}
 	}
 
-	static private void floatPutToMiscellaneous(Map<String, String> miscellaneous, String name, Float value, String unit) {
+	static private void floatPutToMiscellaneous(IChromatogram chromatogram, String name, Float value, String unit) {
 
 		if(value == null) {
 			return;
 		}
-		miscellaneous.put(name, Float.toString(value) + unit);
+		chromatogram.putHeaderData(name, Float.toString(value) + unit);
 	}
 
 	public static String getMiscellaneousData(IChromatogram chromatogram) {
 
 		StringBuilder builder = new StringBuilder();
-		Map<String, String> miscellaneous = chromatogram.getMiscellaneous();
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, DURATION, DURATION);
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, ANALYSIS, ANALYSIS);
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, ANOUNT, ANOUNT);
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, ISTD_ANOUNT, ISTD_ANOUNT);
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, INJ_Volume, INJ_Volume);
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, COLUMN, COLUMN);
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, MOBIL_PHASE, MOBIL_PHASE);
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, FLOW_RATE, FLOW_RATE);
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, DETECTION, DETECTION);
-		addMiscellaneousAcqusitionDataToStringBuilder(builder, miscellaneous, TEMPERATURE, TEMPERATURE);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, DURATION, DURATION);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, ANALYSIS, ANALYSIS);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, ANOUNT, ANOUNT);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, ISTD_ANOUNT, ISTD_ANOUNT);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, INJ_Volume, INJ_Volume);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, COLUMN, COLUMN);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, MOBIL_PHASE, MOBIL_PHASE);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, FLOW_RATE, FLOW_RATE);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, DETECTION, DETECTION);
+		addMiscellaneousAcqusitionDataToStringBuilder(builder, chromatogram, TEMPERATURE, TEMPERATURE);
 		// TODO:List<String> devicesNames= getNameofDeviceFormMiscellaneous(miscellaneous);
 		return builder.toString();
 	}
 
-	static private void longPutToMiscellaneous(Map<String, String> miscellaneous, String name, Long value, String unit) {
+	static private void longPutToMiscellaneous(IChromatogram chromatogram, String name, Long value, String unit) {
 
 		if(value == null) {
 			return;
 		}
-		miscellaneous.put(name, Long.toString(value) + unit);
+		chromatogram.putHeaderData(name, Long.toString(value) + unit);
 	}
 
 	public static void setChromatogramParameters(SaveChromatogram saveChromatogram, IAcquisition acquisition) {
@@ -102,22 +100,21 @@ public class ProccessMiscellaneousDataChromatogram {
 		IChromatogram chromatogram = saveChromatogram.getChromatogram();
 		String[] devicesNames = saveChromatogram.getNamesDevices();
 		chromatogram.setShortInfo(acquisition.getDescription());
-		Map<String, String> miscellaneous = chromatogram.getMiscellaneous();
-		longPutToMiscellaneous(miscellaneous, DURATION, acquisition.getDuration() / (1000 * 60), " min");
-		stringPutToMiscellaneous(miscellaneous, ANALYSIS, acquisition.getAnalysis(), "");
-		floatPutToMiscellaneous(miscellaneous, ANOUNT, acquisition.getAmount(), "");
-		floatPutToMiscellaneous(miscellaneous, ISTD_ANOUNT, acquisition.getISTDAmount(), "");
-		floatPutToMiscellaneous(miscellaneous, INJ_Volume, acquisition.getInjectionVolume(), "");
-		stringPutToMiscellaneous(miscellaneous, COLUMN, acquisition.getColumn(), "");
-		stringPutToMiscellaneous(miscellaneous, MOBIL_PHASE, acquisition.getMobilPhase(), "");
-		floatPutToMiscellaneous(miscellaneous, FLOW_RATE, acquisition.getFlowRate(), acquisition.getFlowRateUnit());
-		stringPutToMiscellaneous(miscellaneous, DETECTION, acquisition.getDetection(), "");
-		floatPutToMiscellaneous(miscellaneous, TEMPERATURE, acquisition.getTemperature(), acquisition.getTemperatureUnit());
-		addDevice(miscellaneous, devicesNames);
+		longPutToMiscellaneous(chromatogram, DURATION, acquisition.getDuration() / (1000 * 60), " min");
+		stringPutToMiscellaneous(chromatogram, ANALYSIS, acquisition.getAnalysis(), "");
+		floatPutToMiscellaneous(chromatogram, ANOUNT, acquisition.getAmount(), "");
+		floatPutToMiscellaneous(chromatogram, ISTD_ANOUNT, acquisition.getISTDAmount(), "");
+		floatPutToMiscellaneous(chromatogram, INJ_Volume, acquisition.getInjectionVolume(), "");
+		stringPutToMiscellaneous(chromatogram, COLUMN, acquisition.getColumn(), "");
+		stringPutToMiscellaneous(chromatogram, MOBIL_PHASE, acquisition.getMobilPhase(), "");
+		floatPutToMiscellaneous(chromatogram, FLOW_RATE, acquisition.getFlowRate(), acquisition.getFlowRateUnit());
+		stringPutToMiscellaneous(chromatogram, DETECTION, acquisition.getDetection(), "");
+		floatPutToMiscellaneous(chromatogram, TEMPERATURE, acquisition.getTemperature(), acquisition.getTemperatureUnit());
+		addDevice(chromatogram, devicesNames);
 		for(int i = 0; i < devicesNames.length; i++) {
 			HashMap<String, String> settings = saveChromatogram.getDeviceProperties(devicesNames[i]);
 			if(settings != null && devicesNames[i] != null) {
-				addDeviceSettings(miscellaneous, devicesNames[i], settings);
+				addDeviceSettings(chromatogram, devicesNames[i], settings);
 			}
 		}
 	}
@@ -135,11 +132,11 @@ public class ProccessMiscellaneousDataChromatogram {
 		saveChromatograms.add(saveChomapotogram);
 	}
 
-	static private void stringPutToMiscellaneous(Map<String, String> miscellaneous, String name, String value, String unit) {
+	static private void stringPutToMiscellaneous(IChromatogram chromatogram, String name, String value, String unit) {
 
 		if(value == null) {
 			return;
 		}
-		miscellaneous.put(name, value + unit);
+		chromatogram.putHeaderData(name, value + unit);
 	}
 }
