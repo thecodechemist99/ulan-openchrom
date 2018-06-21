@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.chemclipse.converter.core.ISupplier;
-import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
+import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 
 public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 
@@ -35,7 +35,7 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 
 	private IAcquisition acquisition;
 	private File file;
-	final private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos = new LinkedList<IChromatogramExportConverterProcessingInfo>();
+	final private List<IProcessingInfo> chromatogramExportConverterProcessingInfos = new LinkedList<IProcessingInfo>();
 	private HashMap<String, Integer> names = new HashMap<>();
 	private ISupplier supplier;
 
@@ -56,7 +56,7 @@ public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {
 	}
 
 	@Override
-	public List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessInfo() {
+	public List<IProcessingInfo> getChromatogramExportConverterProcessInfo() {
 
 		return chromatogramExportConverterProcessingInfos;
 	}

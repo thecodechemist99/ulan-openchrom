@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.chromulan.system.control.report.ProccessMiscellaneousDataChromatogram;
 import org.eclipse.chemclipse.converter.core.ISupplier;
-import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;
+import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class AcquisitionMSDSaver extends AbstractAcquisitionSaver implements IAcquisitionMSDSaver {
@@ -18,9 +18,9 @@ public class AcquisitionMSDSaver extends AbstractAcquisitionSaver implements IAc
 	}
 
 	@Override
-	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<SaveChromatogram> chromatograms) {
+	public List<IProcessingInfo> save(IProgressMonitor progressMonitor, List<SaveChromatogram> chromatograms) {
 
-		List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos = getChromatogramExportConverterProcessInfo();
+		List<IProcessingInfo> chromatogramExportConverterProcessingInfos = getChromatogramExportConverterProcessInfo();
 		File file = getFile();
 		ISupplier supplier = getSupplier();
 		IAcquisition acquisition = getAcquisition();
@@ -35,7 +35,7 @@ public class AcquisitionMSDSaver extends AbstractAcquisitionSaver implements IAc
 			if(chromatogram instanceof IChromatogramMSD) {
 				IChromatogramMSD chromatogramMSD = (IChromatogramMSD)chromatogram;
 				File nfile = setFile(saveChromatogram.getName(), supplier.getFileExtension());
-				IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterMSD.convert(nfile, chromatogramMSD, supplier.getId(), progressMonitor);
+				IProcessingInfo procesInfo = ChromatogramConverterMSD.convert(nfile, chromatogramMSD, supplier.getId(), progressMonitor);
 				chromatogramExportConverterProcessingInfos.add(procesInfo);
 			}
 		}

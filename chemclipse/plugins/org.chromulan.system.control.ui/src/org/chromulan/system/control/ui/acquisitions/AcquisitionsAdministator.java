@@ -37,9 +37,9 @@ import org.chromulan.system.control.ui.wizard.WizardNewAcquisition;
 import org.chromulan.system.control.ui.wizard.WizardNewAcquisitions;
 import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
 import org.eclipse.chemclipse.converter.core.ISupplier;
-import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
+import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.chemclipse.ux.extension.ui.provider.ISupplierEditorSupport;
 import org.eclipse.chemclipse.wsd.converter.chromatogram.ChromatogramConverterWSD;
@@ -95,7 +95,7 @@ public class AcquisitionsAdministator {
 		} else {
 			ChromatogramFilesDialog dialog = new ChromatogramFilesDialog(display.getActiveShell(), acquisition.getAcquisitionSaver());
 			if(dialog.open() == Window.OK) {
-				List<IChromatogramExportConverterProcessingInfo> chromatogramFiles = dialog.getChromatogramExportConverterProcessingInfos();
+				List<IProcessingInfo> chromatogramFiles = dialog.getChromatogramExportConverterProcessingInfos();
 				ISupplierEditorSupport support = null;
 				if(acquisition instanceof IAcquisitionCSD) {
 					support = new org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport();
@@ -105,9 +105,9 @@ public class AcquisitionsAdministator {
 					support = new org.eclipse.chemclipse.ux.extension.msd.ui.support.ChromatogramEditorSupport();
 				}
 				if(support != null) {
-					for(IChromatogramExportConverterProcessingInfo chromatogramFile : chromatogramFiles) {
+					for(IProcessingInfo chromatogramFile : chromatogramFiles) {
 						try {
-							support.openEditor(chromatogramFile.getFile());
+							support.openEditor(chromatogramFile.getProcessingResult(File.class));
 						} catch(TypeCastException e) {
 							// TODO: logger.warn(e);
 						}

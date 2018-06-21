@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.chromulan.system.control.model.IAcquisitionSaver;
-import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
+import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.TableColumn;
 public class ChromatogramFilesDialog extends Dialog {
 
 	private IAcquisitionSaver acquisitionSaver;
-	private List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos;
+	private List<IProcessingInfo> chromatogramExportConverterProcessingInfos;
 
 	public ChromatogramFilesDialog(Shell parentShell, IAcquisitionSaver acquisitionSaver) {
 		super(parentShell);
@@ -93,7 +93,7 @@ public class ChromatogramFilesDialog extends Dialog {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 
 				if(event.getChecked()) {
-					chromatogramExportConverterProcessingInfos.add((IChromatogramExportConverterProcessingInfo)event.getElement());
+					chromatogramExportConverterProcessingInfos.add((IProcessingInfo)event.getElement());
 				} else {
 					chromatogramExportConverterProcessingInfos.remove(event.getElement());
 				}
@@ -111,11 +111,11 @@ public class ChromatogramFilesDialog extends Dialog {
 			@Override
 			public String getText(Object element) {
 
-				if(element instanceof IChromatogramExportConverterProcessingInfo) {
-					IChromatogramExportConverterProcessingInfo info = (IChromatogramExportConverterProcessingInfo)element;
+				if(element instanceof IProcessingInfo) {
+					IProcessingInfo info = (IProcessingInfo)element;
 					File file;
 					try {
-						file = info.getFile();
+						file = info.getProcessingResult(File.class);
 						return file.getName();
 					} catch(TypeCastException e) {
 						// TODO: logger.warn(e);
@@ -137,7 +137,7 @@ public class ChromatogramFilesDialog extends Dialog {
 		return viewerColumn;
 	}
 
-	public List<IChromatogramExportConverterProcessingInfo> getChromatogramExportConverterProcessingInfos() {
+	public List<IProcessingInfo> getChromatogramExportConverterProcessingInfos() {
 
 		return chromatogramExportConverterProcessingInfos;
 	}

@@ -16,10 +16,10 @@ import java.util.List;
 
 import org.chromulan.system.control.report.ProccessMiscellaneousDataChromatogram;
 import org.eclipse.chemclipse.converter.core.ISupplier;
-import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.csd.model.core.IChromatogramCSD;
 import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class AcquisitionCSDSaver extends AbstractAcquisitionSaver implements IAcquisitionCSDSaver {
@@ -29,9 +29,9 @@ public class AcquisitionCSDSaver extends AbstractAcquisitionSaver implements IAc
 	}
 
 	@Override
-	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<SaveChromatogram> chromatograms) {
+	public List<IProcessingInfo> save(IProgressMonitor progressMonitor, List<SaveChromatogram> chromatograms) {
 
-		List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos = getChromatogramExportConverterProcessInfo();
+		List<IProcessingInfo> chromatogramExportConverterProcessingInfos = getChromatogramExportConverterProcessInfo();
 		File file = getFile();
 		ISupplier supplier = getSupplier();
 		IAcquisition acquisition = getAcquisition();
@@ -46,7 +46,7 @@ public class AcquisitionCSDSaver extends AbstractAcquisitionSaver implements IAc
 			if(chromatogram instanceof IChromatogramCSD) {
 				IChromatogramCSD chromatogramCSD = (IChromatogramCSD)chromatogram;
 				File nfile = setFile(saveChromatogram.getName(), supplier.getFileExtension());
-				IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterCSD.convert(nfile, chromatogramCSD, supplier.getId(), progressMonitor);
+				IProcessingInfo procesInfo = ChromatogramConverterCSD.convert(nfile, chromatogramCSD, supplier.getId(), progressMonitor);
 				chromatogramExportConverterProcessingInfos.add(procesInfo);
 			}
 		}

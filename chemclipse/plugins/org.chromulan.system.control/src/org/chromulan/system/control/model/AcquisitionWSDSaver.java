@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.chromulan.system.control.report.ProccessMiscellaneousDataChromatogram;
 import org.eclipse.chemclipse.converter.core.ISupplier;
-import org.eclipse.chemclipse.converter.processing.chromatogram.IChromatogramExportConverterProcessingInfo;
 import org.eclipse.chemclipse.model.core.IChromatogram;
+import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.wsd.converter.chromatogram.ChromatogramConverterWSD;
 import org.eclipse.chemclipse.wsd.model.core.IChromatogramWSD;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,9 +18,9 @@ public class AcquisitionWSDSaver extends AbstractAcquisitionSaver implements IAc
 	}
 
 	@Override
-	public List<IChromatogramExportConverterProcessingInfo> save(IProgressMonitor progressMonitor, List<SaveChromatogram> chromatograms) {
+	public List<IProcessingInfo> save(IProgressMonitor progressMonitor, List<SaveChromatogram> chromatograms) {
 
-		List<IChromatogramExportConverterProcessingInfo> chromatogramExportConverterProcessingInfos = getChromatogramExportConverterProcessInfo();
+		List<IProcessingInfo> chromatogramExportConverterProcessingInfos = getChromatogramExportConverterProcessInfo();
 		File file = getFile();
 		ISupplier supplier = getSupplier();
 		IAcquisition acquisition = getAcquisition();
@@ -35,7 +35,7 @@ public class AcquisitionWSDSaver extends AbstractAcquisitionSaver implements IAc
 			if(chromatogram instanceof IChromatogramWSD) {
 				IChromatogramWSD chromatogramWSD = (IChromatogramWSD)chromatogram;
 				File nfile = setFile(saveChromatogram.getName(), supplier.getFileExtension());
-				IChromatogramExportConverterProcessingInfo procesInfo = ChromatogramConverterWSD.convert(nfile, chromatogramWSD, supplier.getId(), progressMonitor);
+				IProcessingInfo procesInfo = ChromatogramConverterWSD.convert(nfile, chromatogramWSD, supplier.getId(), progressMonitor);
 				chromatogramExportConverterProcessingInfos.add(procesInfo);
 			}
 		}
