@@ -17,7 +17,7 @@ import java.util.List;
 import org.chromulan.system.control.ui.acquisition.support.FileToString;
 import org.chromulan.system.control.ui.acquisition.support.StringToFile;
 import org.chromulan.system.control.ui.acquisition.support.ValidatorDirectory;
-import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
+import org.eclipse.chemclipse.converter.chromatogram.IChromatogramConverterSupport;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
@@ -71,7 +71,7 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 		Label label = new Label(composite, SWT.None);
 		label.setText("Type File CSD");
 		ComboViewer combo = new ComboViewer(composite, SWT.READ_ONLY);
-		ChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
+		IChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
 		List<ISupplier> suppliers = support.getExportSupplier();
 		combo.setContentProvider(ArrayContentProvider.getInstance());
 		combo.setLabelProvider(new LabelProvider() {

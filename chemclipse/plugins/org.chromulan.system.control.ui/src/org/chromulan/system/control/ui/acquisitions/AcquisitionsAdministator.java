@@ -35,7 +35,7 @@ import org.chromulan.system.control.ui.devices.support.ProfilePreferencePage;
 import org.chromulan.system.control.ui.wizard.WizardModelAcquisition;
 import org.chromulan.system.control.ui.wizard.WizardNewAcquisition;
 import org.chromulan.system.control.ui.wizard.WizardNewAcquisitions;
-import org.eclipse.chemclipse.converter.chromatogram.ChromatogramConverterSupport;
+import org.eclipse.chemclipse.converter.chromatogram.IChromatogramConverterSupport;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
@@ -225,7 +225,7 @@ public class AcquisitionsAdministator {
 			PreferenceSupplier.INSTANCE().getPreferences().put(PREFERENCE_FILE, path);
 		}
 		if(supplierCSD != null) {
-			ChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
+			IChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
 			List<ISupplier> suppliers = support.getExportSupplier();
 			for(ISupplier supplier : suppliers) {
 				if(supplier.getId().equals(supplierCSD)) {
@@ -241,7 +241,7 @@ public class AcquisitionsAdministator {
 			}
 		}
 		if(supplierMSD != null) {
-			ChromatogramConverterSupport support = ChromatogramConverterMSD.getChromatogramConverterSupport();
+			IChromatogramConverterSupport support = ChromatogramConverterMSD.getChromatogramConverterSupport();
 			List<ISupplier> suppliers = support.getExportSupplier();
 			for(ISupplier supplier : suppliers) {
 				if(supplier.getId().equals(supplierMSD)) {
@@ -257,7 +257,7 @@ public class AcquisitionsAdministator {
 			}
 		}
 		if(supplierWSD != null) {
-			ChromatogramConverterSupport support = ChromatogramConverterWSD.getChromatogramConverterSupport();
+			IChromatogramConverterSupport support = ChromatogramConverterWSD.getChromatogramConverterSupport();
 			List<ISupplier> suppliers = support.getExportSupplier();
 			for(ISupplier supplier : suppliers) {
 				if(supplier.getId().equals(supplierWSD)) {
