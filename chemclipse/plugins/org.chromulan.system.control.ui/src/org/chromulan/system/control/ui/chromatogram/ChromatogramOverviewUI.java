@@ -17,8 +17,8 @@ import org.eclipse.chemclipse.swt.ui.components.AbstractLineSeriesUI;
 import org.eclipse.chemclipse.swt.ui.support.AxisTitlesIntensityScale;
 import org.eclipse.chemclipse.swt.ui.support.ChartUtil;
 import org.eclipse.swt.widgets.Composite;
-import org.swtchart.IAxis;
-import org.swtchart.Range;
+import org.eclipse.swtchart.IAxis;
+import org.eclipse.swtchart.Range;
 
 public abstract class ChromatogramOverviewUI extends AbstractLineSeriesUI {
 
