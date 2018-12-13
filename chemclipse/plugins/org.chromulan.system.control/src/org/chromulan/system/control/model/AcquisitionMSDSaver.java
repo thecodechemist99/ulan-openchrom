@@ -35,7 +35,7 @@ public class AcquisitionMSDSaver extends AbstractAcquisitionSaver implements IAc
 			if(chromatogram instanceof IChromatogramMSD) {
 				IChromatogramMSD chromatogramMSD = (IChromatogramMSD)chromatogram;
 				File nfile = setFile(saveChromatogram.getName(), supplier.getFileExtension());
-				IProcessingInfo procesInfo = ChromatogramConverterMSD.convert(nfile, chromatogramMSD, supplier.getId(), progressMonitor);
+				IProcessingInfo procesInfo = ChromatogramConverterMSD.getInstance().convert(nfile, chromatogramMSD, supplier.getId(), progressMonitor);
 				chromatogramExportConverterProcessingInfos.add(procesInfo);
 			}
 		}

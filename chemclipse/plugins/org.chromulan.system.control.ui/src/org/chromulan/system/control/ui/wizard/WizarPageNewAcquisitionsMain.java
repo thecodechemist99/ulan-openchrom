@@ -71,7 +71,7 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 		Label label = new Label(composite, SWT.None);
 		label.setText("Type File CSD");
 		ComboViewer combo = new ComboViewer(composite, SWT.READ_ONLY);
-		IChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
+		IChromatogramConverterSupport support = ChromatogramConverterCSD.getInstance().getChromatogramConverterSupport();
 		List<ISupplier> suppliers = support.getExportSupplier();
 		combo.setContentProvider(ArrayContentProvider.getInstance());
 		combo.setLabelProvider(new LabelProvider() {
@@ -92,7 +92,7 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 		label = new Label(composite, SWT.None);
 		label.setText("Type File MSD");
 		combo = new ComboViewer(composite, SWT.READ_ONLY);
-		support = ChromatogramConverterMSD.getChromatogramConverterSupport();
+		support = ChromatogramConverterMSD.getInstance().getChromatogramConverterSupport();
 		suppliers = support.getExportSupplier();
 		combo.setContentProvider(ArrayContentProvider.getInstance());
 		combo.setLabelProvider(new LabelProvider() {
@@ -113,7 +113,7 @@ public class WizarPageNewAcquisitionsMain extends WizardPage {
 		label = new Label(composite, SWT.None);
 		label.setText("Type File WSD");
 		combo = new ComboViewer(composite, SWT.READ_ONLY);
-		support = ChromatogramConverterWSD.getChromatogramConverterSupport();
+		support = ChromatogramConverterWSD.getInstance().getChromatogramConverterSupport();
 		suppliers = support.getExportSupplier();
 		combo.setContentProvider(ArrayContentProvider.getInstance());
 		combo.setLabelProvider(new LabelProvider() {

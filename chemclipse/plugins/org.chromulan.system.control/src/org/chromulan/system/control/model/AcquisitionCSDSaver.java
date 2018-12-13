@@ -46,7 +46,7 @@ public class AcquisitionCSDSaver extends AbstractAcquisitionSaver implements IAc
 			if(chromatogram instanceof IChromatogramCSD) {
 				IChromatogramCSD chromatogramCSD = (IChromatogramCSD)chromatogram;
 				File nfile = setFile(saveChromatogram.getName(), supplier.getFileExtension());
-				IProcessingInfo procesInfo = ChromatogramConverterCSD.convert(nfile, chromatogramCSD, supplier.getId(), progressMonitor);
+				IProcessingInfo procesInfo = ChromatogramConverterCSD.getInstance().convert(nfile, chromatogramCSD, supplier.getId(), progressMonitor);
 				chromatogramExportConverterProcessingInfos.add(procesInfo);
 			}
 		}

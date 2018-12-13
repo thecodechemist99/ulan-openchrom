@@ -139,11 +139,11 @@ public class AcquisitionSavePreferencePage extends PreferencePage {
 
 		this.acquisition = acquisition;
 		if(acquisition instanceof IAcquisitionCSD) {
-			this.suppliers = ChromatogramConverterCSD.getChromatogramConverterSupport().getSupplier();
+			this.suppliers = ChromatogramConverterCSD.getInstance().getChromatogramConverterSupport().getSupplier();
 		} else if(acquisition instanceof IAcquisitionMSD) {
-			this.suppliers = ChromatogramConverterMSD.getChromatogramConverterSupport().getSupplier();
+			this.suppliers = ChromatogramConverterMSD.getInstance().getChromatogramConverterSupport().getSupplier();
 		} else if(acquisition instanceof IAcquisitionWSD) {
-			this.suppliers = ChromatogramConverterWSD.getChromatogramConverterSupport().getSupplier();
+			this.suppliers = ChromatogramConverterWSD.getInstance().getChromatogramConverterSupport().getSupplier();
 		}
 		file.setValue(acquisition.getAcquisitionSaver().getFile());
 		supplier.setValue(acquisition.getAcquisitionSaver().getSupplier());

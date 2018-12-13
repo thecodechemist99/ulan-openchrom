@@ -35,7 +35,7 @@ public class AcquisitionWSDSaver extends AbstractAcquisitionSaver implements IAc
 			if(chromatogram instanceof IChromatogramWSD) {
 				IChromatogramWSD chromatogramWSD = (IChromatogramWSD)chromatogram;
 				File nfile = setFile(saveChromatogram.getName(), supplier.getFileExtension());
-				IProcessingInfo procesInfo = ChromatogramConverterWSD.convert(nfile, chromatogramWSD, supplier.getId(), progressMonitor);
+				IProcessingInfo procesInfo = ChromatogramConverterWSD.getInstance().convert(nfile, chromatogramWSD, supplier.getId(), progressMonitor);
 				chromatogramExportConverterProcessingInfos.add(procesInfo);
 			}
 		}

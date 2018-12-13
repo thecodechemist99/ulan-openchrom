@@ -225,7 +225,7 @@ public class AcquisitionsAdministator {
 			PreferenceSupplier.INSTANCE().getPreferences().put(PREFERENCE_FILE, path);
 		}
 		if(supplierCSD != null) {
-			IChromatogramConverterSupport support = ChromatogramConverterCSD.getChromatogramConverterSupport();
+			IChromatogramConverterSupport support = ChromatogramConverterCSD.getInstance().getChromatogramConverterSupport();
 			List<ISupplier> suppliers = support.getExportSupplier();
 			for(ISupplier supplier : suppliers) {
 				if(supplier.getId().equals(supplierCSD)) {
@@ -241,7 +241,7 @@ public class AcquisitionsAdministator {
 			}
 		}
 		if(supplierMSD != null) {
-			IChromatogramConverterSupport support = ChromatogramConverterMSD.getChromatogramConverterSupport();
+			IChromatogramConverterSupport support = ChromatogramConverterMSD.getInstance().getChromatogramConverterSupport();
 			List<ISupplier> suppliers = support.getExportSupplier();
 			for(ISupplier supplier : suppliers) {
 				if(supplier.getId().equals(supplierMSD)) {
@@ -257,7 +257,7 @@ public class AcquisitionsAdministator {
 			}
 		}
 		if(supplierWSD != null) {
-			IChromatogramConverterSupport support = ChromatogramConverterWSD.getChromatogramConverterSupport();
+			IChromatogramConverterSupport support = ChromatogramConverterWSD.getInstance().getChromatogramConverterSupport();
 			List<ISupplier> suppliers = support.getExportSupplier();
 			for(ISupplier supplier : suppliers) {
 				if(supplier.getId().equals(supplierWSD)) {
