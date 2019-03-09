@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.chromulan.system.control.model.IAcquisitionSaver;
 import org.eclipse.chemclipse.processing.core.IProcessingInfo;
-import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -112,14 +111,10 @@ public class ChromatogramFilesDialog extends Dialog {
 			public String getText(Object element) {
 
 				if(element instanceof IProcessingInfo) {
-					IProcessingInfo info = (IProcessingInfo)element;
+					IProcessingInfo<File> info = (IProcessingInfo)element;
 					File file;
-					try {
-						file = info.getProcessingResult(File.class);
-						return file.getName();
-					} catch(TypeCastException e) {
-						// TODO: logger.warn(e);
-					}
+					file = info.getProcessingResult();
+					return file.getName();
 				}
 				return null;
 			}

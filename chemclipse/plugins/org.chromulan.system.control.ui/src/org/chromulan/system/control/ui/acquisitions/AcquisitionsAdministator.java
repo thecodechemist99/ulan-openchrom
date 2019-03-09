@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 Jan Holy.
+ * Copyright (c) 2016, 2018, 2019 Jan Holy.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Jan Holy - initial API and implementation
+ * Alexander Kerner - Generics
  *******************************************************************************/
 package org.chromulan.system.control.ui.acquisitions;
 
@@ -40,7 +41,6 @@ import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.processing.core.IProcessingInfo;
-import org.eclipse.chemclipse.processing.core.exceptions.TypeCastException;
 import org.eclipse.chemclipse.ux.extension.ui.provider.ISupplierEditorSupport;
 import org.eclipse.chemclipse.wsd.converter.chromatogram.ChromatogramConverterWSD;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -105,12 +105,8 @@ public class AcquisitionsAdministator {
 					support = new org.eclipse.chemclipse.ux.extension.msd.ui.support.ChromatogramEditorSupport();
 				}
 				if(support != null) {
-					for(IProcessingInfo chromatogramFile : chromatogramFiles) {
-						try {
-							support.openEditor(chromatogramFile.getProcessingResult(File.class));
-						} catch(TypeCastException e) {
-							// TODO: logger.warn(e);
-						}
+					for(IProcessingInfo<File> chromatogramFile : chromatogramFiles) {
+						support.openEditor(chromatogramFile.getProcessingResult());
 					}
 				}
 			}
