@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2019 Jan Holy.
+ * Copyright (c) 2016, 2019 Lablicate GmbH.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -39,9 +39,11 @@ import org.chromulan.system.control.ui.wizard.WizardNewAcquisitions;
 import org.eclipse.chemclipse.converter.chromatogram.IChromatogramConverterSupport;
 import org.eclipse.chemclipse.converter.core.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
+import org.eclipse.chemclipse.model.types.DataType;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.chemclipse.ux.extension.ui.provider.ISupplierEditorSupport;
+import org.eclipse.chemclipse.ux.extension.xxd.ui.editors.EditorSupportFactory;
 import org.eclipse.chemclipse.wsd.converter.chromatogram.ChromatogramConverterWSD;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -102,7 +104,7 @@ public class AcquisitionsAdministator {
 				} else if(acquisition instanceof IAcquisitionCSD) {
 					support = new org.eclipse.chemclipse.ux.extension.wsd.ui.support.ChromatogramEditorSupport();
 				} else if(acquisition instanceof IAcquisitionCSD) {
-					support = new org.eclipse.chemclipse.ux.extension.msd.ui.support.ChromatogramEditorSupport();
+					support = new EditorSupportFactory(DataType.MSD).getInstanceEditorSupport();
 				}
 				if(support != null) {
 					for(IProcessingInfo<File> chromatogramFile : chromatogramFiles) {
