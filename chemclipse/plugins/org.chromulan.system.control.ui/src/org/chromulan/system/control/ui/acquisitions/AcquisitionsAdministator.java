@@ -100,11 +100,11 @@ public class AcquisitionsAdministator {
 				List<IProcessingInfo> chromatogramFiles = dialog.getChromatogramExportConverterProcessingInfos();
 				ISupplierEditorSupport support = null;
 				if(acquisition instanceof IAcquisitionCSD) {
-					support = new org.eclipse.chemclipse.ux.extension.csd.ui.support.ChromatogramEditorSupport();
-				} else if(acquisition instanceof IAcquisitionCSD) {
-					support = new org.eclipse.chemclipse.ux.extension.wsd.ui.support.ChromatogramEditorSupport();
-				} else if(acquisition instanceof IAcquisitionCSD) {
+					support = new EditorSupportFactory(DataType.CSD).getInstanceEditorSupport();
+				} else if(acquisition instanceof IAcquisitionMSD) {
 					support = new EditorSupportFactory(DataType.MSD).getInstanceEditorSupport();
+				} else if(acquisition instanceof IAcquisitionWSD) {
+					support = new EditorSupportFactory(DataType.WSD).getInstanceEditorSupport();
 				}
 				if(support != null) {
 					for(IProcessingInfo<File> chromatogramFile : chromatogramFiles) {
