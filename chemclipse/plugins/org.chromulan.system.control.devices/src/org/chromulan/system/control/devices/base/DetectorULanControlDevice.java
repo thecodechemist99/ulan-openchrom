@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 Jan Holy.
+ * Copyright (c) 2016, 2019 Jan Holy.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -18,7 +18,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 
 import org.chromulan.system.control.device.setting.IDeviceSetting;
-import org.chromulan.system.control.model.ChromatogramCSDAcquisition;
 import org.chromulan.system.control.model.IChromatogramAcquisition;
 import org.eclipse.chemclipse.csd.model.implementation.ScanCSD;
 
@@ -107,7 +106,7 @@ public abstract class DetectorULanControlDevice extends UlanControlDevice {
 
 	private void setObject(int scanInterval, int scanDelay) {
 
-		chromatogramAcquisition = new ChromatogramCSDAcquisition(scanInterval, scanDelay);
+		// TODO create a new acquisition instance
 		filtGetData = getUlanDevice().addFiltAdr(0x4f, null, new CompletionHandler<ULanMsg, Void>() {
 
 			@Override

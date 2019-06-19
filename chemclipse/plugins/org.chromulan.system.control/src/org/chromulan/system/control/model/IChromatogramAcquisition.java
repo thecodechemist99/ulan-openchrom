@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 Jan Holy.
+ * Copyright (c) 2015, 2019 Jan Holy.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,7 +13,6 @@ package org.chromulan.system.control.model;
 
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.model.core.IScan;
-import org.eclipse.chemclipse.swt.ui.series.IMultipleSeries;
 
 public interface IChromatogramAcquisition {
 
@@ -32,8 +31,6 @@ public interface IChromatogramAcquisition {
 	int getScanDelay();
 
 	int getScanInterval();
-
-	IMultipleSeries getSeries();
 
 	void newAcquisition(int scanInterval, int scanDeley);
 

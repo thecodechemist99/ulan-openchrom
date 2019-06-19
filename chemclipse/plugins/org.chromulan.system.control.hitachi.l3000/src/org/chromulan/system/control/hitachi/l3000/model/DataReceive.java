@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 Jan Holy.
+ * Copyright (c) 2016, 2019 Jan Holy.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -18,7 +18,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.chromulan.system.control.model.ChromatogramWSDAcquisition;
 import org.chromulan.system.control.model.IChromatogramWSDAcquisition;
 import org.eclipse.chemclipse.wsd.model.core.AbstractScanSignalWSD;
 import org.eclipse.chemclipse.wsd.model.core.AbstractScanWSD;
@@ -43,7 +42,7 @@ public class DataReceive {
 	private int wavelenghtRangeTo;
 
 	public DataReceive(String name, int timeInterval, float wavelenghtInterval, int wavelenghtRangeFrom, int wavelenghtRangeTo) {
-		this.chromatogram = new ChromatogramWSDAcquisition(timeInterval, 0);
+		// TODO Create a new acquisition instance
 		this.chromatogram.setName(name);
 		this.wavelenghtInterval = wavelenghtInterval;
 		this.wavelenghtRangeFrom = wavelenghtRangeFrom;
