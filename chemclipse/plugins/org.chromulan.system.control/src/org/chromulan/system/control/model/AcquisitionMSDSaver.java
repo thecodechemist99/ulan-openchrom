@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.chromulan.system.control.report.ProccessMiscellaneousDataChromatogram;
-import org.eclipse.chemclipse.converter.core.ISupplier;
+import org.eclipse.chemclipse.processing.converter.ISupplier;
 import org.eclipse.chemclipse.model.core.IChromatogram;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.msd.model.core.IChromatogramMSD;

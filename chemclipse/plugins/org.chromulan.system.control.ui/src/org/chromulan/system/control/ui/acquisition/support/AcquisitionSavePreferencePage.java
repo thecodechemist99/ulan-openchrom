@@ -18,7 +18,7 @@ import org.chromulan.system.control.model.IAcquisition;
 import org.chromulan.system.control.model.IAcquisitionCSD;
 import org.chromulan.system.control.model.IAcquisitionMSD;
 import org.chromulan.system.control.model.IAcquisitionWSD;
-import org.eclipse.chemclipse.converter.core.ISupplier;
+import org.eclipse.chemclipse.processing.converter.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.wsd.converter.chromatogram.ChromatogramConverterWSD;

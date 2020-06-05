@@ -37,7 +37,7 @@ import org.chromulan.system.control.ui.wizard.WizardModelAcquisition;
 import org.chromulan.system.control.ui.wizard.WizardNewAcquisition;
 import org.chromulan.system.control.ui.wizard.WizardNewAcquisitions;
 import org.eclipse.chemclipse.converter.chromatogram.IChromatogramConverterSupport;
-import org.eclipse.chemclipse.converter.core.ISupplier;
+import org.eclipse.chemclipse.processing.converter.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.model.types.DataType;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;

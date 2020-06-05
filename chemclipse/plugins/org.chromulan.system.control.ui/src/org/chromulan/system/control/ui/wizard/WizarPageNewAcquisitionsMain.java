@@ -18,7 +18,7 @@ import org.chromulan.system.control.ui.acquisition.support.FileToString;
 import org.chromulan.system.control.ui.acquisition.support.StringToFile;
 import org.chromulan.system.control.ui.acquisition.support.ValidatorDirectory;
 import org.eclipse.chemclipse.converter.chromatogram.IChromatogramConverterSupport;
-import org.eclipse.chemclipse.converter.core.ISupplier;
+import org.eclipse.chemclipse.processing.converter.ISupplier;
 import org.eclipse.chemclipse.csd.converter.chromatogram.ChromatogramConverterCSD;
 import org.eclipse.chemclipse.msd.converter.chromatogram.ChromatogramConverterMSD;
 import org.eclipse.chemclipse.wsd.converter.chromatogram.ChromatogramConverterWSD;

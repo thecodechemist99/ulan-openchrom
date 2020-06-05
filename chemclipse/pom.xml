@@ -15,7 +15,7 @@
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.eclipse.chemclipse</groupId>
-  <artifactId>master</artifactId>
+  <artifactId>develop</artifactId>
   <version>BUILD-VERSION</version>
   <packaging>pom</packaging>
   <!--
@@ -100,7 +100,7 @@
             <artifact>
               <groupId>net.openchrom.releng </groupId>
               <artifactId>openchrom.targetplatform </artifactId>
-              <version>1.0.0-SNAPSHOT </version>
+              <version>1.4.0-SNAPSHOT </version>
             </artifact>
           </target>
           <environments>

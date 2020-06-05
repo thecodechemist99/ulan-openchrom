@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.chromulan.system.control.feature_1.4.0.qualifier.jar" id="org.chromulan.system.control.feature" version="1.4.0.qualifier">
+   <feature url="features/org.chromulan.system.control.feature_1.4.0.202006050332.jar" id="org.chromulan.system.control.feature" version="1.4.0.202006050332">
       <category name="org.chromulan.system.control"/>
    </feature>
    <category-def name="org.chromulan.system.control" label="CHROMuLAN"/>

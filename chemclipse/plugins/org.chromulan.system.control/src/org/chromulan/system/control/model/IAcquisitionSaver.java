@@ -14,7 +14,7 @@ package org.chromulan.system.control.model;
 import java.io.File;
 import java.util.List;
 
-import org.eclipse.chemclipse.converter.core.ISupplier;
+import org.eclipse.chemclipse.processing.converter.ISupplier;
 import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 import org.eclipse.core.runtime.IProgressMonitor;
 

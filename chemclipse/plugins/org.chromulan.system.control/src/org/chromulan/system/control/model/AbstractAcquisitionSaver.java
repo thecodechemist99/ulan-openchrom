@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.chemclipse.converter.core.ISupplier;
+import org.eclipse.chemclipse.processing.converter.ISupplier;
 import org.eclipse.chemclipse.processing.core.IProcessingInfo;
 
 public abstract class AbstractAcquisitionSaver implements IAcquisitionSaver {

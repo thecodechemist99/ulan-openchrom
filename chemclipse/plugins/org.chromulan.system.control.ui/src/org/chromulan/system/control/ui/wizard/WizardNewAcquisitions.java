@@ -13,7 +13,7 @@ package org.chromulan.system.control.ui.wizard;
 
 import java.io.File;
 
-import org.eclipse.chemclipse.converter.core.ISupplier;
+import org.eclipse.chemclipse.processing.converter.ISupplier;
 import org.eclipse.jface.wizard.Wizard;
 
 public class WizardNewAcquisitions extends Wizard {
