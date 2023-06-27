@@ -31,7 +31,7 @@
     <!-- VERSIONS -->
     <tycho.version>3.0.5</tycho.version>
     <tycho-extras.version>3.0.5</tycho-extras.version>
-    <pmd.version>6.55.0</pmd.version>
+    <pmd.version>3.21.0</pmd.version>
     <checkstyle.version>10.12.1</checkstyle.version>
     <!-- IDS -->
     <tycho.groupid>org.eclipse.tycho</tycho.groupid>
@@ -100,7 +100,7 @@
             <artifact>
               <groupId>net.openchrom.releng </groupId>
               <artifactId>openchrom.targetplatform </artifactId>
-              <version>1.4.0-SNAPSHOT </version>
+              <version>1.5.0-SNAPSHOT </version>
             </artifact>
           </target>
           <environments>
