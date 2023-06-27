@@ -19,20 +19,20 @@
   <version>BUILD-VERSION</version>
   <packaging>pom</packaging>
   <!--
-	USE MAVEN 3.0
+	USE MAVEN 3.9
   --> 
   <prerequisites>
-    <maven>3.0</maven>
+    <maven>3.9</maven>
   </prerequisites>
   <!--
 	PROPERTIES
   --> 
   <properties>
     <!-- VERSIONS -->
-    <tycho.version>1.1.0</tycho.version>
-    <tycho-extras.version>1.1.0</tycho-extras.version>
-    <pmd.version>2.7.1</pmd.version>
-    <checkstyle.version>2.9.1</checkstyle.version>
+    <tycho.version>3.0.5</tycho.version>
+    <tycho-extras.version>3.0.5</tycho-extras.version>
+    <pmd.version>6.55.0</pmd.version>
+    <checkstyle.version>10.12.1</checkstyle.version>
     <!-- IDS -->
     <tycho.groupid>org.eclipse.tycho</tycho.groupid>
     <sonatype.groupid>org.sonatype.tycho</sonatype.groupid>
@@ -40,15 +40,15 @@
     <!-- REPOSITORY URLS -->
     <tycho-repo.url>https://oss.sonatype.org/content/groups/public</tycho-repo.url>
     <neon-repo.url>http://download.eclipse.org/releases/neon</neon-repo.url>
-    <neon-updates-repo.url>http://download.eclipse.org/eclipse/updates/4.6</neon-updates-repo.url>
-    <jetty-repo.url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</jetty-repo.url>
-    <orbit-repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/S20190726194335/repository</orbit-repo.url>
+    <neon-updates-repo.url>http://download.eclipse.org/eclipse/updates/4.28</neon-updates-repo.url>
+    <jetty-repo.url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x</jetty-repo.url>
+    <orbit-repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/S20230516204213/repository</orbit-repo.url>
     <nebula-repo.url>http://download.eclipse.org/nebula/snapshot</nebula-repo.url>
-    <pydev-repo.url>https://dl.bintray.com/fabioz/pydev/6.3.1</pydev-repo.url>
-    <nattable-repo.url>http://download.eclipse.org/nattable/releases/1.5.0/repository</nattable-repo.url>
+    <pydev-repo.url>https://dl.bintray.com/fabioz/pydev/10.2.0</pydev-repo.url>
+    <nattable-repo.url>http://download.eclipse.org/nattable/releases/2.1.0/repository</nattable-repo.url>
     <ease-repo.url>http://download.eclipse.org/ease/update/release</ease-repo.url>
-    <knime-repo.url>http://update.knime.org/analytics-platform/3.3</knime-repo.url>
-    <efxclipse-repo.url>http://download.eclipse.org/efxclipse/updates-released/2.4.0/site</efxclipse-repo.url>
+    <knime-repo.url>http://update.knime.org/analytics-platform/4.7</knime-repo.url>
+    <efxclipse-repo.url>http://download.eclipse.org/efxclipse/updates-released/3.3.0/site</efxclipse-repo.url>
     <egit-repo.url>http://download.eclipse.org/egit/updates</egit-repo.url>
     <!-- ENCODING -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -155,7 +155,7 @@
             <extraClasspathElement>
               <groupId>com.oracle</groupId>
               <artifactId>javafx</artifactId>
-              <version>8.0.0-SNAPSHOT</version>
+              <version>17.0.0-SNAPSHOT</version>
               <systemPath>${java.home}/lib/jfxswt.jar</systemPath>
               <scope>system</scope>
             </extraClasspathElement>

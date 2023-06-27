@@ -2,7 +2,7 @@
 <feature
       id="org.chromulan.system.control.feature"
       label="CHROMuLAN Control"
-      version="1.4.0.qualifier"
+      version="1.5.0.qualifier"
       provider-name="CHROMuLAN">
 
    <description url="http://www.openchrom.net">

@@ -10,6 +10,6 @@
 
   <artifactId>org.chromulan.system.control.hitachi.l3000</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <version>1.4.0-SNAPSHOT</version>
+  <version>1.5.0-SNAPSHOT</version>
   
 </project>
