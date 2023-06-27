@@ -23,7 +23,7 @@
   <description>
 	The OpenChrom CHROMuLAN plug-in offers a solution to connect uLAN devices. It extends the functionality of the OpenChrom Rich Client Platform (RCP).
   </description>
-  <url>https://github.com/holyjan3/ulan-openchrom</url>
+  <url>https://github.com/thecodechemist99/ulan-openchrom</url>
   <!--
 	LICENSES
   -->
@@ -50,6 +50,15 @@
       <id>eselmeister</id>
       <name>Philip Wenig</name>
       <email>philip.wenig [at] openchrom.net</email>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>thecodechemist99</id>
+      <name>Florian Beck</name>
+      <email>florian.beck [at] nakt.eu</email>
       <timezone>+1</timezone>
       <roles>
         <role>Developer</role>
