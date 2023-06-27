@@ -12,3 +12,4 @@ chemclipse/features/org.chromulan.system.control.feature/target/
 chemclipse/plugins/org.chromulan.system.control.ui/target/
 chemclipse/plugins/org.chromulan.system.control/target/
 chemclipse/sites/org.chromulan.system.control.updateSite/target/
+.vscode/
