@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.eclipse.chemclipse</groupId>
     <artifactId>develop</artifactId>
-    <version>BUILD-VERSION</version>
+    <version>1.4.0</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <!--
@@ -29,8 +29,8 @@
   -->
   <licenses>
     <license>
-      <name>EPL v1.0</name>
-      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+      <name>EPL v2.0</name>
+      <url>http://www.eclipse.org/legal/epl-v20.html</url>
     </license> 
   </licenses>
   <!--

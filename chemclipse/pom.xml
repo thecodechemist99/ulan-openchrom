@@ -16,7 +16,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.eclipse.chemclipse</groupId>
   <artifactId>develop</artifactId>
-  <version>BUILD-VERSION</version>
+  <version>1.4.0</version>
   <packaging>pom</packaging>
   <!--
 	USE MAVEN 3.9

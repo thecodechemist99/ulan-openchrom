@@ -7,10 +7,10 @@ Bundle-Activator: org.chromulan.system.control.hitachi.l3000.Activator
 Bundle-Vendor: CHROMuLAN
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.chromulan.system.control;bundle-version="1.2.0",
+ org.chromulan.system.control;bundle-version="1.4.0",
  org.eclipse.e4.ui.model.workbench;bundle-version="2.4.0",
- org.chromulan.system.control.manager;bundle-version="1.2.0",
- org.chromulan.system.control.ui;bundle-version="1.2.0",
+ org.chromulan.system.control.manager;bundle-version="1.4.0",
+ org.chromulan.system.control.ui;bundle-version="1.4.0",
  org.eclipse.chemclipse.wsd.model;bundle-version="0.8.0",
  org.eclipse.chemclipse.csd.model;bundle-version="0.8.0",
  org.eclipse.chemclipse.model;bundle-version="0.8.0",
